@@ -1,0 +1,15 @@
+/**
+ * Links
+ */
+a {
+    color: darken( $colorPrimary, 10% );
+    text-decoration: none;
+
+    &:hover {
+        color: $colorPrimary;
+    }
+}
+p > a {
+    display: inline-block;
+    text-decoration: underline;
+}

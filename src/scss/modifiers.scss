@@ -1,0 +1,192 @@
+/**
+ * Fullscreen modifiers
+ */
+@mixin fullScreen( $fixed: 0 ) {
+
+    display: block;
+    overflow: hidden;
+    @if $fixed == 1 { position: fixed; }
+    @else { position: absolute; }
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/**
+ * Radial gradient background color
+ */
+@mixin bgRadial( $color ) {
+
+    $dark: saturate( darken( $color, 8% ), 8% );
+    $image: radial-gradient( circle, $color 0%, $dark 55% );
+    background-color: $dark;
+    background-image: $image;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/**
+ * Color modifiers
+ */
+@mixin colorImage( $color, $text ) {
+
+    background-color: $color !important;
+    background-image: radial-gradient( circle, rgba(  0, 0, 0, 0 ) 0%, rgba( 0, 0, 0, 0.8 ) 100% ) !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+}
+
+@mixin colorBg( $color, $text, $hover: 0 ) {
+
+    background-color: $color !important;
+    color: $text !important;
+
+    @if $hover == 1 {
+
+        &:hover {
+            background-color: darken( $color, 5% ) !important;
+            color: lighten( $text, 10% ) !important;
+        }
+        &:active, &:focus {
+            background-color: darken( $color, 10% ) !important;
+            color: lighten( $text, 15% ) !important;
+        }
+    }
+}
+
+@mixin colorBorder( $color, $hover: 0 ) {
+
+    border-color: $color !important;
+
+    @if $hover == 1 {
+
+        &:hover, &:focus {
+            color: darken( $color, 8% ) !important;
+            border-color: desaturate( darken( $color, 8% ), 10% ) !important;
+        }
+        &:focus {
+            box-shadow: 0 0 16px transparentize( lighten( $color, 20% ), 0.5 );
+        }
+    }
+}
+
+@mixin colorText( $color, $hover: 0 ) {
+
+    color: lighten( $color, 5% ) !important;
+
+    @if $hover == 1 {
+
+        &:hover {
+            color: darken( $color, 10% ) !important;
+        }
+        &:active, &:focus {
+            color: darken( $color, 15% ) !important;
+        }
+    }
+}
+
+/**
+ * Radial gradient background image colors
+ */
+.bg-document-image  { @include colorImage( $colorDocument,  $colorDocumentText  ); }
+.bg-input-image     { @include colorImage( $colorInput,     $colorInputText     ); }
+.bg-default-image   { @include colorImage( $colorDefault,   $colorDefaultText   ); }
+.bg-primary-image   { @include colorImage( $colorPrimary,   $colorPrimaryText   ); }
+.bg-secondary-image { @include colorImage( $colorSecondary, $colorSecondaryText ); }
+.bg-success-image   { @include colorImage( $colorSuccess,   $colorSuccessText   ); }
+.bg-warning-image   { @include colorImage( $colorWarning,   $colorWarningText   ); }
+.bg-danger-image    { @include colorImage( $colorDanger,    $colorDangerText    ); }
+.bg-info-image      { @include colorImage( $colorInfo,      $colorInfoText      ); }
+.bg-grey-image      { @include colorImage( $colorGrey,      $colorGreyText      ); }
+.bg-bright-image    { @include colorImage( $colorBright,    $colorBrightText    ); }
+
+/**
+ * Solid background colors
+ */
+.bg-document  { @include colorBg( $colorDocument,  $colorDocumentText   ); }
+.bg-input     { @include colorBg( $colorInput,     $colorInputText      ); }
+.bg-default   { @include colorBg( $colorDefault,   $colorDefaultText    ); }
+.bg-primary   { @include colorBg( $colorPrimary,   $colorPrimaryText    ); }
+.bg-secondary { @include colorBg( $colorSecondary, $colorSecondaryText  ); }
+.bg-success   { @include colorBg( $colorSuccess,   $colorSuccessText    ); }
+.bg-warning   { @include colorBg( $colorWarning,   $colorWarningText    ); }
+.bg-danger    { @include colorBg( $colorDanger,    $colorDangerText     ); }
+.bg-info      { @include colorBg( $colorInfo,      $colorInfoText       ); }
+.bg-grey      { @include colorBg( $colorGrey,      $colorGreyText       ); }
+.bg-bright    { @include colorBg( $colorBright,    $colorBrightText     ); }
+
+/**
+ * Solid background colors with hover/active state
+ */
+.bg-document-hover  { @include colorBg( $colorDocument,  $colorDocumentText,  1 ); }
+.bg-input-hover     { @include colorBg( $colorInput,     $colorInputText,     1 ); }
+.bg-default-hover   { @include colorBg( $colorDefault,   $colorDefaultText,   1 ); }
+.bg-primary-hover   { @include colorBg( $colorPrimary,   $colorPrimaryText,   1 ); }
+.bg-secondary-hover { @include colorBg( $colorSecondary, $colorSecondaryText, 1 ); }
+.bg-success-hover   { @include colorBg( $colorSuccess,   $colorSuccessText,   1 ); }
+.bg-warning-hover   { @include colorBg( $colorWarning,   $colorWarningText,   1 ); }
+.bg-danger-hover    { @include colorBg( $colorDanger,    $colorDangerText,    1 ); }
+.bg-info-hover      { @include colorBg( $colorInfo,      $colorInfoText,      1 ); }
+.bg-grey-hover      { @include colorBg( $colorGrey,      $colorGreyText,      1 ); }
+.bg-bright-hover    { @include colorBg( $colorBright,    $colorBrightText,    1 ); }
+
+/**
+ * Solid border colors
+ */
+.border-document  { @include colorBorder( $colorDocument  ); }
+.border-input     { @include colorBorder( $colorInput     ); }
+.border-default   { @include colorBorder( $colorDefault   ); }
+.border-primary   { @include colorBorder( $colorPrimary   ); }
+.border-secondary { @include colorBorder( $colorSecondary ); }
+.border-success   { @include colorBorder( $colorSuccess   ); }
+.border-warning   { @include colorBorder( $colorWarning   ); }
+.border-danger    { @include colorBorder( $colorDanger    ); }
+.border-info      { @include colorBorder( $colorInfo      ); }
+.border-grey      { @include colorBorder( $colorGrey      ); }
+.border-bright    { @include colorBorder( $colorBright    ); }
+
+/**
+ * Solid border colors with hover/active state
+ */
+.border-document-hover  { @include colorBorder( $colorDocument,  1 ); }
+.border-input-hover     { @include colorBorder( $colorInput,     1 ); }
+.border-default-hover   { @include colorBorder( $colorDefault,   1 ); }
+.border-primary-hover   { @include colorBorder( $colorPrimary,   1 ); }
+.border-secondary-hover { @include colorBorder( $colorSecondary, 1 ); }
+.border-success-hover   { @include colorBorder( $colorSuccess,   1 ); }
+.border-warning-hover   { @include colorBorder( $colorWarning,   1 ); }
+.border-danger-hover    { @include colorBorder( $colorDanger,    1 ); }
+.border-info-hover      { @include colorBorder( $colorInfo,      1 ); }
+.border-grey-hover      { @include colorBorder( $colorGrey,      1 ); }
+.border-bright-hover    { @include colorBorder( $colorBright,    1 ); }
+
+/**
+ * Solid text colors
+ */
+.text-document  { @include colorText( $colorDocument  ); }
+.text-input     { @include colorText( $colorInput     ); }
+.text-default   { @include colorText( $colorDefault   ); }
+.text-primary   { @include colorText( $colorPrimary   ); }
+.text-secondary { @include colorText( $colorSecondary ); }
+.text-success   { @include colorText( $colorSuccess   ); }
+.text-warning   { @include colorText( $colorWarning   ); }
+.text-danger    { @include colorText( $colorDanger    ); }
+.text-info      { @include colorText( $colorInfo      ); }
+.text-grey      { @include colorText( $colorGrey      ); }
+.text-bright    { @include colorText( $colorBright    ); }
+
+/**
+ * Solid text colors with hover/active state
+ */
+.text-document-hover  { @include colorText( $colorDocument,  1 ); }
+.text-input-hover     { @include colorText( $colorInput,     1 ); }
+.text-default-hover   { @include colorText( $colorDefault,   1 ); }
+.text-primary-hover   { @include colorText( $colorPrimary,   1 ); }
+.text-secondary-hover { @include colorText( $colorSecondary, 1 ); }
+.text-success-hover   { @include colorText( $colorSuccess,   1 ); }
+.text-warning-hover   { @include colorText( $colorWarning,   1 ); }
+.text-danger-hover    { @include colorText( $colorDanger,    1 ); }
+.text-info-hover      { @include colorText( $colorInfo,      1 ); }
+.text-grey-hover      { @include colorText( $colorGrey,      1 ); }
+.text-bright-hover    { @include colorText( $colorBright,    1 ); }

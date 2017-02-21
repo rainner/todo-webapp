@@ -1,0 +1,381 @@
+
+/**
+ * Common element show animation
+ */
+@keyframes showAnimation {
+      0% { transform: scale( 1.2 ); opacity: 0; }
+    100% { transform: scale( 1 ); opacity: 1; }
+}
+
+/**
+ * App containers
+ */
+.app-wrap {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 100vh;
+
+    .app-left {
+        position: relative;
+        flex: 1;
+        z-index: 1;
+    }
+
+    .app-right {
+        position: relative;
+        width: 300px;
+        background-color: $colorSecondary;
+        background-image: linear-gradient( 90deg, darken( $colorSecondary, 6% ) 0%, $colorSecondary 6px );
+        color: $colorDocument;
+        z-index: 2;
+    }
+}
+
+/**
+ * Main headings
+ */
+.heading-wrap {
+    overflow: hidden;
+    padding: 4px $padSpace 0 $padSpace;
+    height: 68px;
+    background-color: rgba( 0, 0, 0, 0.08 );
+
+    & > *,
+    & > *:before,
+    & > *:after {
+        font-size: 28px;
+    }
+
+    input {
+        display: block;
+        width: 100%;
+        font-size: inherit;
+        line-height: 1.4em;
+        padding: 0 4px;
+        background-color: transparent;
+        border-radius: $lineJoin;
+        border-bottom: $lineWidth $lineStyle rgba( 0, 0, 0, 0 );
+
+        &:focus {
+            border-color: $lineColor;
+        }
+    }
+}
+
+/**
+ * Todos list welcome message
+ */
+.todo-welcome {
+    display: block;
+    padding: $padSpace;
+    color: darken( $colorDocument, 20% );
+}
+
+/**
+ * Main todo list
+ */
+.todo-list-wrap {
+    display: block;
+    list-style: none;
+    text-align: left;
+    padding: $padSpace;
+
+    // todo list item entry (pending)
+    .todo-list-item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: stretch;
+        margin-bottom: 10px;
+        padding: $padSpace;
+        border-radius: $lineJoin;
+        background-color: #fff;
+        box-shadow: $shadowPaper;
+        animation: showAnimation $fxSpeed $fxEase;
+
+        // list item left icon
+        .todo-list-icon {
+            font-size: 200%;
+            line-height: 1em;
+            padding-right: $padSpace;
+            text-align: left;
+
+            // pending icon
+            .todo-list-icon-pending {
+                color: $colorWarning;
+            }
+            // complete icon
+            .todo-list-icon-complete {
+                display: none;
+                color: $colorSuccess;
+            }
+        }
+
+        // todo list entry info + edit input
+        .todo-list-info {
+            flex: 1;
+
+            // input label wrapper
+            .todo-list-label {
+                display: block;
+                position: relative;
+                width: 100%;
+
+                // entry date
+                .todo-list-date {
+                    font-size: 72%;
+                    line-height: 1.4em;
+                    opacity: 0.4;
+                }
+
+                // entry hidden edit input
+                .todo-list-input {
+                    display: block;
+                    position: relative;
+                    width: 100%;
+                    font-size: inherit;
+                    line-height: 1.2em;
+                    background-color: #ffc;
+                    border-radius: $lineJoin;
+                    max-height: 0;
+                    z-index: 1;
+                }
+
+                // entry todo text
+                .todo-list-text {
+                    display: block;
+                    position: relative;
+                    font-size: inherit;
+                    line-height: 1.2em;
+                    z-index: 2;
+                }
+
+                // list entry focus state changes
+                .todo-list-input:focus { max-height: 100%; }
+                .todo-list-input:focus ~ .todo-list-text { display: none; }
+            }
+        }
+
+        // entry controls
+        .todo-list-control {
+            padding-left: 10px;
+            opacity: 0.2;
+
+            button {
+                display: inline-block;
+                font-size: inherit;
+                line-height: 1em;
+                cursor: pointer;
+            }
+        }
+
+        // entry hover state
+        &:hover {
+            background-color: #ffd;
+
+            // show controls on hover
+            .todo-list-control {
+                opacity: 1;
+            }
+        }
+    }
+
+    // completed list item changes
+    .todo-list-item.complete {
+        background-color: #eff;
+
+        // toggle left icon state
+        .todo-list-icon {
+            .todo-list-icon-pending {
+                display: none;
+            }
+            .todo-list-icon-complete {
+                display: inline-block;
+            }
+        }
+        // add line-through effect to todo text
+        .todo-list-info {
+            .todo-list-text {
+                text-decoration: line-through;
+                opacity: 0.675;
+            }
+        }
+        // hide check toggle icon
+        .todo-list-control {
+            .todo-list-btn-check {
+                display: none;
+            }
+        }
+    }
+}
+
+/**
+ * Todo list add form
+ */
+.todo-list-form {
+    display: block;
+    margin: 0;
+    padding: 0 $padSpace;
+
+    input {
+        display: block;
+        width: 100%;
+        line-height: 1.5em;
+        border-bottom: $lineWidth $lineStyle $lineColor;
+
+        &:focus {
+            border-color: $colorSuccess;
+        }
+    }
+}
+
+/**
+ * Saved lists on sidebar
+ */
+.saved-list-wrap {
+    display: block;
+    padding: $padSpace;
+
+    // main list ul element
+    .saved-list-container {
+        display: block;
+        list-style: none;
+        text-align: left;
+        margin-bottom: $padSpace;
+
+        // list item
+        .saved-list-item {
+            display: block;
+            position: relative;
+            margin-bottom: 10px;
+            padding: $padSpace;
+            border-radius: $lineJoin;
+            background-color: rgba( 255, 255, 255, 0.1 );
+            color: $colorDocument;
+            box-shadow: $shadowPaper;
+            animation: showAnimation $fxSpeed $fxEase;
+
+            // left side arrow
+            &:before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                width: $padSpace;
+                height: $padSpace;
+                left: -$padSpace;
+                top: 50%;
+                margin-top: -$padSpace;
+                border-top: $padSpace solid transparent;
+                border-bottom: $padSpace solid transparent;
+                border-right: $padSpace solid $colorDocument;
+                opacity: 0;
+            }
+
+            &:hover {
+                background-color: rgba( 255, 255, 255, 0.075 );
+            }
+            & > hr {
+                margin: 6px 0;
+            }
+            .saved-list-title {
+                color: #fff;
+            }
+            .saved-list-pill {
+                display: inline-block;
+                font-weight: normal;
+                font-size: 72%;
+                line-height: 1em;
+                margin-right: 8px;
+            }
+        }
+
+        // list item active state
+        .saved-list-item.active {
+            background-color: $colorDocument;
+            color: $colorDocumentText;
+
+            // left side arrow
+            &:before {
+                opacity: 1;
+            }
+            .saved-list-title {
+                color: $colorPrimary;
+            }
+            .saved-list-total {
+                color: $colorWarning;
+            }
+            .saved-list-done {
+                color: $colorSuccess;
+            }
+        }
+    }
+}
+
+/**
+ * 900px and smaller
+ */
+@media (max-width: 900px) {
+
+    // collapse right sidebar
+    .app-wrap {
+        width: calc( 100vw + 250px);
+
+        .app-left {
+            width: calc( 100vw - 50px );
+        }
+        .app-right {
+            width: 300px;
+
+            .saved-list-wrap {
+                pointer-events: none;
+                opacity: 0;
+            }
+        }
+        // show right sidebar on hove/active state
+        .app-right:hover,
+        .app-right:active,
+        .app-right:focus,
+        .app-right.expanded {
+            transform: translateX( -250px );
+
+            .saved-list-wrap {
+                pointer-events: auto;
+                opacity: 1;
+            }
+        }
+    }
+}
+
+/**
+ * 720px and smaller
+ */
+@media (max-width: 720px) {
+
+    // heading font adjustments
+    .heading-wrap {
+        & > *,
+        & > *:before,
+        & > *:after {
+            font-size: 4vw;
+        }
+    }
+}
+
+/**
+ * 480px and smaller
+ */
+@media (max-width: 480px) {
+
+    // heading font adjustments
+    .heading-wrap {
+        & > *,
+        & > *:before,
+        & > *:after {
+            font-size: 5vw;
+        }
+    }
+}

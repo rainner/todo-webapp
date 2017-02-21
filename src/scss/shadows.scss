@@ -1,0 +1,52 @@
+/**
+ * Dropshadows
+ */
+.shadow-left,
+.shadow-right {
+    position: relative;
+    overflow: visible;
+}
+.shadow-left:before,
+.shadow-right:before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 80%;
+    height: 50px;
+    bottom: 20px;
+    box-shadow: 0 20px 10px rgba( 0, 0, 0, 0.5 );
+    transition: none !important;
+    z-index: -1;
+}
+.shadow-left:before {
+    left: 15px;
+    transform: rotate( -3deg );
+}
+.shadow-right:before {
+    right: 15px;
+    transform: rotate( 3deg );
+}
+.shadow-hollow {
+    box-shadow: $shadowHollow !important;
+}
+.shadow-bubble {
+    box-shadow: $shadowBubble !important;
+}
+.shadow-paper {
+    box-shadow: $shadowPaper !important;
+}
+.shadow-dark {
+    box-shadow: $shadowDark !important;
+}
+.shadow-glow {
+    box-shadow: $shadowGlow !important;
+}
+.shadow-bold {
+    box-shadow: $shadowBold !important;
+}
+.shadow-text,
+.shadow-text *,
+.shadow-text *:before,
+.shadow-text *:after {
+    text-shadow: $shadowText !important;
+}

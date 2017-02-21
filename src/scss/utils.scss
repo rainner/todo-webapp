@@ -1,0 +1,233 @@
+
+/**
+ * Common spacing
+ */
+.push-top {
+    margin-top: $rowSpace;
+}
+.push-bottom {
+    margin-bottom: $rowSpace;
+}
+.push-left {
+    margin-left: $colSpace;
+}
+.push-right {
+    margin-right: $colSpace;
+}
+.push-vertical {
+    margin: calc( $rowSpace / 2 ) 0;
+}
+.push-horizontal {
+    margin: 0 calc( $colSpace / 2 );
+}
+.push-vertical-center {
+    margin: calc( $rowSpace / 2 ) auto;
+}
+.push-horizontal-center {
+    margin: auto calc( $colSpace / 2 );
+}
+.push-none {
+    margin: 0;
+}
+
+/**
+ * Common padding
+ */
+.pad-top {
+    padding-top: $padSpace;
+}
+.pad-bottom {
+    padding-bottom: $padSpace;
+}
+.pad-left {
+    padding-left: $padSpace;
+}
+.pad-right {
+    padding-right: $padSpace;
+}
+.pad-vertical {
+    padding-top: $padSpace;
+    padding-bottom: $padSpace;
+}
+.pad-horizontal {
+    padding-left: $padSpace;
+    padding-right: $padSpace;
+}
+.pad-all {
+    padding: $padSpace;
+}
+.pad-none {
+    padding: 0;
+}
+
+/**
+ * Common borders
+ */
+.border-top {
+    border-top: $lineWidth $lineStyle $lineColor;
+}
+.border-right {
+    border-right: $lineWidth $lineStyle $lineColor;
+}
+.border-bottom {
+    border-bottom: $lineWidth $lineStyle $lineColor;
+}
+.border-left {
+    border-left: $lineWidth $lineStyle $lineColor;
+}
+.border-vertical {
+    border-top: $lineWidth $lineStyle $lineColor;
+    border-bottom: $lineWidth $lineStyle $lineColor;
+}
+.border-horizontal {
+    border-left: $lineWidth $lineStyle $lineColor;
+    border-right: $lineWidth $lineStyle $lineColor;
+}
+.border-all {
+    border: $lineWidth $lineStyle $lineColor;
+}
+.border-none {
+    border: none;
+}
+
+/**
+ * Box styles
+ */
+.box-well {
+    display: block;
+    background-color: darken( $colorDocument, 5% );
+    box-shadow: $shadowHollow;
+    border-radius: $lineJoin;
+    padding: $padSpace;
+    min-height: 100%;
+}
+.box-paper {
+    display: block;
+    background-color: lighten( $colorDocument, 10% );
+    box-shadow: $shadowPaper;
+    border-radius: $lineJoin;
+    padding: $padSpace;
+    min-height: 100%;
+}
+
+/**
+ * Element edges
+ */
+.edge-round {
+    border-radius: $lineJoin;
+}
+.edge-circle {
+    border-radius: 1000px;
+}
+.edge-square {
+    border-radius: 0;
+}
+
+/**
+ * Transparent background styles
+ */
+.faded-black {
+    background-color: rgba( 0, 0, 0, 0.1 );
+}
+.faded-white {
+    background-color: rgba( 255, 255, 255, 0.3 );
+}
+
+/**
+ * Display types
+ */
+.is-block {
+    display: block;
+}
+.is-inlineblock {
+    display: inline-block;
+}
+.is-inline {
+    display: inline;
+}
+.is-hidden {
+    visibility: hidden;
+}
+.is-absolute {
+    position: absolute;
+}
+.is-fixed {
+    position: fixed;
+}
+.is-clickable {
+    cursor: pointer;
+}
+.is-loading {
+    cursor: wait;
+    pointer-events: none;
+}
+.is-disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+.is-fullscreen {
+    display: block;
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+.is-centered {
+    display: block;
+    position: fixed;
+    margin: 0;
+    padding: $padSpace;
+    border: 0;
+    left: 50%;
+    top: 50%;
+    transform: translateX( -50% ) translateY( -50% );
+}
+
+/**
+ * Floating
+ */
+.float-wrap {
+    zoom: 1;
+
+    &:after {
+        display: table;
+        clear: both;
+        margin: 0;
+        padding: 0;
+        height: 0;
+        content: "";
+    }
+}
+.float-left {
+    display: inline-block;
+    float: left;
+}
+.float-right {
+    display: inline-block;
+    float: right;
+}
+.float-center {
+    display: inline-block;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/**
+ * Prevent text selection
+ */
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+

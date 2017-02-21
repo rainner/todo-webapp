@@ -1,0 +1,336 @@
+/**
+ * Font
+ */
+@import url( "https://fonts.googleapis.com/css?family=Kalam:700" );
+
+/**
+ * Global font styles
+ */
+html * {
+    font-family: "Kalam", sans-serif;
+    font-weight: normal;
+}
+body {
+    font-size: $fontSize;
+    line-height: 1.6em;
+}
+
+/**
+ * Heading sizes
+ */
+h1, h2, h3, h4, h5, h6 {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+h1 {
+    font-size: ceil( $fontSize * 3 );
+    line-height: ceil( $fontSize * 2.8 );
+}
+h2 {
+    font-size: ceil( $fontSize * 2.3 );
+    line-height: ceil( $fontSize * 2.2 );
+}
+h3 {
+    font-size: ceil( $fontSize * 1.9 );
+    line-height: ceil( $fontSize * 1.8 );
+}
+h4 {
+    font-size: ceil( $fontSize * 1.5 );
+    line-height: ceil( $fontSize * 1.4 );
+}
+h5 {
+    font-size: ceil( $fontSize * 1.3 );
+    line-height: ceil( $fontSize * 1.3 );
+}
+h6 {
+    font-size: ceil( $fontSize * 1 );
+    line-height: ceil( $fontSize * 1 );
+}
+
+/**
+ * Paragraphs
+ */
+p {
+    margin-bottom: $padSpace;
+}
+* p:last-of-type {
+    margin: 0;
+}
+
+/**
+ * Subscript
+ */
+sub, sup {
+    font-size: 80%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup {
+    top: -0.5em;
+}
+sub {
+    bottom: -0.25em;
+}
+
+/**
+ * Font styles
+ */
+b, strong {
+    font-weight: bold;
+}
+i, em, dfn {
+    font-style: italic;
+}
+em, dfn {
+    color: lighten( $colorDocumentText, 15% );
+}
+
+/**
+ * Code tag resets
+ */
+code, kbd, pre, samp {
+    font-family: $fontFixed;
+    font-size: inherit;
+    line-height: inherit;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    background: transparent;
+    border: none;
+}
+code {
+    color: $colorDanger;
+    background-color: $lineColor;
+    border-radius: $lineJoin;
+    padding: 0 8px;
+}
+
+/**
+ * Horizontal lines
+ */
+br, hr {
+    display: block;
+    overflow: hidden;
+    clear: both;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    height: 0;
+}
+hr {
+    padding: 0;
+    border-top: $lineWidth $lineStyle $lineColor;
+    margin: $colSpace 0;
+}
+
+/**
+ * Pills and search tags
+ */
+.pill, .tag {
+    display: inline-block;
+    font-size: 80%;
+    font-weight: normal;
+    line-height: 1em;
+    margin: 0 4px 4px 0;
+    padding: 8px 12px;
+    text-indent: 0;
+    background-color: $lineColor;
+    color: $colorDocumentText;
+    border-radius: 100px;
+}
+.tag:before {
+    content: "#";
+    display: inline-block;
+    margin-right: 4px;
+    opacity: 0.6;
+}
+a.pill:hover,
+a.pill:active,
+a.tag:hover,
+a.tag:active,
+button.pill:hover,
+button.pill:active,
+button.tag:hover,
+button.tag:active {
+    background-color: $colorSecondary;
+    color: #fff !important;
+}
+
+/**
+ * Font styles
+ */
+.font-trebuchet, .font-trebuchet * {
+    font-family: Segoe, "Segoe UI", "DejaVu Sans", "Trebuchet MS", Verdana, sans-serif !important;
+}
+.font-monospace, .font-monospace * {
+    font-family: Consolas, "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", Monaco, "Courier New", monospace !important;
+}
+.font-georgia, .font-georgia * {
+    font-family: Constantia, "Lucida Bright", "DejaVu Serif", Georgia, serif !important;
+}
+.font-verdana, .font-verdana * {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", Verdana, sans-serif !important;
+}
+.font-arial, .font-arial * {
+    font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+.font-helvetica, .font-helvetica * {
+    font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif !important;
+}
+
+/**
+ * Text modifiers
+ */
+.text-normal, .text-normal * {
+    font-style: normal !important;
+    font-weight: normal !important;
+    text-decoration: none !important;
+    line-height: 1em !important;
+    letter-spacing: 0 !important;
+}
+.text-nowrap, .text-nowrap * {
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+.text-code, .text-code * {
+    font-family: Consolas, "Andale Mono", Monaco, "Courier New", monospace;
+    white-space: pre;
+}
+.text-bold, .text-bold * {
+    font-weight: bold !important;
+}
+.text-italic, .text-italic * {
+    font-style: italic !important;
+}
+.text-uppercase, .text-uppercase * {
+    text-transform: uppercase !important;
+}
+.text-lowercase, .text-lowercase * {
+    text-transform: lowercase !important;
+}
+.text-capitalized, .text-capitalized * {
+    text-transform: capitalize !important;
+}
+.text-underlined, .text-underlined * {
+    text-decoration: underline !important;
+}
+.text-left, .text-left * {
+    text-align: left !important;
+}
+.text-centered, .text-centered * {
+    text-align: center !important;
+}
+.text-right, .text-right * {
+    text-align: right !important;
+}
+.text-justified, .text-justified * {
+    text-align: justify !important;
+}
+.text-shrink, .text-shrink * {
+    letter-spacing: -1px !important;
+}
+.text-faded, .text-faded * {
+    opacity: 0.75 !important;
+}
+
+/**
+ * Text sizes
+ */
+.text-tiny, .text-tiny * {
+    font-size: 40% !important;
+    letter-spacing: 1px !important;
+    line-height: 1em !important;
+}
+.text-small, .text-small * {
+    font-size: 80% !important;
+    letter-spacing: 1px !important;
+    line-height: 1em !important;
+}
+.text-big, .text-big * {
+    font-size: 140% !important;
+    line-height: 1.2em !important;
+}
+.text-huge, .text-huge * {
+    font-size: 200% !important;
+    line-height: 1.2em !important;
+}
+
+/**
+ * 720px and smaller
+ */
+@media (max-width: 720px) {
+
+    // reduce main font size with the screen
+    body {
+        font-size: 2.6vw;
+        line-height: 3.5vw;
+    }
+
+    // reduce heading font size with the screen
+    h1 {
+        font-size: 7.5vw;
+        line-height: 7vw;
+    }
+    h2 {
+        font-size: 6.2vw;
+        line-height: 6vw;
+    }
+    h3 {
+        font-size: 5vw;
+        line-height: 4.8vw;
+    }
+    h4 {
+        font-size: 4vw;
+        line-height: 3.9vw;
+    }
+    h5 {
+        font-size: 3.2vw;
+        line-height: 3.2vw;
+    }
+    h6 {
+        font-size: 2.5vw;
+        line-height: 2.5vw;
+    }
+}
+
+/**
+ * 480px and smaller
+ */
+@media (max-width: 480px) {
+
+    // reduce main font size with the screen
+    body {
+        font-size: 3.6vw;
+        line-height: 4.5vw;
+    }
+
+    // reduce heading font size with the screen
+    h1 {
+        font-size: 8.5vw;
+        line-height: 8vw;
+    }
+    h2 {
+        font-size: 7.2vw;
+        line-height: 7vw;
+    }
+    h3 {
+        font-size: 6vw;
+        line-height: 6vw;
+    }
+    h4 {
+        font-size: 5vw;
+        line-height: 5vw;
+    }
+    h5 {
+        font-size: 4.2vw;
+        line-height: 4.2vw;
+    }
+    h6 {
+        font-size: 3.5vw;
+        line-height: 3.5vw;
+    }
+}

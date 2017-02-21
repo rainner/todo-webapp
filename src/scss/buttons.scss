@@ -1,0 +1,91 @@
+/**
+ * Buttons
+ */
+@keyframes btnPulse {
+      0% { opacity: 1; }
+     50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.btn,
+.btn *,
+.btn-outline,
+.btn-outline * {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-weight: normal;
+    font-size: inherit;
+    line-height: 1em;
+    box-shadow: none !important;
+}
+
+.btn,
+.btn-outline {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin: 0 5px 5px 0;
+    cursor: pointer;
+    padding: 0.5em 0.7em 0.3em 0.7em;
+    border-radius: 100px;
+    background-color: darken( $colorDocument, 8% );
+    color: $colorDefaultText;
+
+    & > .btn-spinner {
+        display: none;
+    }
+    & > .btn-text {
+        display: inline-block;
+    }
+    &.loading {
+        cursor: wait;
+        pointer-events: none;
+        animation: btnPulse 1s infinite ease-in-out;
+    }
+    &.loading > .btn-spinner {
+        display: inline-block;
+    }
+    &.loading > .btn-text {
+        display: none;
+    }
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active {
+    background-color: darken( $colorDocument, 12% );
+    color: lighten( $colorDefaultText, 10% );
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: $lineWidth $lineStyle darken( $colorDocument, 8% );
+}
+
+.btn-outline:hover,
+.btn-outline:focus,
+.btn-outline:active {
+    border-color: darken( $colorDocument, 12% );
+}
+
+/**
+ * Fluid button groups
+ */
+.btn-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: stretch;
+    overflow: hidden;
+    border-radius: 100px;
+
+    & > a,
+    & > button {
+        flex: 1;
+        border-radius: 0;
+        margin: 0;
+    }
+}

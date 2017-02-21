@@ -1,0 +1,83 @@
+
+// spacing and padding
+$padSpace: 20px;
+$colSpace: 30px;
+$rowSpace: 40px;
+
+// borders and lines
+$lineWidth: 2px;
+$lineStyle: solid;
+$lineColor: rgba( 0, 0, 0, 0.1 );
+$lineJoin: 4px;
+
+// base font options
+$fontSize: 20px;
+$fontFamily: Helvetica, Arial, sans-serif;
+$fontFixed: Consolas, "Andale Mono", Monaco, "Courier New", monospace;
+
+// document colors
+$colorDocument: #e5e5e2;
+$colorDocumentText: #250829;
+
+// input colors
+$colorInput: #ffffff;
+$colorInputText: #404050;
+
+// default colors
+$colorDefault: #afb5b7;
+$colorDefaultText: #3e4243;
+
+// primary colors
+$colorPrimary: #2a4d5e;
+$colorPrimaryText: #ffdede;
+
+// secondary colors
+$colorSecondary: #392551;
+$colorSecondaryText: #e4dce9;
+
+// success colors
+$colorSuccess: #5c8166;
+$colorSuccessText: #e5ecd5;
+
+// warning colors
+$colorWarning: #a9a973;
+$colorWarningText: #f4ead0;
+
+// warning colors
+$colorDanger: #5a1638;
+$colorDangerText: #fae3e0;
+
+// warning colors
+$colorInfo: #29567b;
+$colorInfoText: #e0ebf4;
+
+// grey colors
+$colorGrey: #686868;
+$colorGreyText: #e5e4e4;
+
+// bright colors
+$colorBright: #ffffff;
+$colorBrightText: #434343;
+
+// base page colors
+$colorText: #404050;
+$colorBg: darken( $colorDocument, 10% );
+$colorInput: lighten( $colorDocument, 20% );
+$colorOverlay: rgba( 0, 0, 0, 0.6 );
+
+// common shadow styles
+$shadowHollow: inset 0 2px 8px rgba( 0, 0, 0, 0.2 );
+$shadowBubble: inset 0 -20px 20px rgba( 0, 0, 0, 0.1 );
+$shadowPaper: 0 1px 3px rgba( 0, 0, 0, 0.1 );
+$shadowDark: 0 1px 3px rgba( 0, 0, 0, 0.3 );
+$shadowGlow: 0 0 10px rgba( 0, 0, 0, 0.2 );
+$shadowBold: 0 2px 12px rgba( 0, 0, 0, 0.4 );
+$shadowText: 1px 1px 0 rgba( 0, 0, 0, 0.3 );
+
+// common speed for most small ui transition animations
+$fxSpeed: 300ms;
+$fxEase: cubic-bezier( 0.215, 0.610, 0.355, 1.000 );
+$fxEaseBounce: cubic-bezier( 0.640, -0.280, 0.050, 1.405 );
+
+
+
