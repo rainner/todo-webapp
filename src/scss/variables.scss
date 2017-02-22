@@ -1,11 +1,11 @@
 
 // spacing and padding
-$padSpace: 18px;
+$padSpace: 20px;
 $colSpace: 30px;
 $rowSpace: 40px;
 
 // borders and lines
-$lineWidth: 2px;
+$lineWidth: 1px;
 $lineStyle: solid;
 $lineColor: rgba( 0, 0, 0, 0.1 );
 $lineJoin: 6px;
@@ -16,7 +16,7 @@ $fontFamily: Helvetica, Arial, sans-serif;
 $fontFixed: Consolas, "Andale Mono", Monaco, "Courier New", monospace;
 
 // document colors
-$colorDocument: #e5e5e2;
+$colorDocument: #e3e3da;
 $colorDocumentText: #250829;
 
 // input colors
@@ -40,7 +40,7 @@ $colorSuccess: #5c8166;
 $colorSuccessText: #e5ecd5;
 
 // warning colors
-$colorWarning: #a9a973;
+$colorWarning: #9d9d69;
 $colorWarningText: #f4ead0;
 
 // warning colors
@@ -68,7 +68,7 @@ $colorOverlay: rgba( 0, 0, 0, 0.6 );
 // common shadow styles
 $shadowHollow: inset 0 2px 8px rgba( 0, 0, 0, 0.2 );
 $shadowBubble: inset 0 -20px 20px rgba( 0, 0, 0, 0.1 );
-$shadowPaper: 0 1px 1px rgba( 0, 0, 0, 0.125 );
+$shadowPaper: 0 1px 1px rgba( 0, 0, 0, 0.15 );
 $shadowDark: 0 1px 3px rgba( 0, 0, 0, 0.3 );
 $shadowGlow: 0 0 10px rgba( 0, 0, 0, 0.2 );
 $shadowBold: 0 2px 12px rgba( 0, 0, 0, 0.4 );

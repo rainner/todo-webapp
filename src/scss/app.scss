@@ -8,6 +8,18 @@
 }
 
 /**
+ * Doc mods
+ */
+body {
+    background-color: $colorDocument;
+    background-image: radial-gradient( circle, lighten( $colorDocument, 10% ) 0%, rgba( 255, 255, 255, 0 ) 80% );
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/**
  * App containers
  */
 .app-wrap {
@@ -43,7 +55,7 @@
     overflow: hidden;
     padding: 4px $padSpace 0 $padSpace;
     height: 68px;
-    background-color: rgba( 0, 0, 0, 0.08 );
+    background-color: rgba( 0, 0, 0, 0.05 );
 
     & > *,
     & > *:before,
@@ -58,7 +70,6 @@
         line-height: 1.8em;
         padding: 0 4px;
         background-color: transparent;
-        border-radius: $lineJoin;
         border-bottom: $lineWidth $lineStyle rgba( 0, 0, 0, 0 );
 
         &:focus {
@@ -73,7 +84,14 @@
 .todo-welcome {
     display: block;
     padding: $padSpace;
-    color: darken( $colorDocument, 30% );
+    color: desaturate( darken( $colorDocument, 40% ), 20% );
+
+    a {
+        color: darken( $colorDocument, 60% );
+        &:hover {
+            color: darken( $colorDocument, 50% );
+        }
+    }
 }
 
 /**
@@ -94,7 +112,7 @@
         margin-bottom: 10px;
         padding: 12px $padSpace;
         border-radius: $lineJoin;
-        background-color: lighten( $colorDocument, 6% );
+        background-color: #e1decd;
         box-shadow: $shadowPaper;
         animation: showAnimation $fxSpeed $fxEase;
 
@@ -124,6 +142,7 @@
             .todo-list-label {
                 display: block;
                 position: relative;
+                cursor: pointer;
                 width: 100%;
 
                 // entry date
@@ -140,7 +159,7 @@
                     width: 100%;
                     font-size: inherit;
                     line-height: 1.2em;
-                    background-color: #ffc;
+                    background-color: transparent;
                     border-radius: $lineJoin;
                     max-height: 0;
                     z-index: 1;
@@ -149,6 +168,7 @@
                 // entry todo text
                 .todo-list-text {
                     display: block;
+                    width: auto;
                     position: relative;
                     font-size: inherit;
                     line-height: 1.2em;
@@ -176,7 +196,7 @@
 
         // entry hover state
         &:hover {
-            background-color: lighten( $colorDocument, 12% );
+            background-color: desaturate( lighten( $colorDocument, 6% ), 10% );
 
             // show controls on hover
             .todo-list-control {
@@ -187,7 +207,7 @@
 
     // completed list item changes
     .todo-list-item.complete {
-        background-color: #eff;
+        background-color: #d1ddd0;
 
         // toggle left icon state
         .todo-list-icon {
@@ -288,7 +308,7 @@
             .saved-list-pill {
                 display: inline-block;
                 font-weight: normal;
-                font-size: 72%;
+                font-size: 80%;
                 line-height: 1em;
                 margin-right: 8px;
             }
