@@ -50,18 +50,18 @@
     speak: none;
 }
 .icon-pl:before { /* push-left */
-    margin-left: 10px;
+    margin-left: 8px;
 }
 .icon-pr:before { /* push-right */
-    margin-right: 10px;
+    margin-right: 8px;
 }
 .icon-fwl:before { /* fixed-width left */
     width: 20px;
-    margin-left: 10px;
+    margin-left: 8px;
 }
 .icon-fwr:before { /* fixed-width right */
     width: 20px;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 .icon-spin:before {
     animation: iconSpin 1s infinite linear;

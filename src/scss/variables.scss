@@ -1,6 +1,6 @@
 
 // spacing and padding
-$padSpace: 20px;
+$padSpace: 18px;
 $colSpace: 30px;
 $rowSpace: 40px;
 
@@ -8,7 +8,7 @@ $rowSpace: 40px;
 $lineWidth: 2px;
 $lineStyle: solid;
 $lineColor: rgba( 0, 0, 0, 0.1 );
-$lineJoin: 4px;
+$lineJoin: 6px;
 
 // base font options
 $fontSize: 20px;
@@ -68,7 +68,7 @@ $colorOverlay: rgba( 0, 0, 0, 0.6 );
 // common shadow styles
 $shadowHollow: inset 0 2px 8px rgba( 0, 0, 0, 0.2 );
 $shadowBubble: inset 0 -20px 20px rgba( 0, 0, 0, 0.1 );
-$shadowPaper: 0 1px 3px rgba( 0, 0, 0, 0.1 );
+$shadowPaper: 0 1px 1px rgba( 0, 0, 0, 0.125 );
 $shadowDark: 0 1px 3px rgba( 0, 0, 0, 0.3 );
 $shadowGlow: 0 0 10px rgba( 0, 0, 0, 0.2 );
 $shadowBold: 0 2px 12px rgba( 0, 0, 0, 0.4 );

@@ -54,7 +54,7 @@
         display: block;
         width: 100%;
         font-size: inherit;
-        line-height: 1.4em;
+        line-height: 1.8em;
         padding: 0 4px;
         background-color: transparent;
         border-radius: $lineJoin;
@@ -72,7 +72,7 @@
 .todo-welcome {
     display: block;
     padding: $padSpace;
-    color: darken( $colorDocument, 20% );
+    color: darken( $colorDocument, 30% );
 }
 
 /**
@@ -91,9 +91,9 @@
         align-items: center;
         justify-content: stretch;
         margin-bottom: 10px;
-        padding: $padSpace;
+        padding: 12px $padSpace;
         border-radius: $lineJoin;
-        background-color: #fff;
+        background-color: lighten( $colorDocument, 6% );
         box-shadow: $shadowPaper;
         animation: showAnimation $fxSpeed $fxEase;
 
@@ -175,7 +175,7 @@
 
         // entry hover state
         &:hover {
-            background-color: #ffd;
+            background-color: lighten( $colorDocument, 12% );
 
             // show controls on hover
             .todo-list-control {
@@ -224,7 +224,7 @@
     input {
         display: block;
         width: 100%;
-        line-height: 1.5em;
+        line-height: 1.8em;
         border-bottom: $lineWidth $lineStyle $lineColor;
 
         &:focus {
