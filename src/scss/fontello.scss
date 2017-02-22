@@ -1,17 +1,6 @@
 /**
  * Font icons from Fontello
  */
-@font-face {
-    font-weight: normal;
-    font-style: normal;
-    font-family: "fontello";
-    src: url( "/public/font/fontello.eot?86427789" );
-    src: url( "/public/font/fontello.eot?86427789#iefix" ) format( "embedded-opentype" ),
-         url( "/public/font/fontello.woff2?86427789" ) format( "woff2" ),
-         url( "/public/font/fontello.woff?86427789" ) format( "woff" ),
-         url( "/public/font/fontello.ttf?86427789" ) format( "truetype" ),
-         url( "/public/font/fontello.svg?86427789#fontello" ) format( "svg" );
-}
 @keyframes iconSpin {
     0%   { transform: rotate( 0deg ); }
     100% { transform: rotate( 359deg ); }
