@@ -36,7 +36,7 @@ export default {
         "savedlists": SavedLists,
     },
 
-    // app data
+    // component data
     data() {
         return {
             key: "todo_app_data",
@@ -46,7 +46,7 @@ export default {
         }
     },
 
-    // app methods
+    // component methods
     methods: {
 
         // check if sidebar is is current selected list

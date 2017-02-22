@@ -23,7 +23,7 @@
                 <button
                     v-if="hasActiveTodos()"
                     class="is-clickable icon-home text-grey-hover"
-                    title="Reset app"
+                    title="App home"
                     @click="clearTodos( $event )"
                     v-tooltip>
                 </button>
@@ -38,34 +38,11 @@
             </div>
         </div>
 
-        <!-- no todos list selected, show intro message -->
-        <div v-if="!hasActiveTodos()" class="todo-welcome">
-            <p>
-                Hello and welcome.
-                This is a simple todos lists as tasks manager application.
-            </p>
-            <p>
-                There is nothing selected right now.
-                You can get started by typing a name above and hitting enter to create a new list,
-                or using the sidebar to the right to select a saved list if you have been here before.
-                You can also click the <a class="icon-plus icon-pr" href="#" @click.prevent="createTodos()">New List</a>
-                button to create a list with a new name automatically.
-            </p>
-            <p>
-                This application uses the browser's built in storage engine to remember your todos data.
-                For more information, visit the
-                <a class="icon-link icon-pr" href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API" target="_blank">Web Storage API</a>
-                info page to learn more.
-            </p>
-        </div>
+        <!-- no todos list selected, show welcome message -->
+        <welcome v-if="!hasActiveTodos()"></welcome>
 
-        <!-- current todos list has no entries, show message -->
-        <div v-if="hasActiveTodos() && !hasTodosEntries()" class="todo-welcome">
-            <p>
-                This todos list is empty.
-                Type something below and hit enter to add tasks to this todos lists.
-            </p>
-        </div>
+        <!-- current todos list has no entries, show empty message -->
+        <empty v-if="hasActiveTodos() && !hasTodosEntries()"></empty>
 
         <!-- todo list items -->
         <ul v-if="hasTodosEntries()" class="todo-list-wrap">
@@ -77,7 +54,6 @@
                 <div class="todo-list-info">
                     <label class="todo-list-label">
                         <div class="todo-list-date">Last modified: {{ task.modified }}</div>
-
                         <input
                             class="todo-list-input"
                             type="text"
@@ -101,7 +77,7 @@
             <div class="flex-row flex-middle">
                 <div class="icon-plus icon-pr"></div>
                 <div class="flex-1">
-                    <input type="text" name="todo" value="" placeholder="Add new TODO task..." />
+                    <input type="text" name="todo" value="" placeholder="Add new TODO task..." autofocus />
                 </div>
             </div>
         </form>
@@ -110,6 +86,10 @@
 </template>
 
 <script>
+// imports
+import Welcome from "./Welcome.vue";
+import Empty from "./Empty.vue";
+
 /**
  * Task list component
  */
@@ -118,12 +98,18 @@ export default {
     // component name
     name: "tasklist",
 
+    // sub components
+    components: {
+        "welcome": Welcome,
+        "empty": Empty,
+    },
+
     // component props
     props: {
         todos: { type: Object, default: {}, required: true },
     },
 
-    // app data
+    // component data
     data() {
         return {
             last: "",
