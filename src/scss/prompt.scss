@@ -1,0 +1,97 @@
+/**
+ * Custom prompt box
+ */
+.prompt-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    overflow: hidden;
+    pointer-events: none;
+    cursor: auto;
+    background-color: $colorOverlay;
+    padding: $padSpace;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 9999;
+
+    .prompt-container {
+        display: block;
+        overflow: hidden;
+        position: relative;
+        cursor: auto;
+        width: 100%;
+        max-width: 400px;
+        background-color: lighten( $colorDocument, 20% );
+        border-radius: $lineJoin;
+        box-shadow: $shadowBold;
+        transform: scale( 0.5 );
+
+        .prompt-title {
+            font-size: inherit;
+            line-height: 1em;
+            padding: $padSpace;
+        }
+        .prompt-message {
+            padding: $padSpace;
+            border-top: $lineWidth $lineStyle $lineColor;
+        }
+        .prompt-input {
+            display: block;
+            overflow: hidden;
+            font-size: inherit;
+            line-height: inherit;
+            min-width: 100%;
+            margin: 0;
+            padding: $padSpace;
+            color: $colorGrey;
+            border-bottom: $lineWidth $lineStyle $colorSecondary;
+            box-shadow: $shadowHollow;
+
+            &:active, &:focus {
+                color: $colorText;
+                border-bottom-color: $colorPrimary;
+            }
+        }
+        .prompt-buttons {
+            display: flex;
+            flex-direction: row;
+
+            button {
+                flex: 1;
+                cursor: pointer;
+                color: $colorDocumentText;
+                background-color: rgba( 0, 0, 0, 0.1 );
+                text-align: center;
+                text-transform: uppercase;
+                font-size: inherit;
+                line-height: 1em;
+                margin: 0;
+                padding: $padSpace;
+
+                &:hover,
+                &:active,
+                &:focus {
+                    background-color: rgba( 0, 0, 0, 0.3 );
+                }
+            }
+            button + button {
+                background-color: rgba( 0, 0, 0, 0.2 );
+            }
+        }
+    }
+
+    &.prompt-visible {
+        pointer-events: auto;
+        cursor: wait;
+        opacity: 1;
+
+        .prompt-container {
+            transform: scale( 1 );
+        }
+    }
+}

@@ -1,0 +1,59 @@
+/**
+ * Page notifications
+ */
+.notify-wrap {
+    display: block;
+    position: fixed;
+    width: 100%;
+    max-width: 500px;
+    padding: $padSpace;
+    bottom: $padSpace;
+    left: 50%;
+    transform: translateX( -50% );
+    z-index: 9999;
+
+    .notify-item {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+        margin: $padSpace 0 0 0;
+        border-radius: $lineJoin;
+        background-color: lignten( $colorDocument, 20% );
+        box-shadow: $shadowBold;
+        opacity: 0;
+        transform: translateY( 100px );
+
+        .notify-message {
+            display: block;
+            padding: $padSpace;
+            font-weight: normal;
+            font-size: 90%;
+        }
+        &.notify-visible {
+            opacity: 1;
+            transform: translateY( 0 );
+        }
+        &.notify-default {
+            background-color: $colorDefault;
+            color: $colorDefaultText;
+        }
+        &.notify-success {
+            background-color: $colorSuccess;
+            color: $colorSuccessText;
+        }
+        &.notify-warning {
+            background-color: $colorWarning;
+            color: $colorWarningText;
+        }
+        &.notify-info {
+            background-color: $colorInfo;
+            color: $colorInfoText;
+        }
+        &.notify-danger {
+            background-color: $colorDanger;
+            color: $colorDangerText;
+        }
+    }
+}
