@@ -1,125 +1,40 @@
 <template>
     <!-- app main wrapper -->
     <div class="app-wrap">
-
         <!-- main todo area -->
         <div class="app-left">
-
-            <!-- todo list heading -->
-            <div class="heading-wrap flex-row flex-space flex-middle">
-                <div class="icon-list icon-pr"></div>
-                <div class="flex-1">
-                    <input
-                        type="text"
-                        name="listName"
-                        placeholder="New todo list name..."
-                        autocomplete="off"
-                        v-model="todos.name"
-                        @focus="onFocus( $event )"
-                        @keyup.enter="todoListSave( $event, 1 )"
-                        @blur="todoListSave( $event )" />
-                </div>
-                <div class="pad-left">
-                    <button
-                        v-if="hasActiveTodo()"
-                        class="is-clickable icon-x text-grey-hover"
-                        title="Delete list"
-                        @click="todoListDelete( $event )"
-                        v-tooltip>
-                    </button>
-                </div>
-            </div>
-
-            <!-- todo list items -->
-            <ul v-if="hasActiveTodo()" class="todo-list-wrap">
-                <li v-for="(task, index) in todos.entries" class="todo-list-item" :class="{ 'complete': task.complete }">
-                    <div class="todo-list-icon">
-                        <span class="todo-list-icon-pending icon-clock"></span>
-                        <span class="todo-list-icon-complete icon-check"></span>
-                    </div>
-                    <div class="todo-list-info">
-                        <label class="todo-list-label">
-                            <div class="todo-list-date">Last modified: {{ task.modified }}</div>
-
-                            <input
-                                class="todo-list-input"
-                                type="text"
-                                v-model="task.todo"
-                                @focus="onFocus( $event )"
-                                @keyup.enter="todoTaskSave( $event, index, 1 )"
-                                @blur="todoTaskSave( $event, index )" />
-
-                            <span class="todo-list-text" v-html="task.todo"></span>
-                        </label>
-                    </div>
-                    <div class="todo-list-control">
-                        <button class="todo-list-btn-check icon-check text-success-hover" title="Mark complete" @click="todoTaskDone( $event, index )" v-tooltip></button>
-                        <button class="todo-list-btn-delete icon-x text-danger-hover" title="Delete task" @click="todoTaskDelete( $event, index )" v-tooltip></button>
-                    </div>
-                </li>
-            </ul>
-
-            <!-- todo list add item form -->
-            <form v-if="hasActiveTodo()" class="todo-list-form" action="#" @submit.prevent="todoTaskInsert( $event )">
-                <div class="flex-row flex-middle">
-                    <div class="icon-plus icon-pr"></div>
-                    <div class="flex-1">
-                        <input type="text" name="todo" value="" placeholder="Add new TODO task..." />
-                    </div>
-                </div>
-            </form>
-
-            <!-- show welcome info when nothing is selected -->
-            <div v-if="!hasActiveTodo()" class="todo-welcome">
-                <p>
-                    This is a simple TODO lists and task manager application.
-                    Right now there's nothing selected, so you can either select a saved list
-                    from the right if you've been here before, or type in a name above
-                    to create a new list.
-                </p>
-            </div>
-
+            <tasklist :todos="todos"></tasklist>
         </div>
-
         <!-- right sidebar -->
         <div class="app-right">
-
-            <!-- saved lists heading -->
-            <div class="heading-wrap flex-row fles-space flex-middle">
-                <div class="icon-folder icon-pr">Saved Lists</div>
-            </div>
-
-            <!-- saved lists items -->
-            <div class="saved-list-wrap">
-                <ul class="saved-list-container">
-                    <li v-for="(todos, index) in lists" class="saved-list-item" :class="{ 'active': isActiveList( index ) }">
-                        <a class="saved-list-title icon-list icon-pr" href="#" title="Manage" @click.prevent="selectTodos( index )" v-html="todos.name" v-tooltip></a> <hr />
-                        <span class="saved-list-pill saved-list-total" v-html="getTodosTotal( todos ) + ' total'"></span>
-                        <span class="saved-list-pill saved-list-done" v-html="getTodosDone( todos ) + ' done'"></span>
-                    </li>
-                </ul>
-                <a class="btn bg-success-hover icon-plus icon-pr shadow-paper" href="#" @click.prevent="createNewTodos()">New List</a>
-            </div>
-
+            <savedlists :lists="lists"></savedlists>
         </div>
-
     </div>
 </template>
 
 <script>
-/**
- * Setup global tooltips handler
- */
+// imports
+import TaskList from "./TaskList.vue";
+import SavedLists from "./SavedLists.vue";
+import Notify from "../scripts/Notify";
+import Prompt from "../scripts/Prompt";
 import Tooltip from "../scripts/Tooltip";
+
+// setup global handlers
+var notify = new Notify();
 var tooltip = new Tooltip();
 
-/**
- * App component
- */
+// app root component
 export default {
 
     // component name
     name: "app",
+
+    // sub components
+    components: {
+        "tasklist": TaskList,
+        "savedlists": SavedLists,
+    },
 
     // app data
     data() {
@@ -128,132 +43,16 @@ export default {
             lists: [],
             todos: {},
             index: -1,
-            last: "",
         }
-    },
-
-    // custom dom element manipulations
-    directives: {
-
-        // apply tooltip text
-        tooltip: {
-            bind: function( el ) {
-                tooltip.select( el );
-            },
-            unbind: function( el ) {
-                tooltip.unselect( el );
-            },
-        },
     },
 
     // app methods
     methods: {
 
-        // capture previous value of something to compare later when saving
-        onFocus: function( e )
+        // check if sidebar is is current selected list
+        isActiveList: function( index )
         {
-            this.last = e.target.value || "";
-        },
-
-        // catch input event to change list name
-        todoListSave: function( e, enter )
-        {
-            var name = e.target.value || ""; // input value
-
-            if( enter ) // release focus on enter press
-            {
-                e.target.blur();
-                return;
-            }
-            if( name && name !== this.last ) // value has changed
-            {
-                if( this.hasActiveTodo() ) // edit mode
-                {
-                    this.lists[ this.index ].name = name;
-                    this.lists[ this.index ].modified = this.getDateString();
-                }
-                else { // create new entry and select it
-                    this.lists.push( this.getNewListEntry( name ) );
-                    this.selectTodos( this.lists.length - 1 );
-                }
-                this.saveData();
-            }
-            e.target.blur();
-        },
-
-        // delete currently active todos (btn event)
-        todoListDelete: function( e )
-        {
-            if( this.hasActiveTodo() && confirm( "Delete this list?" ) )
-            {
-                this.lists.splice( this.index, 1 );
-                this.index = -1;
-                this.todos = this.getNewListEntry();
-                this.saveData();
-            }
-        },
-
-        // append new todos task to current active todos list (form submit event)
-        todoTaskInsert: function( e )
-        {
-            if( e && e.target && this.hasActiveTodo() )
-            {
-                e.preventDefault();
-
-                var todo = e.target.todo.value || "";
-
-                if( todo )
-                {
-                    this.lists[ this.index ].entries.push({
-                        todo: todo,
-                        modified: this.getDateString(),
-                        complete: false,
-                    });
-                    this.selectTodos( this.index );
-                    this.saveData();
-                }
-                e.target.reset();
-            }
-        },
-
-        // save individual todo list entry task name
-        todoTaskSave: function( e, index, enter )
-        {
-            var todo = e.target.value || ""; // input value
-
-            if( enter ) // release focus on enter press
-            {
-                e.target.blur();
-                return;
-            }
-            if( this.hasActiveTodo() && todo && todo !== this.last && index !== undefined )
-            {
-                this.lists[ this.index ].entries[ index ].todo = todo;
-                this.lists[ this.index ].entries[ index ].modified = this.getDateString();
-                this.saveData();
-            }
-            e.target.blur();
-        },
-
-        // make todos task as done for index
-        todoTaskDone: function( e, index )
-        {
-            if( this.hasActiveTodo() && index !== undefined )
-            {
-                this.lists[ this.index ].entries[ index ].complete = true;
-                this.lists[ this.index ].entries[ index ].modified = this.getDateString();
-                this.saveData();
-            }
-        },
-
-        // delete todos task from list for index
-        todoTaskDelete: function( e, index )
-        {
-            if( this.hasActiveTodo() && confirm( "Delete this task?" ) && index !== undefined )
-            {
-                this.lists[ this.index ].entries.splice( index, 1 );
-                this.saveData();
-            }
+            return ( index === this.index ) ? true : false;
         },
 
         // select a todos list to be active from sidebar
@@ -263,80 +62,133 @@ export default {
             {
                 this.index = index;
                 this.todos = this.lists[ index ];
+                this.todos.index = index;
             }
         },
 
-        // clear active for creation of a new todos list
-        createNewTodos: function()
+        // clear current selected todos list
+        unselectTodos: function()
         {
-            var name = "Todo on " + this.getDateString();
-            this.lists.push( this.getNewListEntry( name ) );
-            this.selectTodos( this.lists.length - 1 );
+            this.index = -1;
+            this.todos = {};
         },
 
-        // get total number of entries in a todos list
-        getTodosTotal: function( todos )
+        // add new todos-list to the list and select it
+        createTodos: function( name )
         {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.length || 0;
-            }
-            return 0;
-        },
-
-        // get number of done tasks in a todos list
-        getTodosDone: function( todos )
-        {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.filter( function( todo ){ return todo.complete; } ).length || 0;
-            }
-            return 0;
-        },
-
-        // get object for a new todos list
-        getNewListEntry: function( name )
-        {
-            return {
-                name: name || "",
-                modified: this.getDateString(),
-                entries: [],
+            var todos = {
+                index    : 0,
+                id       : this.getRandomString(),
+                name     : name || "Todos " + this.getDateString(),
+                modified : this.getDateString(),
+                entries  : [],
             };
+            this.lists.push( todos );
+            this.selectTodos( this.lists.length - 1 );
+
+            if( this.saveData() )
+            {
+                this.showNotice( "success", "New todos list created." );
+            }
+        },
+
+        // update current selected todos-list data
+        updateTodos: function( todos )
+        {
+            if( todos && typeof todos === "object" && this.index >= 0 )
+            {
+                this.todos = todos;
+                this.todos.index = this.index;
+                this.todos.modified = this.getDateString();
+                this.lists[ this.index ] = todos;
+
+                if( this.saveData() )
+                {
+                    this.showNotice( "success", "Todos list has been updated." );
+                }
+            }
+        },
+
+        // delete selected todos-list from the list
+        deleteTodos: function()
+        {
+            if( this.index >= 0 )
+            {
+                var self = this;
+
+                new Prompt({
+                    title: "Confirm...",
+                    confirm: "Delete this list?",
+                    onAccept: function()
+                    {
+                        self.lists.splice( self.index, 1 );
+                        self.unselectTodos();
+
+                        if( self.saveData() )
+                        {
+                            self.showNotice( "success", "Todos list has been deleted." );
+                        }
+                    }
+                });
+            }
         },
 
         // get current date string
         getDateString: function()
         {
-            var date  = new Date(),
-                year  = date.getUTCFullYear(),
-                month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][ date.getMonth() ],
-                day   = date.getUTCDate();
+            var date    = new Date(),
+                year    = date.getUTCFullYear(),
+                month   = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][ date.getMonth() ],
+                day     = date.getUTCDate(),
+                minute  = date.getMinutes(),
+                fullh   = date.getHours(),
+                hour    = ( fullh > 12 ) ? ( fullh - 12 ) : fullh,
+                ampm    = ( fullh > 12 ) ? "PM" : "AM",
+                _p      = function( n ) { return ( n < 10 ) ? "0"+ n : ""+ n; };
 
-            return month + " " + day + " " + year;
+            hour = ( hour === 0 ) ? 12 : hour;
+            return month + "/" + _p( day ) + "/" + year + " " + _p( hour ) + ":" + _p( minute ) + " " + ampm;
         },
 
-        // check if there an active todo list selected
-        hasActiveTodo: function()
+        // get a random string
+        getRandomString: function( length )
         {
-            return ( this.index >= 0 ) ? true : false;
+            var chars  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                length = length || 10,
+                output = "";
+
+            while( length )
+            {
+                output += chars.charAt( Math.floor( Math.random() * chars.length ) );
+                length--;
+            }
+            return output;
         },
 
-        // check if sidebar is is current selected list
-        isActiveList: function( index )
+        // add element to tooltip's list
+        addTooltip: function( el )
         {
-            return ( index === this.index ) ? true : false;
+            tooltip.select( el );
+        },
+
+        // add element to tooltip's list
+        removeTooltip: function( el )
+        {
+            tooltip.unselect( el );
+        },
+
+        // show page notice
+        showNotice: function( type, info, time )
+        {
+            notify.add( type, info, time );
         },
 
         // load saved data from store
         loadData: function()
         {
-            try
-            {
-                console.log( "Loading app data...", Date.now() );
-
-                var json = localStorage.getItem( this.key ) || "[]",
-                    data = JSON.parse( json );
-
+            try {
+                var json = localStorage.getItem( this.key ) || "[]";
+                var data = JSON.parse( json );
                 this.lists = data || [];
                 return true;
             }
@@ -347,15 +199,15 @@ export default {
         // save local data to store
         saveData: function()
         {
-            try
-            {
-                console.log( "Saving app data...", Date.now() );
-
+            try {
                 var json = JSON.stringify( this.lists );
                 localStorage.setItem( this.key, json );
                 return true;
             }
-            catch( e ) { console.log( e ); }
+            catch( e ) {
+                notify.error( "Could not save app data." );
+                console.log( e );
+            }
             return false;
         },
     },
@@ -369,7 +221,10 @@ export default {
     // component mounted
     mounted: function()
     {
-
+        if( this.lists.length )
+        {
+            this.selectTodos( 0 );
+        }
     },
 }
 </script>
@@ -378,6 +233,7 @@ export default {
 @charset "utf-8";
 @import "../scss/variables";
 @import "../scss/reset";
+@import "../scss/modifiers";
 @import "../scss/fontello";
 @import "../scss/type";
 @import "../scss/buttons";
@@ -386,7 +242,8 @@ export default {
 @import "../scss/forms";
 @import "../scss/shadows";
 @import "../scss/utils";
+@import "../scss/notify";
+@import "../scss/prompt";
 @import "../scss/tooltip";
-@import "../scss/modifiers";
 @import "../scss/app";
 </style>
