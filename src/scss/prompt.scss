@@ -60,8 +60,11 @@
         .prompt-buttons {
             display: flex;
             flex-direction: row;
+            align-items: center;
+            justify-content: stretch;
 
             button {
+                display: block;
                 flex: 1;
                 cursor: pointer;
                 color: $colorDocumentText;
