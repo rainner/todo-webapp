@@ -1,4 +1,4 @@
-# test-vue-webpack-project
+# TODO VueJS Webapp
 
 A simple todos single-page app built with VueJS that uses localStorage and is bundled with Webpack.
 
