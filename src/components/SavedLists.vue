@@ -4,7 +4,7 @@
     <div class="app-saved-lists">
 
         <!-- saved lists heading -->
-        <div class="heading-wrap flex-row fles-space flex-middle">
+        <div class="saved-list-heading heading-wrap flex-row fles-space flex-middle">
             <div class="icon-folder icon-pr">
                 <span>Saved Lists</span>
                 <span class="text-default">({{ lists.length }})</span>
@@ -14,8 +14,8 @@
         <!-- saved lists items -->
         <div class="saved-list-wrap">
             <ul v-if="lists.length" class="saved-list-container">
-                <li v-for="(todos, index) in lists" class="saved-list-item" :class="{ 'active': isActiveList( index ) }">
-                    <a class="saved-list-title icon-list icon-pr" href="#" title="Manage" @click.prevent="selectTodos( index )" v-html="todos.name" v-tooltip></a> <hr />
+                <li v-for="(todos, index) in lists" class="saved-list-item" :class="{ 'active': isActiveList( index ) }" @click.prevent="selectTodos( index )">
+                    <a class="saved-list-title icon-calendar icon-pr" href="#" v-html="todos.name" @click.prevent="selectTodos( index )"></a> <hr />
                     <span class="saved-list-pill saved-list-total" v-html="getTodosTotal( todos ) + ' total'"></span>
                     <span class="saved-list-pill saved-list-done" v-html="getTodosDone( todos ) + ' done'"></span>
                 </li>
@@ -24,7 +24,7 @@
                 The todo lists you create will be shown here.
                 You can click on the name of a list to select it.
             </div>
-            <a class="btn bg-success-hover icon-plus icon-pr shadow-paper" href="#" @click.prevent="createTodos()">New List</a>
+            <a class="saved-list-btn btn bg-success-hover icon-plus icon-pr shadow-paper" href="#" @click.prevent="createTodos()">New List</a>
         </div>
 
     </div>
@@ -68,6 +68,12 @@ export default {
     // app methods
     methods: {
 
+        // hide sidebar on click
+        hideSidebar: function( e )
+        {
+            this.$parent.hideSidebar();
+        },
+
         // check if sidebar is is current selected list
         isActiveList: function( index )
         {
@@ -89,21 +95,13 @@ export default {
         // get total number of entries in a todos list
         getTodosTotal: function( todos )
         {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.length || 0;
-            }
-            return 0;
+            return this.$parent.getTodosTotal( todos );
         },
 
         // get number of done tasks in a todos list
         getTodosDone: function( todos )
         {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.filter( function( todo ){ return todo.complete; } ).length || 0;
-            }
-            return 0;
+            return this.$parent.getTodosDone( todos );
         },
 
     },
