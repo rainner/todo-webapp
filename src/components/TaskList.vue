@@ -5,9 +5,11 @@
 
         <!-- todo list heading -->
         <div class="heading-wrap flex-row flex-space flex-middle">
+
             <div>
-                <span class="icon-list icon-pr"></span>
+                <span class="icon-calendar icon-pr"></span>
             </div>
+
             <div class="flex-1">
                 <input
                     type="text"
@@ -19,23 +21,50 @@
                     @keyup.enter="todoListSave( $event, 1 )"
                     @blur="todoListSave( $event )" />
             </div>
-            <div class="pad-left">
-                <button
-                    v-if="hasActiveTodos()"
-                    class="is-clickable icon-home text-grey-hover"
-                    title="App home"
-                    @click="clearTodos( $event )"
-                    v-tooltip>
-                </button>
 
-                <button
-                    v-if="hasActiveTodos()"
-                    class="is-clickable icon-x text-grey-hover"
-                    title="Delete list"
-                    @click="todoListDelete( $event )"
-                    v-tooltip>
-                </button>
+            <div class="pad-left">
+                <div class="dropdown" v-dropdown>
+                    <big class="dropdown-trigger icon-menu text-grey-hover"></big>
+                    <ul class="dropdown-tr">
+                        <li>
+                            <a href="#"
+                                class="is-clickable icon-home"
+                                @click.prevent="clearTodos( $event )">
+                                App home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="is-clickable icon-reload"
+                                @click.prevent="reloadPage()">
+                                Reload app
+                            </a>
+                        </li>
+                        <li id="sidebar-toggle-btn">
+                            <a href="#"
+                                class="is-clickable icon-folder"
+                                @click.prevent="showSidebar( $event )">
+                                Saved lists
+                            </a>
+                        </li>
+                        <li v-if="hasActiveTodos()">
+                            <a href="#"
+                                class="is-clickable icon-x text-danger-hover"
+                                @click.prevent="todoListDelete( $event )">
+                                Delete list
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="is-clickable icon-trash text-danger-hover"
+                                @click.prevent="flushData( $event )">
+                                Flush data
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </div>
 
         <!-- no todos list selected, show welcome message -->
@@ -43,6 +72,13 @@
 
         <!-- current todos list has no entries, show empty message -->
         <empty v-if="hasActiveTodos() && !hasTodosEntries()"></empty>
+
+         <!-- todo list info -->
+        <div v-if="hasTodosEntries()" class="todo-list-metadata text-grey">
+            <span>Last saved: {{ todos.modified }}</span> <br />
+            <span class="text-warning" v-html="getTodosTotal() + ' total'"></span>,
+            <span class="text-success" v-html="getTodosDone() + ' done'"></span>
+        </div>
 
         <!-- todo list items -->
         <ul v-if="hasTodosEntries()" class="todo-list-wrap">
@@ -62,12 +98,18 @@
                             @keyup.enter="todoTaskSave( $event, index, 1 )"
                             @blur="todoTaskSave( $event, index )" />
 
-                        <span class="todo-list-text" v-html="task.todo"></span>
+                        <span class="todo-list-text text-wrap" v-html="task.todo"></span>
                     </label>
                 </div>
                 <div class="todo-list-control">
-                    <button class="todo-list-btn-check icon-check text-success-hover" title="Mark complete" @click="todoTaskDone( $event, index )" v-tooltip></button>
-                    <button class="todo-list-btn-delete icon-x text-danger-hover" title="Delete task" @click="todoTaskDelete( $event, index )" v-tooltip></button>
+                    <div class="dropdown" v-dropdown>
+                        <big class="dropdown-trigger icon-config"></big>
+                        <ul class="dropdown-tr">
+                            <li v-if="!task.complete"><a class="icon-check icon-pr text-success-hover" href="#" @click.prevent="todoTaskCheck( $event, index )">Check</a></li>
+                            <li v-if="task.complete"><a class="icon-clock icon-pr text-warning-hover" href="#" @click.prevent="todoTaskUncheck( $event, index )">Uncheck</a></li>
+                            <li><a class="icon-close icon-pr text-danger-hover" href="#" @click.prevent="todoTaskDelete( $event, index )">Delete task</a></li>
+                        </ul>
+                    </div>
                 </div>
             </li>
         </ul>
@@ -89,6 +131,7 @@
 // imports
 import Welcome from "./Welcome.vue";
 import Empty from "./Empty.vue";
+import Dropdown from "../scripts/Dropdown";
 
 /**
  * Task list component
@@ -119,6 +162,13 @@ export default {
     // custom dom element manipulations
     directives: {
 
+        // apply dropdown menu
+        dropdown: {
+            bind: function( el, binding, vnode ) {
+                new Dropdown( el );
+            },
+        },
+
         // apply tooltip text
         tooltip: {
             bind: function( el, binding, vnode ) {
@@ -139,10 +189,28 @@ export default {
             this.last = e.target.value || "";
         },
 
+        // reload the page
+        reloadPage: function()
+        {
+            top.location.reload();
+        },
+
+        // show sidebar on click
+        showSidebar: function( e )
+        {
+            this.$parent.showSidebar();
+        },
+
         // clear selected todos
         clearTodos: function()
         {
             this.$parent.unselectTodos();
+        },
+
+        // flush all stored app data and reset
+        flushData: function()
+        {
+            this.$parent.flushData();
         },
 
         // add new todos-list to the list and select it
@@ -228,12 +296,23 @@ export default {
             e.target.blur();
         },
 
-        // make todos task as done for index
-        todoTaskDone: function( e, index )
+        // make todos task as checked for index
+        todoTaskCheck: function( e, index )
         {
             if( this.hasActiveTodos() && index !== undefined )
             {
                 this.todos.entries[ index ].complete = true;
+                this.todos.entries[ index ].modified = this.$parent.getDateString();
+                this.$parent.updateTodos( this.todos );
+            }
+        },
+
+        // make todos task as unchecked for index
+        todoTaskUncheck: function( e, index )
+        {
+            if( this.hasActiveTodos() && index !== undefined )
+            {
+                this.todos.entries[ index ].complete = false;
                 this.todos.entries[ index ].modified = this.$parent.getDateString();
                 this.$parent.updateTodos( this.todos );
             }
@@ -248,6 +327,19 @@ export default {
                 this.$parent.updateTodos( this.todos );
             }
         },
+
+        // get total number of entries in a todos list
+        getTodosTotal: function()
+        {
+            return this.$parent.getTodosTotal( this.todos );
+        },
+
+        // get number of done tasks in a todos list
+        getTodosDone: function()
+        {
+            return this.$parent.getTodosDone( this.todos );
+        },
+
     },
 }
 </script>
