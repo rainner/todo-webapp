@@ -24,23 +24,25 @@ body {
  */
 .app-wrap {
     display: flex;
-    position: relative;
-    overflow: hidden;
     flex-direction: row;
     align-items: stretch;
     justify-content: stretch;
-    height: 100%;
+    overflow: hidden;
     min-height: 100vh;
 
     .app-left {
-        position: relative;
         flex: 1;
+        min-height: 100vh;
         z-index: 1;
+
+        #sidebar-toggle-btn {
+            display: none;
+        }
     }
 
     .app-right {
-        position: relative;
         width: 300px;
+        min-height: 100vh;
         background-color: $colorSecondary;
         background-image: linear-gradient( 90deg, darken( $colorSecondary, 6% ) 0%, $colorSecondary 6px );
         color: $colorDocument;
@@ -52,16 +54,10 @@ body {
  * Main headings
  */
 .heading-wrap {
-    overflow: hidden;
-    padding: 4px $padSpace 0 $padSpace;
-    height: 68px;
+    padding: 6px $padSpace 0 $padSpace;
+    height: 2.5em;
     background-color: rgba( 0, 0, 0, 0.05 );
-
-    & > *,
-    & > *:before,
-    & > *:after {
-        font-size: 28px;
-    }
+    font-size: 125%;
 
     input {
         display: block;
@@ -75,6 +71,10 @@ body {
         &:focus {
             border-color: $lineColor;
         }
+    }
+
+    button {
+        display: inline-block;
     }
 }
 
@@ -97,6 +97,14 @@ body {
 /**
  * Main todo list
  */
+.todo-list-metadata {
+    display: none;
+    margin: 0;
+    padding: $padSpace;
+    padding-bottom: 0;
+    font-size: 80%;
+    line-height: 1.4em;
+}
 .todo-list-wrap {
     display: block;
     list-style: none;
@@ -183,7 +191,7 @@ body {
 
         // entry controls
         .todo-list-control {
-            padding-left: 10px;
+            padding: 2px 0 0 10px;
             opacity: 0.2;
 
             button {
@@ -196,7 +204,7 @@ body {
 
         // entry hover state
         &:hover {
-            background-color: desaturate( lighten( $colorDocument, 6% ), 10% );
+            background-color: lighten( #e1decd, 5% );
 
             // show controls on hover
             .todo-list-control {
@@ -239,7 +247,7 @@ body {
  */
 .todo-list-form {
     display: block;
-    margin: 0;
+    margin: 0 0 100px 0;
     padding: 0 $padSpace;
 
     input {
@@ -257,81 +265,88 @@ body {
 /**
  * Saved lists on sidebar
  */
-.saved-list-wrap {
-    display: block;
-    padding: $padSpace;
+.app-saved-lists {
+    position: relative;
 
-    // main list ul element
-    .saved-list-container {
-        display: block;
-        list-style: none;
-        text-align: left;
-        margin-bottom: $padSpace;
+    .saved-list-wrap {
+        padding: $padSpace;
 
-        // list item
-        .saved-list-item {
+        // main list ul element
+        .saved-list-container {
             display: block;
-            position: relative;
-            margin-bottom: 10px;
-            padding: $padSpace;
-            border-radius: $lineJoin;
-            background-color: rgba( 255, 255, 255, 0.1 );
-            color: $colorDocument;
-            box-shadow: $shadowPaper;
-            animation: showAnimation $fxSpeed $fxEase;
+            list-style: none;
+            text-align: left;
+            margin-bottom: $padSpace;
 
-            // left side arrow
-            &:before {
-                content: "";
-                display: inline-block;
-                position: absolute;
-                width: $padSpace;
-                height: $padSpace;
-                left: -$padSpace;
-                top: 50%;
-                margin-top: -$padSpace;
-                border-top: $padSpace solid transparent;
-                border-bottom: $padSpace solid transparent;
-                border-right: $padSpace solid $colorDocument;
-                opacity: 0;
+            // list item
+            .saved-list-item {
+                display: block;
+                position: relative;
+                margin-bottom: 10px;
+                padding: $padSpace;
+                border-radius: $lineJoin;
+                background-color: rgba( 255, 255, 255, 0.1 );
+                color: $colorDocument;
+                box-shadow: $shadowPaper;
+                animation: showAnimation $fxSpeed $fxEase;
+
+                // left side arrow
+                &:before {
+                    content: "";
+                    display: inline-block;
+                    position: absolute;
+                    width: $padSpace;
+                    height: $padSpace;
+                    left: -$padSpace;
+                    top: 50%;
+                    margin-top: -$padSpace;
+                    border-top: $padSpace solid transparent;
+                    border-bottom: $padSpace solid transparent;
+                    border-right: $padSpace solid $colorDocument;
+                    opacity: 0;
+                }
+
+                &:hover {
+                    background-color: rgba( 255, 255, 255, 0.075 );
+                }
+                & > hr {
+                    margin: 6px 0;
+                }
+                .saved-list-title {
+                    color: #fff;
+                }
+                .saved-list-pill {
+                    display: inline-block;
+                    font-weight: normal;
+                    font-size: 80%;
+                    line-height: 1em;
+                    margin-right: 8px;
+                }
             }
 
-            &:hover {
-                background-color: rgba( 255, 255, 255, 0.075 );
-            }
-            & > hr {
-                margin: 6px 0;
-            }
-            .saved-list-title {
-                color: #fff;
-            }
-            .saved-list-pill {
-                display: inline-block;
-                font-weight: normal;
-                font-size: 80%;
-                line-height: 1em;
-                margin-right: 8px;
+            // list item active state
+            .saved-list-item.active {
+                background-color: $colorDocument;
+                color: $colorDocumentText;
+
+                // left side arrow
+                &:before {
+                    opacity: 1;
+                }
+                .saved-list-title {
+                    color: $colorPrimary;
+                }
+                .saved-list-total {
+                    color: $colorWarning;
+                }
+                .saved-list-done {
+                    color: $colorSuccess;
+                }
             }
         }
 
-        // list item active state
-        .saved-list-item.active {
-            background-color: $colorDocument;
-            color: $colorDocumentText;
-
-            // left side arrow
-            &:before {
-                opacity: 1;
-            }
-            .saved-list-title {
-                color: $colorPrimary;
-            }
-            .saved-list-total {
-                color: $colorWarning;
-            }
-            .saved-list-done {
-                color: $colorSuccess;
-            }
+        .saved-list-btn {
+            display: block;
         }
     }
 }
@@ -343,31 +358,52 @@ body {
 
     // collapse right sidebar
     .app-wrap {
-        width: calc( 100vw + 250px);
+        width: calc( 100% + 300px );
 
         .app-left {
-            width: calc( 100vw - 50px );
+            width: 100%;
+
+            #sidebar-toggle-btn {
+                display: block;
+            }
         }
         .app-right {
             width: 300px;
+            background-image: none;
 
+            .saved-list-heading,
             .saved-list-wrap {
                 pointer-events: none;
                 opacity: 0;
+
+                .saved-list-btn {
+                    display: none;
+                }
             }
         }
         // show right sidebar on hove/active state
-        .app-right:hover,
-        .app-right:active,
-        .app-right:focus,
         .app-right.expanded {
-            transform: translateX( -250px );
+            box-shadow: -2px 0 2px rgba( 0, 0, 0, 0.2 );
+            transform: translateX( -300px );
 
+            .saved-list-toggle {
+                opacity: 0;
+            }
+            .saved-list-heading,
             .saved-list-wrap {
                 pointer-events: auto;
                 opacity: 1;
+
+                .saved-list-btn {
+                    display: block;
+                }
             }
         }
+    }
+
+    // show selected list info
+    .todo-list-metadata {
+        display: block;
     }
 }
 
@@ -376,27 +412,13 @@ body {
  */
 @media (max-width: 720px) {
 
-    // heading font adjustments
-    .heading-wrap {
-        & > *,
-        & > *:before,
-        & > *:after {
-            font-size: 4vw;
+    // show todo list controls
+    .todo-list-wrap {
+        .todo-list-item {
+            .todo-list-control {
+                opacity: 1;
+            }
         }
     }
 }
 
-/**
- * 480px and smaller
- */
-@media (max-width: 480px) {
-
-    // heading font adjustments
-    .heading-wrap {
-        & > *,
-        & > *:before,
-        & > *:after {
-            font-size: 5vw;
-        }
-    }
-}

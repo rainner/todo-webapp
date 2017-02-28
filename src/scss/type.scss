@@ -191,6 +191,13 @@ button.tag:active {
     white-space: nowrap !important;
     text-overflow: ellipsis !important;
 }
+.text-wrap, .text-wrap * {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  hyphens: auto;
+}
 .text-code, .text-code * {
     font-family: Consolas, "Andale Mono", Monaco, "Courier New", monospace;
     white-space: pre;

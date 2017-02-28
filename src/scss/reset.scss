@@ -32,10 +32,9 @@
  */
 html, body {
     display: block;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: $colorDocument;
     color: $colorDocumentText;
-    height: 100%;
     min-height: 100vh;
 }
 body {
