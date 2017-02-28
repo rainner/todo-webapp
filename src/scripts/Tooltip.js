@@ -52,7 +52,7 @@
             // class to apply when tooltip is placed on the bottom
             bottomClass : "tooltip-bottom",
             // delay to show the tooltip
-            showDelay : 200,
+            showDelay : 100,
             // ...
         }, options );
 
@@ -150,7 +150,9 @@
                     item.setAttribute( "data-tip", tip );
                     item.removeAttribute( "title" );
                     item.addEventListener( "mouseenter", function( e ){ self._onEnter( e, this ); } );
+                    item.addEventListener( "touchstart", function( e ){ self._onEnter( e, this ); } );
                     item.addEventListener( "mouseleave", function( e ){ self._onLeave( e, this ); } );
+                    item.addEventListener( "touchend", function( e ){ self._onLeave( e, this ); } );
                 }
             }
         },
@@ -168,7 +170,9 @@
                     item.setAttribute( "title", tip );
                     item.removeAttribute( "data-tip" );
                     item.removeEventListener( "mouseenter", function( e ){ self._onEnter( e, this ); } );
+                    item.removeEventListener( "touchstart", function( e ){ self._onEnter( e, this ); } );
                     item.removeEventListener( "mouseleave", function( e ){ self._onLeave( e, this ); } );
+                    item.removeEventListener( "touchend", function( e ){ self._onLeave( e, this ); } );
                 }
             }
         },
@@ -208,11 +212,14 @@
                     left = centerX;
                     top  = bottomPos;
                 }
-                this._tooltip.className = this._options.tipClass + " " + clss;
-                this._tooltip.style["left"] = ( View.scrollLeft() + left ) +"px";
-                this._tooltip.style["top"] = ( View.scrollTop() + top ) +"px";
-                this._tooltip.style["z-index"] = "666";
-                this._visible = true;
+                if( left > 1 && top > 1 && this._tooltip.innerHTML )
+                {
+                    this._tooltip.className = this._options.tipClass + " " + clss;
+                    this._tooltip.style["left"] = ( View.scrollLeft() + left ) +"px";
+                    this._tooltip.style["top"] = ( View.scrollTop() + top ) +"px";
+                    this._tooltip.style["z-index"] = "666";
+                    this._visible = true;
+                }
             }
         },
 
@@ -246,7 +253,7 @@
                 this._timeout = setTimeout( this._showTooltip.bind( this ), this._options.showDelay );
 
                 if( this._autohide ) clearTimeout( this._autohide );
-                this._autohide = setTimeout( this._hideTooltip.bind( this ), 8000 );
+                this._autohide = setTimeout( this._hideTooltip.bind( this ), 6000 );
             }
         },
 
