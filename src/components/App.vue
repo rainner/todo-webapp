@@ -2,11 +2,11 @@
     <!-- app main wrapper -->
     <div class="app-wrap">
         <!-- main todo area -->
-        <div class="app-left">
+        <div class="app-left" @mouseup="hideSidebar( $event )">
             <tasklist :todos="todos"></tasklist>
         </div>
         <!-- right sidebar -->
-        <div class="app-right">
+        <div class="app-right" @mouseleave="hideSidebar( $event )" @blur="hideSidebar( $event )">
             <savedlists :lists="lists"></savedlists>
         </div>
     </div>
@@ -133,6 +133,47 @@ export default {
             }
         },
 
+        // get total number of entries in a todos list
+        getTodosTotal: function( todos )
+        {
+            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
+            {
+                return todos.entries.length || 0;
+            }
+            return 0;
+        },
+
+        // get number of done tasks in a todos list
+        getTodosDone: function( todos )
+        {
+            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
+            {
+                return todos.entries.filter( function( todo ){ return todo.complete; } ).length || 0;
+            }
+            return 0;
+        },
+
+        // flush all data
+        flushData: function()
+        {
+            var self = this;
+
+            new Prompt({
+                title: "Confirm...",
+                confirm: "Delete all data saved by this app?",
+                onAccept: function()
+                {
+                    self.lists = [];
+                    self.unselectTodos();
+
+                    if( self.saveData() )
+                    {
+                        self.showNotice( "success", "App data has been deleted." );
+                    }
+                }
+            });
+        },
+
         // get current date string
         getDateString: function()
         {
@@ -183,6 +224,20 @@ export default {
             notify.add( type, info, time );
         },
 
+        // show the sidebar
+        showSidebar: function()
+        {
+            var right = document.querySelector( ".app-right" );
+            if( right ) right.classList.add( "expanded" );
+        },
+
+        // hide the sidebar
+        hideSidebar: function()
+        {
+            var right = document.querySelector( ".app-right" );
+            if( right ) right.classList.remove( "expanded" );
+        },
+
         // load saved data from store
         loadData: function()
         {
@@ -210,6 +265,7 @@ export default {
             }
             return false;
         },
+
     },
 
     // before component mounted
@@ -237,6 +293,7 @@ export default {
 @import "../scss/fontello";
 @import "../scss/type";
 @import "../scss/buttons";
+@import "../scss/dropdowns";
 @import "../scss/links";
 @import "../scss/flexbox";
 @import "../scss/forms";
