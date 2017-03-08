@@ -15,34 +15,29 @@ body {
  */
 h1, h2, h3, h4, h5, h6 {
     display: block;
-    margin: 0;
+    margin: 0 0 $listSpace 0;
     padding: 0;
     font-weight: normal;
     text-transform: uppercase;
+    line-height: 1.2em;
 }
 h1 {
     font-size: ceil( $fontSize * 3 );
-    line-height: ceil( $fontSize * 2.8 );
 }
 h2 {
     font-size: ceil( $fontSize * 2.3 );
-    line-height: ceil( $fontSize * 2.2 );
 }
 h3 {
     font-size: ceil( $fontSize * 1.9 );
-    line-height: ceil( $fontSize * 1.8 );
 }
 h4 {
     font-size: ceil( $fontSize * 1.5 );
-    line-height: ceil( $fontSize * 1.4 );
 }
 h5 {
     font-size: ceil( $fontSize * 1.3 );
-    line-height: ceil( $fontSize * 1.3 );
 }
 h6 {
     font-size: ceil( $fontSize * 1 );
-    line-height: ceil( $fontSize * 1 );
 }
 
 /**
@@ -119,7 +114,7 @@ br, hr {
 hr {
     padding: 0;
     border-top: $lineWidth $lineStyle $lineColor;
-    margin: $padSpace 0;
+    margin: $rowSpace 0;
 }
 
 /**
@@ -268,34 +263,27 @@ button.tag:active {
 
     // reduce main font size with the screen
     body {
-        font-size: 2.6vw;
-        line-height: 3.5vw;
+        font-size: 3vw;
     }
 
     // reduce heading font size with the screen
     h1 {
         font-size: 7.5vw;
-        line-height: 7vw;
     }
     h2 {
         font-size: 6.2vw;
-        line-height: 6vw;
     }
     h3 {
         font-size: 5vw;
-        line-height: 4.8vw;
     }
     h4 {
         font-size: 4vw;
-        line-height: 3.9vw;
     }
     h5 {
         font-size: 3.2vw;
-        line-height: 3.2vw;
     }
     h6 {
         font-size: 2.5vw;
-        line-height: 2.5vw;
     }
 }
 
@@ -306,33 +294,26 @@ button.tag:active {
 
     // reduce main font size with the screen
     body {
-        font-size: 3.6vw;
-        line-height: 4.5vw;
+        font-size: 4vw;
     }
 
     // reduce heading font size with the screen
     h1 {
         font-size: 8.5vw;
-        line-height: 8vw;
     }
     h2 {
         font-size: 7.2vw;
-        line-height: 7vw;
     }
     h3 {
         font-size: 6vw;
-        line-height: 6vw;
     }
     h4 {
         font-size: 5vw;
-        line-height: 5vw;
     }
     h5 {
         font-size: 4.2vw;
-        line-height: 4.2vw;
     }
     h6 {
         font-size: 3.5vw;
-        line-height: 3.5vw;
     }
 }

@@ -1,9 +1,15 @@
 /**
  * Common form elements
  */
-
 input, textarea, select, option, optgroup, button {
     font-size: inherit;
     line-height: inherit;
     color: inherit;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    display: inline-block;
+    cursor: pointer;
 }

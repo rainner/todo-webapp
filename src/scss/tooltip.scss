@@ -28,12 +28,12 @@ $tipColor: lighten( $colorDocument, 20% );
     pointer-events: none;
     transition: none;
     border: none;
-    border-radius: $lineJoin;
+    border-radius: 3px;
     max-width: 500px;
     margin: 0;
     padding: ( $padSpace / 2 ) $padSpace;
     font-size: 80%;
-    line-height: 1em;
+    line-height: 1.2em;
     color: $colorText;
     background-color: $tipColor;
     box-shadow: $shadowBold;
@@ -55,31 +55,31 @@ $tipColor: lighten( $colorDocument, 20% );
         transition: none;
         border: solid transparent;
         border-color: transparent;
-        border-width: 10px;
+        border-width: 5px;
     }
 
     &.tooltip-left:after { // arrow on right
         left: 100%;
         top: 50%;
         border-left-color: $tipColor;
-        margin-top: -10px;
+        margin-top: -5px;
     }
     &.tooltip-right:after { // arrow on left
         right: 100%;
         top: 50%;
         border-right-color: $tipColor;
-        margin-top: -10px;
+        margin-top: -5px;
     }
     &.tooltip-top:after { // arrow on bottom
         top: 100%;
         left: 50%;
         border-top-color: $tipColor;
-        margin-left: -10px;
+        margin-left: -5px;
     }
     &.tooltip-bottom:after { // arrow on top
         bottom: 100%;
         left: 50%;
         border-bottom-color: $tipColor;
-        margin-left: -10px;
+        margin-left: -5px;
     }
 }

@@ -1,0 +1,15 @@
+/**
+ * App options component
+ */
+.app-options {
+    display: block;
+    padding: ( $padSpace * 2 ) $padSpace;
+    color: desaturate( darken( $colorDocument, 40% ), 20% );
+
+    a {
+        color: darken( $colorDocument, 60% );
+        &:hover {
+            color: darken( $colorDocument, 50% );
+        }
+    }
+}

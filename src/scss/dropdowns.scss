@@ -16,10 +16,13 @@
     overflow: visible;
     margin: 0;
     padding: 0;
+    z-index: 99999;
 
     .dropdown-trigger {
         display: inline-block;
+        position: relative;
         cursor: pointer;
+        z-index: 2;
     }
     ul {
         display: none;
@@ -33,22 +36,22 @@
         border-left: $lineWidth $lineStyle $colorSecondary;
         box-shadow: $shadowBold;
         animation: dropdownShow $fxSpeed $fxEaseBounce forwards;
-        z-index: 666;
+        z-index: 3;
 
         &.dropdown-tl { /* top left */
-            top: 0;
+            top: 80%;
             left: 0;
         }
         &.dropdown-tr { /* top right */
-            top: 0;
+            top: 80%;
             right: 0;
         }
         &.dropdown-bl { /* bottom left */
-            bottom: 0;
+            bottom: 80%;
             left: 0;
         }
         &.dropdown-br { /* bottom right */
-            bottom: 0;
+            bottom: 80%;
             right: 0;
         }
 

@@ -22,24 +22,8 @@
     transition:
         border-color $fxSpeed $fxEase,
         background-color $fxSpeed $fxEase,
-        color $fxSpeed $fxEase,
         transform $fxSpeed $fxEase,
         opacity $fxSpeed $fxEase;
-}
-
-/**
- * Doc setup
- */
-html, body {
-    display: block;
-    overflow-x: hidden;
-    background-color: $colorDocument;
-    color: $colorDocumentText;
-    min-height: 100vh;
-}
-body {
-    position: relative;
-    overflow-y: auto;
 }
 
 /**
@@ -49,4 +33,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup,
 menu, nav, section, main, summary, div, h1, h2, h3, h4, h5, h6, hr,
 p, ol, ul, form, img {
     display: block;
+}
+
+/**
+ * Vue cloaked elements
+ */
+[v-cloak] {
+    display: none;
 }

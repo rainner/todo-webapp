@@ -7,7 +7,7 @@
     width: 100%;
     max-width: 500px;
     padding: $padSpace;
-    bottom: $padSpace;
+    bottom: 100px;
     left: 50%;
     transform: translateX( -50% );
     z-index: 9999;
@@ -17,19 +17,17 @@
         position: relative;
         overflow: hidden;
         cursor: pointer;
-        padding: 0;
-        margin: $padSpace 0 0 0;
+        margin-bottom: $listSpace;
         border-radius: $lineJoin;
         background-color: lignten( $colorDocument, 20% );
-        box-shadow: $shadowBold;
+        box-shadow: 0 2px 20px rgba( 0, 0, 0, 0.6 );
         opacity: 0;
-        transform: translateY( 100px );
+        transform: translateY( 200px );
 
         .notify-message {
             display: block;
             padding: $padSpace;
             font-weight: normal;
-            font-size: 90%;
         }
         &.notify-visible {
             opacity: 1;

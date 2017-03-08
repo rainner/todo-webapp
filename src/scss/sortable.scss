@@ -1,0 +1,24 @@
+/**
+ * sortable list
+ */
+.sortable {
+
+    // handle element
+    .sort-handle {
+        cursor: move;
+    }
+    // item being dragged
+    .sort-dragger {
+        cursor: grabbing;
+        transition: none;
+        border: none;
+        overflow: hidden;
+        visibility: visible !important;
+        box-shadow: $shadowBold !important;
+        opacity: 1 !important;
+    }
+    // list item being sorted
+    .sort-active {
+        opacity: 0.2;
+    }
+}

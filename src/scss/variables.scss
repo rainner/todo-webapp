@@ -1,13 +1,18 @@
 
+// header/footer fixed heights
+$headerHeight: 60px;
+$footerHeight: 4em;
+
 // spacing and padding
-$padSpace: 15px;
-$colSpace: 30px;
-$rowSpace: 40px;
+$padSpace: 0.8em;
+$colSpace: 0.9em;
+$rowSpace: 1em;
+$listSpace: 0.4em;
 
 // borders and lines
 $lineWidth: 2px;
 $lineStyle: solid;
-$lineColor: rgba( 0, 0, 0, 0.1 );
+$lineColor: rgba( 0, 0, 0, 0.075 );
 $lineJoin: 6px;
 
 // base font options
@@ -28,11 +33,11 @@ $colorDefault: #afb5b7;
 $colorDefaultText: #3e4243;
 
 // primary colors
-$colorPrimary: #2a4d5e;
+$colorPrimary: #8b2a2a;
 $colorPrimaryText: #ffdede;
 
 // secondary colors
-$colorSecondary: #392551;
+$colorSecondary: #352656;
 $colorSecondaryText: #e4dce9;
 
 // success colors
