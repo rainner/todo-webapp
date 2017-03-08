@@ -3,89 +3,28 @@
     <!-- component wrapper -->
     <div class="app-todos-list">
 
-        <!-- todo list heading -->
-        <div class="heading-wrap flex-row flex-space flex-middle">
-
-            <div>
-                <span class="icon-calendar icon-pr"></span>
-            </div>
-
-            <div class="flex-1">
-                <input
-                    type="text"
-                    name="listName"
-                    placeholder="New todos list name..."
-                    autocomplete="off"
-                    v-model="todos.name"
-                    @focus="onFocus( $event )"
-                    @keyup.enter="todoListSave( $event, 1 )"
-                    @blur="todoListSave( $event )" />
-            </div>
-
-            <div class="pad-left">
-                <div class="dropdown" v-dropdown>
-                    <big class="dropdown-trigger icon-menu text-grey-hover"></big>
-                    <ul class="dropdown-tr">
-                        <li>
-                            <a href="#"
-                                class="is-clickable icon-home"
-                                @click.prevent="clearTodos( $event )">
-                                App home
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="is-clickable icon-reload"
-                                @click.prevent="reloadPage()">
-                                Reload app
-                            </a>
-                        </li>
-                        <li id="sidebar-toggle-btn">
-                            <a href="#"
-                                class="is-clickable icon-folder"
-                                @click.prevent="showSidebar( $event )">
-                                Saved lists
-                            </a>
-                        </li>
-                        <li v-if="hasActiveTodos()">
-                            <a href="#"
-                                class="is-clickable icon-x text-danger-hover"
-                                @click.prevent="todoListDelete( $event )">
-                                Delete list
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="is-clickable icon-trash text-danger-hover"
-                                @click.prevent="flushData( $event )">
-                                Flush data
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- no todos list selected, show welcome message -->
-        <welcome v-if="!hasActiveTodos()"></welcome>
-
-        <!-- current todos list has no entries, show empty message -->
-        <empty v-if="hasActiveTodos() && !hasTodosEntries()"></empty>
-
-         <!-- todo list info -->
+        <!-- todo list info -->
         <div v-if="hasTodosEntries()" class="todo-list-metadata text-grey">
             <span>Last saved: {{ todos.modified }}</span> <br />
-            <span class="text-warning" v-html="getTodosTotal() + ' total'"></span>,
-            <span class="text-success" v-html="getTodosDone() + ' done'"></span>
+            <span class="text-info" v-html="getTodosTotal() + ' total'"></span>,
+            <span class="text-success" v-html="getTodosDone() + ' done'"></span>,
+            <span class="text-danger" v-html="getTodosRemain() + ' remain'"></span>.
+        </div>
+
+        <!-- empty message if list is empty -->
+        <div v-if="hasActiveTodos() && !hasTodosEntries()" class="todo-info-page">
+            <p>
+                This todos list is empty. <br />
+                Type something below and hit enter to add tasks to this todos lists.
+            </p>
         </div>
 
         <!-- todo list items -->
-        <ul v-if="hasTodosEntries()" class="todo-list-wrap">
-            <li v-for="(task, index) in todos.entries" class="todo-list-item" :class="{ 'complete': task.complete }">
-                <div class="todo-list-icon">
-                    <span class="todo-list-icon-pending icon-clock"></span>
-                    <span class="todo-list-icon-complete icon-check"></span>
+        <ul v-if="hasTodosEntries()" class="todo-list-wrap sortable">
+            <li v-for="(task, index) in todos.entries" :id="'item-' + index" class="todo-list-item" :class="{ 'complete': task.complete }" v-sortitem>
+                <div class="todo-list-icon is-clickable">
+                    <span class="todo-list-icon-pending icon-clock sort-handle"></span>
+                    <span class="todo-list-icon-complete icon-check sort-handle"></span>
                 </div>
                 <div class="todo-list-info">
                     <label class="todo-list-label">
@@ -116,47 +55,33 @@
 
         <!-- todo list add item form -->
         <form v-if="hasActiveTodos()" class="todo-list-form" action="#" @submit.prevent="todoTaskInsert( $event )">
-            <div class="flex-row flex-middle">
-                <div class="icon-plus icon-pr"></div>
-                <div class="flex-1">
-                    <input type="text" name="todo" value="" placeholder="Add new TODO task..." autofocus />
-                </div>
-            </div>
+            <div class="icon-plus icon-pr text-success"></div>
+            <input type="text" name="todo" value="" placeholder="Add new TODO task..." />
         </form>
 
     </div>
 </template>
 
-<script>
-// imports
-import Welcome from "./Welcome.vue";
-import Empty from "./Empty.vue";
-import Dropdown from "../scripts/Dropdown";
 
-/**
- * Task list component
- */
+<script>
+// dependencies
+import Dropdown from "../scripts/Dropdown";
+import Sortable from "../scripts/Sortable";
+
+// setup sortable instance
+var sortable = new Sortable();
+
+// component
 export default {
 
     // component name
     name: "tasklist",
 
-    // sub components
-    components: {
-        "welcome": Welcome,
-        "empty": Empty,
-    },
-
     // component props
     props: {
-        todos: { type: Object, default: {}, required: true },
-    },
-
-    // component data
-    data() {
-        return {
-            last: "",
-        }
+        lists: { type: Array, default: [], required: true },
+        todos: { type: Object, default: [], required: false },
+        options: { type: Object, default: {}, required: false },
     },
 
     // custom dom element manipulations
@@ -166,6 +91,16 @@ export default {
         dropdown: {
             bind: function( el, binding, vnode ) {
                 new Dropdown( el );
+            },
+        },
+
+        // handle reactive sortable items
+        sortitem: {
+            bind: function( el, binding, vnode ) {
+                sortable.add( el );
+            },
+            unbind: function( el, binding, vnode ) {
+                sortable.remove( el );
             },
         },
 
@@ -183,80 +118,34 @@ export default {
     // app methods
     methods: {
 
-        // capture previous value of something to compare later when saving
         onFocus: function( e )
         {
-            this.last = e.target.value || "";
+            this.$parent.onFocus( e );
         },
 
-        // reload the page
-        reloadPage: function()
-        {
-            top.location.reload();
-        },
-
-        // show sidebar on click
-        showSidebar: function( e )
-        {
-            this.$parent.showSidebar();
-        },
-
-        // clear selected todos
-        clearTodos: function()
-        {
-            this.$parent.unselectTodos();
-        },
-
-        // flush all stored app data and reset
-        flushData: function()
-        {
-            this.$parent.flushData();
-        },
-
-        // add new todos-list to the list and select it
-        createTodos: function( name )
-        {
-            this.$parent.createTodos( name );
-        },
-
-        // check if there is an active todos present
         hasActiveTodos: function()
         {
-            if( !this.todos ) return false;
-            if( !this.todos.name ) return false;
-            if( !this.todos.hasOwnProperty( "entries" ) ) return false;
-            return true;
+            return this.$parent.hasActiveTodos();
         },
 
-        // check if current todos has entries
         hasTodosEntries: function()
         {
-            return ( this.hasActiveTodos() && this.todos.entries.length ) ? true : false;
+            return this.$parent.hasTodosEntries();
         },
 
-        // catch input event to change list name
-        todoListSave: function( e, enter )
+        getTodosTotal: function()
         {
-            var name = e.target.value || "";
-
-            if( enter ) { e.target.blur(); return; }
-
-            if( name && name !== this.last )
-            {
-                if( this.hasActiveTodos() )
-                {
-                    this.todos.name = name;
-                    this.$parent.updateTodos( this.todos );
-                } else {
-                    this.createTodos( name );
-                }
-            }
+            return this.$parent.getTodosTotal();
         },
 
-        // delete currently active todos (btn event)
-        todoListDelete: function( e )
+        getTodosDone: function()
         {
-            this.$parent.deleteTodos();
+            return this.$parent.getTodosDone();
+        },
+
+        getTodosRemain: function()
+        {
+            return this.$parent.getTodosRemain();
         },
 
         // append new todos task to current active todos list (form submit event)
@@ -274,7 +163,7 @@ export default {
                 if( entry.todo )
                 {
                     this.todos.entries.push( entry );
-                    this.$parent.updateTodos( this.todos );
+                    this.$parent.saveData( "New list task has been added." );
                 }
                 e.target.reset();
             }
@@ -291,7 +180,7 @@ export default {
             {
                 this.todos.entries[ index ].todo = todo;
                 this.todos.entries[ index ].modified = this.$parent.getDateString();
-                this.$parent.updateTodos( this.todos );
+                this.$parent.saveData( "List todo task has been updated." );
             }
             e.target.blur();
         },
@@ -303,7 +192,7 @@ export default {
             {
                 this.todos.entries[ index ].complete = true;
                 this.todos.entries[ index ].modified = this.$parent.getDateString();
-                this.$parent.updateTodos( this.todos );
+                this.$parent.saveData( "Todo task has been marked as complete." );
             }
         },
 
@@ -314,7 +203,7 @@ export default {
             {
                 this.todos.entries[ index ].complete = false;
                 this.todos.entries[ index ].modified = this.$parent.getDateString();
-                this.$parent.updateTodos( this.todos );
+                this.$parent.saveData( "Todo task has been marked as pending." );
             }
         },
 
@@ -324,22 +213,40 @@ export default {
             if( this.hasActiveTodos() && index !== undefined )
             {
                 this.todos.entries.splice( index, 1 );
-                this.$parent.updateTodos( this.todos );
+                this.$parent.saveData( "Todo task has been removed from the list." );
             }
         },
 
-        // get total number of entries in a todos list
-        getTodosTotal: function()
+        // reset sortable container when component mounts/updates
+        setupSortable: function()
         {
-            return this.$parent.getTodosTotal( this.todos );
+            var list = document.querySelector( ".todo-list-wrap" );
+            sortable.setContainer( list );
         },
+    },
 
-        // get number of done tasks in a todos list
-        getTodosDone: function()
+    // setup sortable change handler
+    beforeMount: function()
+    {
+        var self = this;
+
+        sortable.onChange( function()
         {
-            return this.$parent.getTodosDone( this.todos );
-        },
+            var indexes = this.getNumericOrder();
+            self.$parent.sortTodos( indexes );
+        });
+    },
 
+    // component mounted
+    mounted: function()
+    {
+        this.setupSortable();
+    },
+
+    // component updated
+    updated: function()
+    {
+        this.setupSortable();
     },
 }
 </script>

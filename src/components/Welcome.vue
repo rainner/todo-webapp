@@ -1,10 +1,12 @@
 
 <template>
-    <div class="todo-welcome">
+    <div class="todo-info-page">
+
+        <h4>Todos Web Application</h4>
         <p>
-            Hello and welcome.
             This is a simple todo lists as tasks manager application.
         </p>
+
         <hr />
         <p>
             There is nothing selected right now.
@@ -24,6 +26,7 @@
             <a class="icon-globe icon-pr" href="#" @click.prevent="go( 'webpack' )">Webpack</a>,
             a module bundler for modern JavaScript applications.
         </p>
+
         <hr />
         <p>
             You can view and download the source code for this application on the
@@ -31,6 +34,7 @@
             Licensed under the <a class="icon-hammer icon-pr" href="#" @click.prevent="go( 'license' )">MIT license</a>.
             Created by <a class="icon-user icon-pr" href="#" @click.prevent="go( 'author' )">Rainner Lins</a>.
         </p>
+
     </div>
 </template>
 
