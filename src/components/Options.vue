@@ -1,28 +1,102 @@
 <template>
     <div class="todo-info-page">
 
-        <h4>App Data Management</h4>
-        <p>
-            This allows you to export the application data in a JSON file format to be saved on your computer.
-            You can later import data exported from here to restore the application state if needed.
-            You can also trash the app data and start over.
-        </p>
-        <p>
-            <button class="btn bg-success-hover icon-save icon-pr shadow-paper" @click="importData( $event )">Import</button>
-            <button class="btn bg-info-hover icon-download icon-pr shadow-paper" @click="exportData( $event )">Export</button>
-            <button v-if="lists.length" class="btn bg-danger-hover icon-trash icon-pr shadow-paper" @click="trashData( $event )">Trash All</button>
-            <a id="export-link" style="visibility: hidden"></a>
-        </p>
+        <div>
+            <h4>Account Sign-in</h4>
+            <div v-if="user.provider">
+                <div class="user-wrap">
+                    <div class="user-photo" :style="'background-image: url('+ user.photo +')'"></div>
+                    <div class="user-info">
+                        <span>Hello, {{ user.name }}</span><span v-if="user.email"> ({{ user.email }})</span>.
+                    </div>
+                </div>
+                <p>
+                    You have authenticated using <span class="text-primary">{{ user.provider }}</span>
+                    and are currently logged in. Your todos data will be <b>saved remotely</b> so you can have
+                    access to it from <b>other browsers and devices</b>.
+                </p>
+                <p>
+                    <button class="btn bg-secondary-hover icon-logout icon-pr shadow-paper" @click="emit( 'userLogoff' )">Sign off</button>
+                </p>
+            </div>
+            <div v-else>
+                <p>
+                    Your app data <b>will not</b> be available <b>across browsers or devices</b>,
+                    unless you <b>authenticate</b> using an <b>external service</b> to have your data
+                    <b>saved remotely</b> so you can access it from <b>other devices</b> by signing in there as well.
+                </p>
+                <p>
+                    <button class="btn bg-secondary-hover icon-google icon-pr shadow-paper" @click="emit( 'userLogin', 'google' )">Google</button>
+                    <button class="btn bg-secondary-hover icon-twitter icon-pr shadow-paper" @click="emit( 'userLogin', 'twitter' )">Twitter</button>
+                    <button class="btn bg-secondary-hover icon-github icon-pr shadow-paper" @click="emit( 'userLogin', 'github' )">Github</button>
+                </p>
+            </div>
+        </div>
 
         <hr />
-        <h4>Remote Authentication</h4>
-        <p>
-            The data for this app will not be available across browsers or devices, which means you can't take your todos with you.
-            If you authenticate using a service, this app will remember you and save your data remotely so you can authenticate from different devices to have access to the same data.
-        </p>
-        <p>
-            <button class="btn bg-bright-hover icon-google icon-pr shadow-paper">Login with Google Account</button>
-        </p>
+
+        <div>
+            <h4>Data Management</h4>
+            <p>
+                Import and export your todos data in <b>JSON format</b>.
+                This can be used as a way to <b>backup your data</b>, or take it
+                <b>across browsers and devices</b> without having to sign in.
+            </p>
+            <p>
+                <button class="btn bg-secondary-hover icon-download icon-pr shadow-paper" @click="exportData( $event )">Export</button>
+                <button class="btn bg-secondary-hover icon-save icon-pr shadow-paper" @click="importData( $event )">Import</button>
+                <button v-if="lists.length" class="btn bg-danger-hover icon-trash icon-pr shadow-paper" @click="emit( 'flushData' )">Erase</button>
+            </p>
+        </div>
+
+        <hr />
+
+        <div>
+            <h4>List Options</h4>
+
+            <div class="form-wrap">
+
+                <div class="form-row">
+                    <div class="form-title">Place new tasks on:</div>
+                    <div class="form-controls">
+                        <label class="form-toggle">
+                            <input type="radio" name="taskInsertPosition" value="top" :checked="options.taskInsertPosition == 'top'" @change="onChange( $event )" />
+                            <span>Top</span>
+                        </label>
+                        <label class="form-toggle">
+                            <input type="radio" name="taskInsertPosition" value="bottom" :checked="options.taskInsertPosition == 'bottom'" @change="onChange( $event )" />
+                            <span>Bottom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-title">Place new lists on:</div>
+                    <div class="form-controls">
+                        <label class="form-toggle">
+                            <input type="radio" name="listInsertPosition" value="top" :checked="options.listInsertPosition == 'top'" @change="onChange( $event )" />
+                            <span>Top</span>
+                        </label>
+                        <label class="form-toggle">
+                            <input type="radio" name="listInsertPosition" value="bottom" :checked="options.listInsertPosition == 'bottom'" @change="onChange( $event )" />
+                            <span>Bottom</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-title">Auto select new lists:</div>
+                    <div class="form-controls">
+                        <label class="form-toggle">
+                            <input type="checkbox" name="listAutoSelect" :checked="options.listAutoSelect" @change="onChange( $event )" />
+                            <span>Toggle</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 </template>
@@ -31,48 +105,49 @@
 <script>
 // dependencies
 import Prompt from "../scripts/Prompt";
+import Utils from "../scripts/Utils";
 
 // component
 export default {
 
-    // component name
-    name: "options",
-
     // component props
     props: {
         lists: { type: Array, default: [], required: true },
-        todos: { type: Object, default: [], required: false },
-        options: { type: Object, default: {}, required: false },
-    },
-
-    // custom dom element manipulations
-    directives: {
-
-        // apply tooltip text
-        tooltip: {
-            bind: function( el, binding, vnode ) {
-                vnode.context.$parent.addTooltip( el );
-            },
-            unbind: function( el, binding, vnode ) {
-                vnode.context.$parent.removeTooltip( el );
-            },
-        },
+        options: { type: Object, default: {}, required: true },
+        user: { type: Object, default: {}, required: false },
     },
 
     // app methods
     methods: {
+
+        // for passing method calls to parent
+        emit: function()
+        {
+            return this.$parent.emit.apply( this.$parent, arguments );
+        },
+
+        // on option toggle change
+        onChange: function( e )
+        {
+            var key = e.target.name;
+            var val = e.target.value;
+
+            if( e.target.type === "checkbox" ) {
+                val = e.target.checked;
+            }
+            this.options[ key ] = val;
+            this.emit( "saveOptions", "Options have been saved." );
+        },
 
         // import data button event
         importData: function( e )
         {
             if( !window.File || !window.FileList || !window.FileReader )
             {
-                this.$parent.showNotice( "error", "This browser does not support handling of files." );
-                return;
+                return this.emit( "showNotice", "error", "This browser does not support handling of files." );
             }
-            var self   = this;
-            var reader = null;
-            var input  = document.createElement( "input" );
+            var self  = this;
+            var input = document.createElement( "input" );
 
             input.setAttribute( "type", "file" );
             input.setAttribute( "accept", ".json" );
@@ -82,19 +157,17 @@ export default {
                 {
                     if( !/\.json$/i.test( this.files[0].name ) )
                     {
-                        self.$parent.showNotice( "warning", "Please select a JSON file." );
-                        return;
+                        return self.emit( "showNotice", "warning", "Please select a JSON file." );
                     }
                     if( !this.files[0].size )
                     {
-                        self.$parent.showNotice( "warning", "The file you selected is empty." );
-                        return;
+                        return self.emit( "showNotice", "warning", "The file you selected is empty." );
                     }
-                    reader = new FileReader();
+                    var reader = new FileReader();
                     reader.addEventListener( "load", function( e )
                     {
-                        // let the parent take it from here
-                        self.$parent.importData( e.target.result );
+                        var data = JSON.parse( e.target.result || "{}" ) || {};
+                        self.emit( "importData", data, true );
                     });
                     reader.readAsText( this.files[0], "utf-8" );
                 }
@@ -107,34 +180,42 @@ export default {
         // export data button event
         exportData: function( e )
         {
+            var data = {
+                timestamp: Date.now(),
+                date: Utils.dateString(),
+                address: location.href || "",
+                options: this.options,
+                lists: this.lists,
+            };
             try {
+                var link  = document.createElement( "a" );
+                var frame = document.createElement( "iframe" );
+                var json  = JSON.stringify( data );
+                var name  = ( this.user.provider !== undefined ) ? this.user.provider : "local";
+                var type  = "application/json;charset=utf-8";
+                var file  = "todos."+ name +".data.json";
+                var href  = "data:" + type + "," + encodeURIComponent( json );
 
-                var data = {
-                    name: "todos_web_app_data",
-                    address: location.href || "",
-                    timestamp: Date.now(),
-                    date: this.$parent.getDateString(),
-                    lists: this.lists,
-                    options: this.options,
-                };
-
-                var json = JSON.stringify( data );
-                var href = "data:application/json;charset=utf-8," + encodeURIComponent( json );
-                var link = document.getElementById( "export-link" );
-
-                link.setAttribute( "href", href );
-                link.setAttribute( "download", "todos_data.json" );
-                link.click();
+                if( navigator.msSaveBlob ) // IE
+                {
+                    navigator.msSaveBlob( new Blob( [json], {type: type} ), file );
+                }
+                else if( "download" in link ) // HTML5
+                {
+                    link.setAttribute( "href", href );
+                    link.setAttribute( "download", file );
+                    document.body.appendChild( link );
+                    setTimeout( function() { link.click(); document.body.removeChild( link ); }, 100 );
+                }
+                else { // all else
+                    frame.setAttribute( "src", href );
+                    document.body.appendChild( frame );
+                    setTimeout( function() { document.body.removeChild( frame ); }, 300 );
+                }
             }
             catch( e ) {
-                console.warn( e );
+                this.emit( "showNotice", "error", e.message );
             }
-        },
-
-        // trash data button event
-        trashData: function( e )
-        {
-            this.$parent.flushData();
         },
 
     },
