@@ -1,0 +1,214 @@
+/**
+ * Active todos list column (left)
+ */
+.app-todos-list {
+    display: block;
+    position: relative;
+    animation: showAnimation $fxSpeed $fxEase forwards;
+
+    // main todos list container
+    .todo-list-wrap {
+        display: block;
+        position: relative;
+        list-style: none;
+        text-align: left;
+        padding: $padSpace;
+
+        // todo list item entry (pending)
+        .todo-list-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: stretch;
+            margin: 0 0 $listSpace 0;
+            padding: 0.5em $padSpace;
+            background-color: lighten( $colorDocument, 5% );
+            border-bottom: $lineWidth $lineStyle $colorDefault;
+            border-radius: $lineJoin;
+            box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
+
+            // list item left icon
+            .todo-list-icon,
+            .todo-list-icon a {
+                font-size: 200%;
+                line-height: 1em;
+                margin-right: 10px;
+                text-align: left;
+
+                // pending icon
+                .todo-list-icon-pending {
+                    color: $colorWarning;
+                }
+                // complete icon
+                .todo-list-icon-complete {
+                    display: none;
+                    color: $colorSuccess;
+                }
+            }
+
+            // todo list entry info + edit input
+            .todo-list-info {
+                flex: 1;
+
+                // input label wrapper
+                .todo-list-label {
+                    display: block;
+                    position: relative;
+                    cursor: pointer;
+                    width: 100%;
+
+                    // entry date
+                    .todo-list-date {
+                        font-size: 72%;
+                        line-height: 1.5em;
+                        opacity: 0.4;
+                    }
+
+                    // entry hidden edit input
+                    .todo-list-input {
+                        display: block;
+                        position: relative;
+                        width: 100%;
+                        font-size: inherit;
+                        line-height: 1.2em;
+                        background-color: transparent;
+                        border-radius: $lineJoin;
+                        max-height: 0;
+                        z-index: 1;
+                    }
+
+                    // entry todo text
+                    .todo-list-text {
+                        display: block;
+                        width: auto;
+                        position: relative;
+                        font-size: inherit;
+                        line-height: 1.2em;
+                        z-index: 2;
+                    }
+
+                    // list entry focus state changes
+                    .todo-list-input:focus { max-height: 100%; }
+                    .todo-list-input:focus ~ .todo-list-text { display: none; }
+                }
+            }
+
+            // entry controls
+            .todo-list-control {
+                padding: 2px 0 0 10px;
+                opacity: 0.2;
+
+                button {
+                    display: inline-block;
+                    font-size: inherit;
+                    line-height: 1em;
+                    cursor: pointer;
+                }
+            }
+
+            // entry hover state
+            &:hover {
+                background-color: $colorDocument;
+
+                // show controls on hover
+                .todo-list-control {
+                    opacity: 1;
+                }
+            }
+        }
+
+        // completed list item changes
+        .todo-list-item.complete {
+            background-color: #e1ede0;
+
+            // toggle left icon state
+            .todo-list-icon {
+                .todo-list-icon-pending {
+                    display: none;
+                }
+                .todo-list-icon-complete {
+                    display: inline-block;
+                }
+            }
+            // add line-through effect to todo text
+            .todo-list-info {
+                .todo-list-text {
+                    text-decoration: line-through;
+                    opacity: 0.675;
+                }
+            }
+            // hide check toggle icon
+            .todo-list-control {
+                .todo-list-btn-check {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    // todos list add form
+    .todo-list-footer {
+        display: block;
+        margin: 0;
+        padding: 40px $padSpace;
+
+        .todo-list-form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: stretch;
+
+            input {
+                display: block;
+                flex: 1;
+                padding: 0 0.5em;
+                line-height: 1.8em;
+                border-bottom: $lineWidth $lineStyle $colorSuccess;
+
+                &:focus {
+                    border-color: $colorPrimary;
+                }
+            }
+        }
+        .todo-list-metadata {
+            display: none;
+            padding-left: 1.9em;
+            padding-top: 1.2em;
+            font-size: 80%;
+            line-height: 1.6em;
+            color: desaturate( darken( $colorDocument, 50% ), 10% );
+        }
+    }
+}
+
+/**
+ * 900px and smaller
+ */
+@media (max-width: 900px) {
+
+    // totals on mobile
+    .app-todos-list {
+        .todo-list-footer {
+            .todo-list-metadata {
+                display: block;
+            }
+        }
+    }
+}
+
+/**
+ * 720px and smaller
+ */
+@media (max-width: 720px) {
+
+    // show todo list controls
+    .app-todos-list {
+        .todo-list-wrap {
+            .todo-list-item {
+                .todo-list-control {
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+}
