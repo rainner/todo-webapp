@@ -1,588 +1,25 @@
+
 <template>
-    <!-- app main wrapper -->
     <div class="app-wrap">
-
         <!-- fixed header -->
-        <header class="header-wrap">
-            <nav class="header-nav">
-                <div class="header-icon">
-                    <button class="icon-tasks text-secondary-hover" title="App home" @click="unselectTodos()" v-tooltip></button>
-                </div>
-                <div class="header-input">
-                    <input type="text" name="listName" placeholder="New todos list name..." autocomplete="off" v-model="todos.name" @focus="onFocus( $event )" @keyup.enter="todoListSave( $event, 1 )" @blur="todoListSave( $event )" />
-                </div>
-                <div class="header-btn">
-                    <button class="icon-plus text-success-hover" title="New list" @click="createTodos()" v-tooltip></button>
-                </div>
-                <div class="header-btn" id="sidebar-toggle-btn">
-                    <button class="icon-book text-grey-hover" title="Saved lists" @click="showSidebar( $event )" v-tooltip></button>
-                </div>
-                <div class="header-btn dropdown" v-dropdown>
-                    <button class="icon-menu text-grey-hover dropdown-trigger"></button>
-                    <ul class="dropdown-tr">
-                        <li><a href="#" class="icon-home" @click.prevent="unselectTodos()"> App home</a></li>
-                        <li><a href="#" class="icon-reload" @click.prevent="reloadPage()"> Reload app</a></li>
-                        <li v-if="hasActiveTodos()"><a href="#" class="icon-check text-success-hover" @click.prevent="todoListToggle( $event, true )"> Check all tasks</a></li>
-                        <li v-if="hasActiveTodos()"><a href="#" class="icon-clock text-warning-hover" @click.prevent="todoListToggle( $event, false )"> Uncheck all tasks</a></li>
-                        <li v-if="hasActiveTodos()"><a href="#" class="icon-reload text-danger-hover" @click.prevent="emptyTodos( $event )"> Empty tasks list</a></li>
-                        <li v-if="hasActiveTodos()"><a href="#" class="icon-x text-danger-hover" @click.prevent="deleteTodos( $event )"> Delete tasks list</a></li>
-                        <li><a href="#" class="icon-tool" @click.prevent="showOptions()"> Options</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </header>
-
+        <topbar :todos="todos" :lists="lists" :options="options" :user="user"></topbar>
         <!-- app columns container -->
         <main class="app-columns">
-            <div class="app-left" @mouseup="hideSidebar( $event )">
-                <component :is="comp" :lists="lists" :todos="todos" :options="options"></component>
+            <div class="app-left" @mouseup="hideSidebar()" style="background-image: url( public/img/check.svg )">
+                <component :is="comp" :todos="todos" :lists="lists" :options="options" :user="user"></component>
             </div>
-            <div class="app-right" @mouseleave="hideSidebar( $event )" @blur="hideSidebar( $event )">
-                <savedlists :lists="lists" :todos="todos" :options="options"></savedlists>
+            <div class="app-right" :class="{ 'expanded': expanded }">
+                <sidebar :todos="todos" :lists="lists" :options="options" :user="user"></sidebar>
             </div>
         </main>
-
     </div>
 </template>
 
 
-<script>
-// dependencies
-import Welcome from "./Welcome.vue";
-import NotFound from "./NotFound.vue";
-import TaskList from "./TaskList.vue";
-import SavedLists from "./SavedLists.vue";
-import Options from "./Options.vue";
-import Dropdown from "../scripts/Dropdown";
-import Notify from "../scripts/Notify";
-import Prompt from "../scripts/Prompt";
-import Tooltip from "../scripts/Tooltip";
-
-// setup global handlers
-var notify = new Notify();
-var tooltip = new Tooltip();
-
-// component
-export default {
-
-    // component name
-    name: "app",
-
-    // sub components
-    components: {
-        "welcome": Welcome,
-        "notfound": NotFound,
-        "tasklist": TaskList,
-        "savedlists": SavedLists,
-        "options": Options,
-    },
-
-    // component data
-    data() {
-        return {
-            index   : -1,   // index of current selected todos list
-            path    : "",   // keep track of url hash/path for app state
-            comp    : "",   // current component selected to show
-            last    : "",   // last string captured from a input focus event
-            lists   : [],   // all saved todos lists
-            todos   : {},   // current active todos list data
-            options : {},   // app options saved/loaded from localStorage
-            keys    : {     // keys used for app data/options store
-                lists   : "todo_app_data",
-                options : "todo_app_options",
-            },
-        }
-    },
-
-    // custom dom element manipulations
-    directives: {
-
-        // apply dropdown menu
-        dropdown: {
-            bind: function( el, binding, vnode ) {
-                new Dropdown( el );
-            },
-        },
-
-        // apply tooltip text
-        tooltip: {
-            bind: function( el, binding, vnode ) {
-                tooltip.select( el );
-            },
-            unbind: function( el, binding, vnode ) {
-                tooltip.unselect( el );
-            },
-        },
-    },
-
-    // component methods
-    methods: {
-
-        // set new component view and location hash
-        setComponent: function( comp, path )
-        {
-            if( comp && typeof comp === "string" )
-            {
-                this.comp = comp;
-            }
-            if( path && typeof path === "string" )
-            {
-                window.location.hash = path;
-            }
-            return comp;
-        },
-
-        // reload the page
-        reloadPage: function()
-        {
-            top.location.reload();
-        },
-
-        // capture previous value of something to compare later when saving
-        onFocus: function( e )
-        {
-            if( e && e.target )
-            {
-                this.last = e.target.value || "";
-            }
-        },
-
-        // check if sidebar is is current selected list
-        isActiveList: function( index )
-        {
-            return ( index === this.index ) ? true : false;
-        },
-
-        // select a todos list to be active from sidebar
-        selectTodos: function( lookup )
-        {
-            var index = 0;
-
-            if( typeof lookup === "string" && /^([0-9]+)$/.test( lookup ) )
-            {
-                index = parseInt( lookup );
-            }
-            else if( typeof lookup === "number" )
-            {
-                index = lookup;
-            }
-            if( this.lists[ index ] !== undefined )
-            {
-                this.index = index;
-                this.todos = this.lists[ index ];
-                this.todos.index = index;
-                return this.setComponent( "tasklist", "/list/" + index );
-            }
-            return this.setComponent( "notfound" );
-        },
-
-        // clear current selected todos list
-        unselectTodos: function()
-        {
-            this.index = -1;
-            this.todos = {};
-            return this.setComponent( "welcome", "/home" );
-        },
-
-        // show app options component
-        showOptions: function()
-        {
-            this.index = -1;
-            this.todos = {};
-            return this.setComponent( "options", "/options" );
-        },
-
-        // check if there is an active todos present
-        hasActiveTodos: function()
-        {
-            if( !this.todos ) return false;
-            if( !this.todos.name ) return false;
-            if( !this.todos.hasOwnProperty( "entries" ) ) return false;
-            return true;
-        },
-
-        // check if current todos has entries
-        hasTodosEntries: function()
-        {
-            return ( this.hasActiveTodos() && this.todos.entries.length ) ? true : false;
-        },
-
-        // add new todos-list to the list and select it
-        createTodos: function( name )
-        {
-            var todos = {
-                index    : 0,
-                id       : this.getRandomString( 10 ),
-                name     : name || this.getDateString(),
-                modified : this.getDateString(),
-                time     : Date.now(),
-                entries  : [],
-            };
-            this.lists.splice( 0, 0, todos );
-            this.selectTodos( 0 );
-            this.saveData( "New todos list has been created." );
-        },
-
-        // update current selected todos-list name
-        updateTodos: function( name )
-        {
-           if( name && typeof name === "string" && this.hasActiveTodos() )
-            {
-                this.todos.name = name;
-                this.todos.modified = this.getDateString();
-                this.saveData( "Todos list name has been changed." );
-            }
-        },
-
-        // empty current todos list
-        emptyTodos: function()
-        {
-            if( this.hasActiveTodos() )
-            {
-                var self = this;
-
-                new Prompt({
-                    title: "Confirm...",
-                    confirm: "Remove all tasks from this list?",
-                    onAccept: function()
-                    {
-                        self.todos.entries = [];
-                        self.saveData( "Todos list has been flushed." );
-                    }
-                });
-            }
-        },
-
-        // delete selected todos-list from the list
-        deleteTodos: function()
-        {
-            if( this.hasActiveTodos() )
-            {
-                var self = this;
-
-                new Prompt({
-                    title: "Confirm...",
-                    confirm: "Delete this list?",
-                    onAccept: function()
-                    {
-                        self.lists.splice( self.index, 1 );
-                        self.unselectTodos();
-                        self.saveData( "Todos list has been deleted." );
-                    }
-                });
-            }
-        },
-
-        // save new order of todo tasks for active todos
-        sortTodos: function( indexes )
-        {
-            // do we have an active todos list and a new list of indexes?...
-            if( indexes && Array.isArray( indexes ) && this.hasActiveTodos() )
-            {
-                // is the length of new indexes same as active list todos?...
-                if( indexes.length === this.todos.entries.length )
-                {
-                    // copy originals as is
-                    var lists   = this.lists.slice( 0 );
-                    var todos   = Object.assign( {}, this.todos );
-                    var entries = [];
-
-                    // loop new list of indexes...
-                    for( var i = 0; i < indexes.length; ++i )
-                    {
-                        // place tasks in the right spot based on sorted index list
-                        entries[ i ] = todos.entries[ indexes[ i ] ];
-                    }
-                    // build new data to be saved separate from current Vue data
-                    todos.entries = entries;
-                    todos.modified = this.getDateString();
-                    lists[ this.index ] = todos;
-                    this.saveData( "New todos list order has been saved.", lists );
-                }
-            }
-        },
-
-        // check/uncheck all tasks in active list
-        todoListToggle: function( e, status )
-        {
-            if( e && typeof status === "boolean" )
-            {
-                var msg = status ? "checked" : "unchecked";
-
-                if( this.hasTodosEntries() )
-                {
-                    for( var i = 0; i < this.todos.entries.length; ++i )
-                    {
-                        this.todos.entries[ i ].complete = status;
-                        this.todos.entries[ i ].modified = this.getDateString();
-                    }
-                    this.saveData( "All list tasks have been " + msg + "." );
-                }
-            }
-        },
-
-        // catch input event to change list name
-        todoListSave: function( e, enter )
-        {
-            var name = e.target.value || "";
-
-            // when calling this from both an enter and blur event, skip the enter event
-            if( enter ) { e.target.blur(); return; }
-
-            if( name && name !== this.last )
-            {
-                if( this.hasActiveTodos() ) { this.updateTodos( name ); }
-                else { this.createTodos( name ); }
-            }
-        },
-
-        // get total number of entries in a todos list
-        getTodosTotal: function( todos )
-        {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.length || 0;
-            }
-            if( this.hasTodosEntries() )
-            {
-                return this.todos.entries.length || 0;
-            }
-            return 0;
-        },
-
-        // get number of done tasks in a todos list
-        getTodosDone: function( todos )
-        {
-            if( typeof todos === "object" && todos.hasOwnProperty( "entries" ) )
-            {
-                return todos.entries.filter( function( todo ){ return todo.complete; } ).length || 0;
-            }
-            if( this.hasTodosEntries() )
-            {
-                return this.todos.entries.filter( function( todo ){ return todo.complete; } ).length || 0;
-            }
-            return 0;
-        },
-
-        // get number of done tasks remaining
-        getTodosRemain: function( todos )
-        {
-            return ( this.getTodosTotal( todos ) - this.getTodosDone( todos ) );
-        },
-
-        // get current date string
-        getDateString: function()
-        {
-            var date    = new Date(),
-                year    = date.getUTCFullYear(),
-                month   = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][ date.getMonth() ],
-                day     = date.getUTCDate(),
-                minute  = date.getMinutes(),
-                fullh   = date.getHours(),
-                hour    = ( fullh > 12 ) ? ( fullh - 12 ) : fullh,
-                ampm    = ( fullh > 12 ) ? "PM" : "AM",
-                _p      = function( n ) { return ( n < 10 ) ? "0"+ n : ""+ n; };
-
-            hour = ( hour === 0 ) ? 12 : hour;
-            return month + "/" + _p( day ) + "/" + year + " " + _p( hour ) + ":" + _p( minute ) + " " + ampm;
-        },
-
-        // get a random string
-        getRandomString: function( length )
-        {
-            var chars  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-                length = length || 10,
-                output = "";
-
-            while( length )
-            {
-                output += chars.charAt( Math.floor( Math.random() * chars.length ) );
-                length--;
-            }
-            return output;
-        },
-
-        // add element to tooltip's list
-        addTooltip: function( el )
-        {
-            tooltip.select( el );
-        },
-
-        // add element to tooltip's list
-        removeTooltip: function( el )
-        {
-            tooltip.unselect( el );
-        },
-
-        // show page notice
-        showNotice: function( type, info, time )
-        {
-            notify.add( type, info, time );
-        },
-
-        // show the sidebar
-        showSidebar: function()
-        {
-            var right = document.querySelector( ".app-right" );
-            if( right ) right.classList.add( "expanded" );
-        },
-
-        // hide the sidebar
-        hideSidebar: function()
-        {
-            var right = document.querySelector( ".app-right" );
-            if( right ) right.classList.remove( "expanded" );
-        },
-
-        // load saved data from store
-        loadData: function()
-        {
-            try {
-                var lists = localStorage.getItem( this.keys.lists ) || "[]";
-                lists = JSON.parse( lists );
-
-                var options = localStorage.getItem( this.keys.options ) || "{}";
-                options = JSON.parse( options );
-
-                this.lists   = lists   || [];
-                this.options = options || [];
-                return true;
-            }
-            catch( e ) {
-                notify.error( "Could not load app data, check the console for more information." );
-                console.warn( e );
-            }
-            return false;
-        },
-
-        // save local data to store
-        saveData: function( message, data )
-        {
-            try {
-                var json = JSON.stringify( data || this.lists );
-                localStorage.setItem( this.keys.lists, json );
-
-                if( message && typeof message === "string" ) {
-                    notify.success( message );
-                }
-                return true;
-            }
-            catch( e ) {
-                notify.error( "Could not save app data, check the console for more information." );
-                console.warn( e );
-            }
-            return false;
-        },
-
-        // save local data to store
-        saveOptions: function( message, data )
-        {
-            try {
-                var json = JSON.stringify( data || this.options );
-                localStorage.setItem( this.keys.options, json );
-
-                if( message && typeof message === "string" ) {
-                    notify.success( message );
-                }
-                return true;
-            }
-            catch( e ) {
-                notify.error( "Could not save app options, check the console for more information." );
-                console.warn( e );
-            }
-            return false;
-        },
-
-        // import loaded json data from a file
-        importData: function( data )
-        {
-            try { data = JSON.parse( data || "" ) || {}; }
-            catch( e ) { console.warn( e ); }
-
-            if( data && typeof data === "object" )
-            {
-                if( data.hasOwnProperty( "lists" ) )
-                {
-                    this.lists = data.lists;
-                    this.saveData();
-                }
-                if( data.hasOwnProperty( "options" ) )
-                {
-                    this.options = data.options;
-                    this.saveOptions();
-                }
-                this.showNotice( "success", "App data has been imported and saved." );
-            }
-        },
-
-        // flush todos all data
-        flushData: function()
-        {
-            var self = this;
-
-            new Prompt({
-                title: "Confirm...",
-                confirm: "Delete all data saved by this app?",
-                onAccept: function()
-                {
-                    self.lists = [];
-                    self.unselectTodos();
-                    self.saveData( "App data has been deleted." );
-                }
-            });
-        },
-
-        // try to parse a path and resume previous entries state
-        setRoute: function( path )
-        {
-            path = ( typeof path === "string" ) ? path.replace( /^([\#\?]+)|([\/]+)$/, "" ) : "";
-
-            if( path && path !== this.path )
-            {
-                this.path = path;
-
-                var parts  = path.replace( /^([\#\?\/]+)|([\/]+)$/, "" ).split( "/" );
-                var action = parts.length ? parts.shift() : "home";
-                var item   = parts.length ? parts.shift() : "";
-
-                switch( action )
-                {
-                    case "home"    :  return this.setComponent( "welcome" );
-                    case "options" :  return this.setComponent( "options" );
-                    case "list"    :  return this.selectTodos( item );
-                    default        :  return this.setComponent( "notfound" );
-                }
-            }
-        },
-
-        // when url hash changes
-        hashChange: function( e )
-        {
-            this.setRoute( window.location.hash );
-        },
-    },
-
-    // before component mounted
-    beforeMount: function()
-    {
-        window.addEventListener( "hashchange", this.hashChange );
-        this.loadData();
-    },
-
-    // component mounted
-    mounted: function()
-    {
-        var hash = window.location.hash || "";
-        if( hash ) { this.setRoute( hash ); } // resume or go home
-        else { this.setComponent( "welcome", "/home" ); }
-    },
-}
-</script>
-
-
 <style lang="scss">
+// app styles
 @import "../scss/variables";
-@import "../scss/reset";
+@import "../scss/base";
 @import "../scss/modifiers";
 @import "../scss/fontello";
 @import "../scss/type";
@@ -598,6 +35,514 @@ export default {
 @import "../scss/tooltip";
 @import "../scss/sortable";
 @import "../scss/app";
-@import "../scss/tasklist";
-@import "../scss/savedlists";
+@import "../scss/topbar";
+@import "../scss/sidebar";
+@import "../scss/todos";
 </style>
+
+
+<script>
+// storage
+import localforage from "localforage";
+import firebase from "firebase/app";
+import {} from "firebase/auth";
+import {} from "firebase/database";
+// components
+import TopBar from "./TopBar.vue";
+import Sidebar from "./Sidebar.vue";
+import Home from "./Home.vue";
+import Todos from "./Todos.vue";
+import Options from "./Options.vue";
+import About from "./About.vue";
+import NotFound from "./NotFound.vue";
+// custom scripts
+import Notify from "../scripts/Notify";
+import Prompt from "../scripts/Prompt";
+import Utils from "../scripts/Utils";
+
+// setup localforage
+localforage.config({
+    name: "todoswebapp",
+});
+
+// setup firebase
+firebase.initializeApp({
+    apiKey: "AIzaSyAae9QnCPyaBzPAkRBmYbM6zKdFFNosBXI",
+    authDomain: "todoswebapp.firebaseapp.com",
+    databaseURL: "https://todoswebapp.firebaseio.com",
+    storageBucket: "todoswebapp.appspot.com",
+    messagingSenderId: "15015118956",
+});
+
+// globals
+var notify = new Notify();
+var database = firebase.database();
+var defaultOptions = {
+    // where to place newly added tasks (top, bottom)
+    taskInsertPosition: "bottom",
+    // where to place newly created lists (top, bottom)
+    listInsertPosition: "top",
+     // auto select newly created lists
+    listAutoSelect: true,
+};
+
+// component
+export default {
+
+    // sub components
+    components: {
+        "topbar"   : TopBar,
+        "sidebar"  : Sidebar,
+        "home"     : Home,
+        "todos"    : Todos,
+        "options"  : Options,
+        "about"    : About,
+        "notfound" : NotFound,
+    },
+
+    // component data
+    data: function() {
+        return {
+            expanded : false,    // control sidebar expanded class
+            index    : -1,       // index of current selected todos list
+            path     : "",       // keep track of url hash/path for app state
+            comp     : "",       // current component selected to show
+            lists    : [],       // all saved todos lists
+            todos    : {},       // current active todos list data
+            user     : {},       // auth user data using firebase API
+            options  : Object.assign( {}, defaultOptions ),
+        }
+    },
+
+    // component methods
+    methods: {
+
+        // call a function or emit an event
+        emit: function()
+        {
+            var args = [].slice.call( arguments );
+            var func = args.shift();
+
+            if( typeof this[ func ] === "function" )
+            {
+                return this[ func ].apply( this, args );
+            }
+            return this.$emit.apply( this, arguments );
+        },
+
+        // common handler for async errors
+        onError: function( e )
+        {
+            notify.error( e.message || "There has been a problem.", 8000 );
+        },
+
+        // show the sidebar
+        showSidebar: function()
+        {
+            this.expanded = true;
+        },
+
+        // hide the sidebar
+        hideSidebar: function()
+        {
+            this.expanded = false;
+        },
+
+        // toggle the sidebar
+        toggleSidebar: function()
+        {
+            this.expanded = !this.expanded;
+        },
+
+        // show notification
+        showNotice: function( type, info, time )
+        {
+            notify.add( type, info, time );
+        },
+
+        // set new component view and location hash
+        setComponent: function( comp, path )
+        {
+            this.todosUnselect();
+
+            if( comp && typeof comp === "string" && comp !== this.comp )
+            {
+                this.hideSidebar();
+                this.comp = comp;
+            }
+            if( path && typeof path === "string" && path !== this.path )
+            {
+                window.location.hash = path;
+                this.path = path;
+            }
+            return comp;
+        },
+
+        // update app state from url hash change
+        onHashChange: function( e )
+        {
+            var hash = window.location.hash || "/home";
+            var path = hash.replace( /^([\#\?]+)|([\/]+)$/, "" );
+
+            if( path )
+            {
+                this.path  = path;
+                var parts  = path.replace( /^([\#\?\/]+)|([\/]+)$/, "" ).split( "/" );
+                var action = parts.length ? parts.shift() : "home";
+                var item   = parts.length ? parts.shift() : "";
+
+                switch( action )
+                {
+                    case "home"    :  return this.setComponent( "home" );
+                    case "options" :  return this.setComponent( "options" );
+                    case "about"   :  return this.setComponent( "about" );
+                    case "todos"   :  return this.todosSelect( item );
+                }
+                return this.setComponent( "notfound" );
+            }
+        },
+
+        // check if a todos list exists in the lists array
+        todosExists: function( index )
+        {
+            index = ( index !== undefined ) ? index : this.index;
+            return ( this.lists[ index ] !== undefined );
+        },
+
+        // select a todos list to be active
+        todosSelect: function( lookup )
+        {
+            var id = "";
+            var index = -1;
+
+            if( typeof lookup === "number" ) // index
+            {
+                id = lookup + "";
+                index = lookup;
+            }
+            else if( typeof lookup === "string" )
+            {
+                if( /^([0-9]+)$/.test( lookup ) ) // index
+                {
+                    id = lookup;
+                    index = parseInt( lookup );
+                }
+                else if( /^([\w]+)$/.test( lookup ) ) // id hash
+                {
+                    for( var i = 0; i < this.lists.length; ++i )
+                    {
+                        if( this.lists[ i ].id === lookup )
+                        {
+                            id = this.lists[ i ].id;
+                            index = i; break;
+                        }
+                    }
+                }
+            }
+            if( this.todosExists( index ) )
+            {
+                this.hideSidebar();
+                this.setComponent( "todos", "/todos/" + id );
+                this.index = index;
+                this.todos = Object.assign( {}, this.lists[ index ] );
+                return;
+            }
+            this.setComponent( "notfound" );
+        },
+
+        // clear current selected todos list
+        todosUnselect: function()
+        {
+            this.index = -1;
+            this.todos = {};
+        },
+
+        // check if there is an active todos selected
+        todosSelected: function()
+        {
+            return ( this.index !== -1 && this.todos.id !== undefined );
+        },
+
+        // add new todos-list to the list and select it
+        todosCreate: function( name )
+        {
+            var id    = Utils.randString( 10 );
+            var date  = Utils.dateString();
+            var todos = {
+                id       : id,
+                time     : Date.now(),
+                modified : date,
+                name     : name || date,
+                tasks    : [],
+            };
+            switch( this.options.listInsertPosition )
+            {
+                case "bottom" : this.lists.push( todos ); break;
+                default       : this.lists.splice( 0, 0, todos );
+            }
+            if( this.options.listAutoSelect )
+            {
+                this.todosSelect( id );
+            }
+            this.saveLists( "New todos list has been created." );
+        },
+
+        // update current selected todos-list name
+        todosUpdate: function( data )
+        {
+            if( this.todosSelected() && data )
+            {
+                if( typeof data === "string" )
+                {
+                    this.todos.name = data;
+                    this.todosSave( this.todos, "Todos list name has been changed." );
+                }
+                else if( typeof data === "object" )
+                {
+                    this.todos = Object.assign( this.todos, data );
+                    this.todosSave( this.todos, "Todos list data has been changed." );
+                }
+            }
+        },
+
+        // empty current todos list
+        todosEmpty: function()
+        {
+            if( this.todosSelected() )
+            {
+                var self = this;
+
+                new Prompt({
+                    title: "Confirm...",
+                    confirm: "Remove all tasks from this list?",
+                    onAccept: function()
+                    {
+                        self.todos.tasks = [];
+                        self.todosSave( self.todos, "Todos list has been flushed." );
+                    }
+                });
+            }
+        },
+
+        // delete selected todos-list from the list
+        todosDelete: function()
+        {
+            if( this.todosSelected() )
+            {
+                var self = this;
+
+                new Prompt({
+                    title: "Confirm...",
+                    confirm: "Delete this list?",
+                    onAccept: function()
+                    {
+                        self.lists.splice( self.index, 1 );
+                        self.setComponent( "home", "/home" );
+                        self.saveLists( "Todos list has been deleted." );
+                    }
+                });
+            }
+        },
+
+        // save new todos data for current active list index
+        todosSave: function( todos, message )
+        {
+            if( this.todosSelected() && typeof todos === "object" && todos.id !== undefined )
+            {
+                todos.modified = Utils.dateString();
+                this.todos = todos;
+                this.lists.splice( this.index, 1, Object.assign( {}, todos ) );
+                this.saveLists( message );
+            }
+        },
+
+        // reset app data to default
+        resetData: function( redirect )
+        {
+            if( redirect && this.comp === "todos" )
+            {
+                this.setComponent( "home", "/home" );
+            }
+            this.todosUnselect();
+            this.options = Object.assign( {}, defaultOptions );
+            this.lists = [];
+        },
+
+        // set data for the application
+        importData: function( data, save )
+        {
+            if( data && typeof data === "object" )
+            {
+                if( data.options && typeof data.options === "object" )
+                {
+                    this.options = Object.assign( {}, defaultOptions, data.options );
+                    if( save ) this.saveOptions( "Options have been loaded and saved." );
+                }
+                if( data.lists && Array.isArray( data.lists ) )
+                {
+                    var date  = Utils.dateString();
+                    var lists = [];
+
+                    for( var i = 0; i < data.lists.length; ++i )
+                    {
+                        var todos = data.lists[ i ];
+                        if( !todos.id ) { todos.id = Utils.randString(); }
+                        if( !todos.modified ) { todos.modified = date; }
+                        if( !todos.name ) { todos.name = date; }
+                        if( !todos.tasks ) { todos.tasks = []; }
+                        lists.push( todos );
+                    }
+                    this.lists = lists;
+                    if( save ) this.saveLists( "Todos data has been loaded and saved." );
+                }
+            }
+            this.onHashChange();
+            this.$emit( "hideSpinner" );
+        },
+
+        // save app data to storage (local or remote)
+        saveData: function( key, data, message )
+        {
+            if( key && typeof key === "string" && data !== undefined )
+            {
+                if( this.user.uid ) // logged in, save to remote db
+                {
+                    return database.ref( "/users/" + this.user.uid + "/" + key ).set( data ).then( function() {
+                        if( message ) notify.success( message );
+                    }).catch( this.onError );
+                }
+                return localforage.setItem( key, data ).then( function() {
+                    if( message ) notify.success( message );
+                }).catch( this.onError );
+            }
+        },
+
+        // alias for saving options data
+        saveOptions: function( message )
+        {
+            this.saveData( "options", this.options, message );
+        },
+
+        // alias for saving lists data
+        saveLists: function( message )
+        {
+            this.saveData( "lists", this.lists, message );
+        },
+
+        // load app data from local db
+        loadData: function()
+        {
+            var self = this;
+
+            localforage.getItem( "options" )
+            .then( function( data ) { self.importData( { options: data } ); } )
+            .catch( this.onError );
+
+            localforage.getItem( "lists" )
+            .then( function( data ) { self.importData( { lists: data } ); } )
+            .catch( this.onError );
+        },
+
+        // flush todos all data
+        flushData: function()
+        {
+            var self = this;
+
+            new Prompt({
+                title: "Confirm...",
+                confirm: "Delete all data saved by this app?",
+                onAccept: function()
+                {
+                    self.resetData( true );
+                    self.saveOptions( "Options have been set to default." );
+                    self.saveLists( "Todos data have been deleted." );
+                }
+            });
+        },
+
+        // import data loaded from remote db
+        onAuthData: function( data )
+        {
+            if( data.val() !== null )
+            {
+                this.importData( data.val() );
+            }
+        },
+
+        // on firebase user auth change
+        onAuthChange: function( user )
+        {
+            this.resetData();
+            this.$emit( "showSpinner" );
+
+            if( user !== null )
+            {
+                this.user = {
+                    uid      : user.uid,
+                    name     : user.providerData[ 0 ].displayName,
+                    email    : user.providerData[ 0 ].email,
+                    photo    : user.providerData[ 0 ].photoURL,
+                    provider : user.providerData[ 0 ].providerId,
+                };
+                // logged in, load data from remote db
+                database.ref( "/users/" + user.uid ).once( "value" ).then( this.onAuthData );
+                notify.success( "You have signed in using " + this.user.provider + "." );
+                return;
+            }
+            // not logged in, load data from local db
+            this.loadData();
+            this.user = {};
+        },
+
+        // firebase login using a provider and user creds
+        userLogin: function( type, email, pass )
+        {
+            if( type && typeof type === "string" )
+            {
+                var provider = null;
+
+                switch( type )
+                {
+                    case "email"    :  provider = new firebase.auth.signInWithEmailAndPassword( email, pass );  break;
+                    case "google"   :  provider = new firebase.auth.GoogleAuthProvider();   break;
+                    case "twitter"  :  provider = new firebase.auth.TwitterAuthProvider();  break;
+                    case "facebook" :  provider = new firebase.auth.FacebookAuthProvider(); break;
+                    case "github"   :  provider = new firebase.auth.GithubAuthProvider();   break;
+                }
+                if( provider )
+                {
+                    return firebase.auth().signInWithPopup( provider ).catch( this.onError );
+                }
+                return notify.warning( "Invalid login provider type ("+ type +")." );
+            }
+            return notify.warning( "No login provider type specified." );
+        },
+
+        // firebase signoff
+        userLogoff: function()
+        {
+            firebase.auth().signOut()
+            .then( function() { notify.success( "You are no longer signed in." ); } )
+            .catch( this.onError );
+        },
+    },
+
+    // before mounted
+    beforeMount: function()
+    {
+        firebase.auth().onAuthStateChanged( this.onAuthChange );
+    },
+
+    // component mounted
+    mounted: function()
+    {
+        window.addEventListener( "hashchange", this.onHashChange );
+    },
+
+    // component destroyed
+    destroyed: function()
+    {
+        window.removeEventListener( "hashchange", this.onHashChange );
+    },
+}
+</script>
