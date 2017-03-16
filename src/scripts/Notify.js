@@ -6,8 +6,6 @@
  * @copyright  (c) All Rights Reserved
  * @license    See included LICENSE file
  */
-"use strict";
-
 (function( name, factory ) {
 
     if( typeof define === "function" ) { define( factory ); } else

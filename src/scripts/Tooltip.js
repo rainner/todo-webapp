@@ -6,8 +6,6 @@
  * @copyright  (c) All Rights Reserved
  * @license    See included LICENSE file
  */
-"use strict";
-
 (function( name, factory ) {
 
     if( typeof define === "function" ) { define( factory ); } else
@@ -16,26 +14,8 @@
 
 })( "Tooltip", function() {
 
-    var _w = window,
-        _d = document.documentElement,
-        _b = document.body;
-
-    // get view and scroll data
-    var View = {
-
-        clientWidth : function() {
-            return Math.max( 0, _w.innerWidth || _d.clientWidth || _b.clientWidth || 0 );
-        },
-        clientHeight : function() {
-            return Math.max( 0, _w.innerHeight || _d.clientHeight || _b.clientHeight || 0 );
-        },
-        scrollLeft : function() {
-            return Math.max( 0, _w.pageXOffset || _d.scrollLeft || _b.scrollLeft || 0 ) - ( _d.clientLeft || _b.clientLeft || 0 );
-        },
-        scrollTop : function() {
-            return Math.max( 0, _w.pageYOffset || _d.scrollTop || _b.scrollTop || 0 ) - ( _d.clientTop || _b.clientTop || 0 );
-        },
-    };
+    // imports
+    var View = require( "./Viewport" );
 
     // class constructor
     var Factory = function( selector, options )
@@ -240,9 +220,6 @@
         // when mouse enters target element
         _onEnter: function( e, item )
         {
-            e.preventDefault();
-            e.stopPropagation();
-
             var title = item.getAttribute( "data-tip" );
             if( title )
             {
@@ -260,9 +237,6 @@
         // when mouse leaves target element
         _onLeave: function( e, item )
         {
-            e.preventDefault();
-            e.stopPropagation();
-
             if( this._timeout )
             {
                 clearTimeout( this._timeout );

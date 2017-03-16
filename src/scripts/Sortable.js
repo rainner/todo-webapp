@@ -99,8 +99,8 @@
             return deft || null;
         },
 
-        // extract numeric values for the new list by looking at a defined attr value
-        getNumericOrder: function()
+        // get new order array with unique values from attribute
+        getOrder: function( delimiter )
         {
             var output = [];
 
@@ -110,18 +110,31 @@
                 {
                     var item = this._container.children[ i ];
                     var uniq = item.getAttribute( this._options.uniqueAttribute ) || "";
-                    var numb = parseInt( uniq.replace( /[^0-9]+/gi, "" ) );
-                    if( !isNaN( numb ) ) output.push( numb );
+                    if( uniq ) output.push( uniq );
                 }
+            }
+            if( delimiter && typeof delimiter === "string" )
+            {
+                return output.join( delimiter );
             }
             return output;
         },
 
-        // serialize order array into a string
-        getSerializedOrder: function( delimiter )
+        // get new order array with unique (numeric) values from attribute
+        getNumericOrder: function( delimiter )
         {
-            var order = this.getNumericOrder();
-            return order.join( delimiter || ":" );
+            var output = [];
+
+            this.getOrder().forEach( function( uniq )
+            {
+                var numb = parseInt( uniq.replace( /[^0-9]+/gi, "" ) );
+                if( !isNaN( numb ) ) output.push( numb );
+            });
+            if( delimiter && typeof delimiter === "string" )
+            {
+                return output.join( delimiter );
+            }
+            return output;
         },
 
         // scan container children and add sortable events to each child element
@@ -327,7 +340,7 @@
                 this._clickItem  = e.target;
                 this._clickLeft  = View.mouseLeft( e );
                 this._clickTop   = View.mouseTop( e );
-                this._order      = this.getSerializedOrder();
+                this._order      = this.getOrder( ":" );
 
                 this._makeDragItem( this._listItem );
                 this._listItem.classList.add( this._options.activeClass );
@@ -342,7 +355,7 @@
 
             if( this._listItem )
             {
-                if( typeof this._onChange === "function" && this.getSerializedOrder() !== this._order )
+                if( typeof this._onChange === "function" && this.getOrder( ":" ) !== this._order )
                 {
                     this._onChange.call( this );
                 }
