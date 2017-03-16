@@ -1,0 +1,76 @@
+/**
+ * header bar
+ */
+.header-wrap {
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0 $padSpace;
+    background-color: lighten( $colorDocument, 12% );
+    background-image: linear-gradient( 180deg, lighten( $colorDocument, 12% ) 0%, $colorDocument 100% );
+    border-bottom: $lineWidth $lineStyle $colorPrimary;
+    box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.4 );
+    z-index: 100;
+
+    .header-nav {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: stretch;
+        height: 60px;
+
+        & > div {
+            display: block;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        span, input {
+            display: block;
+            font-size: 140%;
+            line-height: 1.2em;
+        }
+        span {
+            padding: 4px 2px;
+        }
+        .header-icon {
+            margin-right: 6px;
+            padding-right: 6px;
+            border-right: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
+        }
+        .header-btn {
+            margin-left: 6px;
+            padding-left: 6px;
+            border-left: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
+        }
+        .header-input {
+            flex: 1;
+
+            input {
+                width: 100%;
+                line-height: 1.8em;
+            }
+        }
+        #sidebar-toggle-btn {
+            display: none;
+        }
+    }
+}
+
+/**
+ * 900px and smaller
+ */
+@media (max-width: 900px) {
+
+    // show sidebar toggle button
+    .header-wrap {
+        .header-nav {
+            #sidebar-toggle-btn {
+                display: block;
+            }
+        }
+    }
+}
