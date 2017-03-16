@@ -1,0 +1,68 @@
+/**
+ * Global reset
+ */
+
+*,
+*:before,
+*:after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    text-transform: none;
+    text-shadow: none;
+    text-size-adjust: 100%;
+    box-shadow: none;
+    box-sizing: border-box;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+    transform-style: flat;
+    transition:
+        transform $fxSpeed $fxEase,
+        color $fxSpeed $fxEase,
+        border-color $fxSpeed $fxEase,
+        background-color $fxSpeed $fxEase,
+        opacity $fxSpeed $fxEase;
+}
+
+/**
+ * Block types
+ */
+article, aside, details, figcaption, figure, footer, header, hgroup,
+menu, nav, section, main, summary, div, h1, h2, h3, h4, h5, h6, hr,
+p, ol, ul, form, img {
+    display: block;
+}
+
+/**
+ * Vue cloaked elements
+ */
+[v-cloak] {
+    display: none;
+}
+
+/**
+ * Doc mods
+ */
+html, body {
+    display: block;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+body {
+    position: relative;
+    background-color: darken( $colorDocument, 5% );
+}
+
+/**
+ * Common element show animation
+ */
+@keyframes showAnimation {
+      0% { opacity: 0; }
+    100% { opacity: 1; }
+}
