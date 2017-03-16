@@ -1,0 +1,126 @@
+/**
+ * Saved lists on sidebar
+ */
+.app-saved-lists {
+    position: relative;
+
+    .saved-list-wrap {
+        padding: $padSpace;
+
+        // sidebar heading
+        .saved-list-heading {
+            display: block;
+            margin-bottom: $padSpace;
+
+            h1, h2, h3, h4, h5 {
+                display: block;
+                margin: 0 0 0.3em 0;
+                padding: 0;
+                line-height: 1em;
+                color: $colorDocument;
+            }
+            span {
+                display: block;
+                padding-left: $padSpace;
+                font-size: 70%;
+                line-height: 1em;
+            }
+        }
+
+        // default info container
+        .saved-list-default {
+
+            & > hr {
+                border-color: rgba( 255, 255, 255, 0.075 );
+            }
+        }
+
+        // main list ul element
+        .saved-list-container {
+            display: block;
+            list-style: none;
+            text-align: left;
+
+            // list item
+            .saved-list-item {
+                display: block;
+                position: relative;
+                cursor: pointer;
+                margin: 0;
+                padding: $padSpace;
+                padding-bottom: $padSpace / 2;
+                border-radius: $lineJoin;
+                background-color: lighten( $colorSecondary, 10% );
+                border-bottom: $lineWidth $lineStyle lighten( $colorSecondary, 5% );
+                color: $colorDocument;
+                box-shadow: $shadowPaper;
+                animation: showAnimation $fxSpeed $fxEase;
+
+                // left side arrow
+                &:before {
+                    content: "";
+                    display: inline-block;
+                    position: absolute;
+                    width: $padSpace;
+                    height: $padSpace;
+                    left: -$padSpace;
+                    top: 50%;
+                    margin-top: -$padSpace;
+                    border-top: $padSpace solid transparent;
+                    border-bottom: $padSpace solid transparent;
+                    border-right: $padSpace solid $colorDocument;
+                    opacity: 0;
+                }
+
+                &:hover {
+                    background-color: lighten( $colorSecondary, 15% );
+                }
+                & > hr {
+                    margin: 6px 0;
+                }
+                .saved-list-title {
+                    color: #fff;
+                }
+                .saved-list-pill {
+                    display: inline-block;
+                    font-weight: normal;
+                    font-size: 80%;
+                    line-height: 1em;
+                    margin-right: 0.5em;
+                }
+            }
+
+            .saved-list-item + .saved-list-item {
+                margin-top: $listSpace;
+            }
+
+            // list item active state
+            .saved-list-item.active {
+                background-color: $colorDocument;
+                border-color: $colorPrimary;
+                color: $colorDocumentText;
+
+                // left side arrow
+                &:before {
+                    opacity: 1;
+                }
+                .saved-list-title {
+                    color: $colorDocumentText;
+                }
+                .saved-list-total {
+                    color: $colorInfo;
+                }
+                .saved-list-done {
+                    color: $colorSuccess;
+                }
+                .saved-list-remain {
+                    color: $colorDanger;
+                }
+            }
+        }
+
+        .saved-list-btn {
+            display: block;
+        }
+    }
+}
