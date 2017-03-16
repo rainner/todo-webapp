@@ -23,10 +23,10 @@
 .btn,
 .btn-outline {
     display: inline-block;
-    position: relative;
     overflow: hidden;
     text-align: center;
-    margin: 0 5px 5px 0;
+    text-decoration: none !important;
+    margin-bottom: $listSpace;
     cursor: pointer;
     padding: 0.5em 0.7em 0.4em 0.7em;
     border-radius: 100px;

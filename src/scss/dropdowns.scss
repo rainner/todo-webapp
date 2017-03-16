@@ -11,18 +11,12 @@
 }
 
 .dropdown {
-    display: inline-block;
     position: relative;
-    overflow: visible;
-    margin: 0;
-    padding: 0;
-    z-index: 99999;
+    overflow: visible !important;
 
     .dropdown-trigger {
-        display: inline-block;
         position: relative;
         cursor: pointer;
-        z-index: 2;
     }
     ul {
         display: none;
@@ -36,7 +30,7 @@
         border-left: $lineWidth $lineStyle $colorSecondary;
         box-shadow: $shadowBold;
         animation: dropdownShow $fxSpeed $fxEaseBounce forwards;
-        z-index: 3;
+        z-index: -9999;
 
         &.dropdown-tl { /* top left */
             top: 80%;
@@ -92,6 +86,7 @@
 // show dropdown by manual state change
 .dropdown.active > ul {
     display: block;
+    z-index: 9999;
 }
 
 // show dropdown by user interaction

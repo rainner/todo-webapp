@@ -25,7 +25,7 @@
 [class*=" icon-"]:before {
     display: inline-block;
     position: relative;
-    overflow: visible;
+    z-index: 1;
     font-family: "fontello";
     font-style: normal;
     font-weight: normal;
@@ -34,10 +34,14 @@
     text-align: center;
     font-size: inherit;
     line-height: inherit;
-    margin: 0;
-    padding: 0;
     width: 1em;
+    line-height: 1em;
+    margin-left: .01em;
+    margin-right: .01em;
+    opacity: 0.95;
     speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .icon-pl:before { /* push-left */
     margin-left: 0.3em;

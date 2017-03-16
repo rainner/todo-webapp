@@ -13,3 +13,72 @@ input[type="submit"] {
     display: inline-block;
     cursor: pointer;
 }
+
+/**
+ * Form table structure
+ */
+.form-wrap {
+
+    .form-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: stretch;
+        margin-bottom: $listSpace;
+
+        .form-title {
+            flex: 1;
+            max-width: 200px;
+            text-align: right;
+            line-height: 1.2em;
+        }
+        .form-controls {
+            flex: 1;
+            padding-left: $padSpace;
+        }
+    }
+}
+
+/**
+ * Custom radio/checkbox toggle button
+ */
+.form-toggle {
+    display: inline;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    margin-right: $listSpace;
+
+    span {
+        display: inline-block;
+        vertical-align: middle;
+
+        &:before {
+            content: "";
+            display: inline-block;
+            margin: 0 0.5em 0 0;
+            padding: 0;
+            width: 1em;
+            height: 1em;
+            border-radius: 100px;
+            border: 3px solid $colorBright;
+            background-color: darken( $colorDocument, 10% );
+            box-shadow: $shadowPaper;
+        }
+    }
+    span:hover:before {
+        background-color: darken( $colorDocument, 20% );
+    }
+    input[type="radio"],
+    input[type="checkbox"] {
+        position: absolute;
+        visibility: hidden;
+        left: -1000px;
+        top: 0;
+    }
+    input[type="radio"]:checked ~ span:before,
+    input[type="checkbox"]:checked ~ span:before {
+        background-color: $colorSuccess;
+    }
+}
+

@@ -19,10 +19,11 @@
         cursor: pointer;
         margin-bottom: $listSpace;
         border-radius: $lineJoin;
+        border-bottom: $lineWidth $lineStyle darken( $colorDocument, 30% );
         background-color: lignten( $colorDocument, 20% );
-        box-shadow: 0 2px 20px rgba( 0, 0, 0, 0.6 );
+        box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.4 );
         opacity: 0;
-        transform: translateY( 200px );
+        transform: translateY( 120px );
 
         .notify-message {
             display: block;
@@ -34,22 +35,27 @@
             transform: translateY( 0 );
         }
         &.notify-default {
+            border-color: darken( $colorDefault, 10% );
             background-color: $colorDefault;
             color: $colorDefaultText;
         }
         &.notify-success {
+            border-color: darken( $colorSuccess, 10% );
             background-color: $colorSuccess;
             color: $colorSuccessText;
         }
         &.notify-warning {
+            border-color: darken( $colorWarning, 10% );
             background-color: $colorWarning;
             color: $colorWarningText;
         }
         &.notify-info {
+            border-color: darken( $colorInfo, 10% );
             background-color: $colorInfo;
             color: $colorInfoText;
         }
         &.notify-danger {
+            border-color: darken( $colorDanger, 10% );
             background-color: $colorDanger;
             color: $colorDangerText;
         }

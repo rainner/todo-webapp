@@ -46,11 +46,7 @@
 
         &:hover {
             background-color: darken( $color, 5% ) !important;
-            color: lighten( $text, 10% ) !important;
-        }
-        &:active, &:focus {
-            background-color: darken( $color, 10% ) !important;
-            color: lighten( $text, 15% ) !important;
+            color: desaturate( darken( $text, 5% ), 10% ) !important;
         }
     }
 }
@@ -61,12 +57,8 @@
 
     @if $hover == 1 {
 
-        &:hover, &:focus {
-            color: darken( $color, 8% ) !important;
+        &:hover {
             border-color: desaturate( darken( $color, 8% ), 10% ) !important;
-        }
-        &:focus {
-            box-shadow: 0 0 16px transparentize( lighten( $color, 20% ), 0.5 );
         }
     }
 }
@@ -78,10 +70,7 @@
     @if $hover == 1 {
 
         &:hover {
-            color: darken( $color, 10% ) !important;
-        }
-        &:active, &:focus {
-            color: darken( $color, 15% ) !important;
+            color: darken( $color, 8% ) !important;
         }
     }
 }

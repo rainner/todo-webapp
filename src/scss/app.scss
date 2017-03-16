@@ -1,90 +1,5 @@
 
 /**
- * Common element show animation
- */
-@keyframes showAnimation {
-      0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-/**
- * Doc mods
- */
-html, body {
-    display: block;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-}
-body {
-    position: relative;
-    background-color: darken( $colorDocument, 5% );
-}
-
-/**
- * header bar
- */
-.header-wrap {
-    display: block;
-    position: fixed;
-    width: 100%;
-    height: 60px;
-    left: 0;
-    top: 0;
-    margin: 0;
-    padding: 0 $padSpace;
-    background-color: lighten( $colorDocument, 12% );
-    background-image: linear-gradient( 180deg, lighten( $colorDocument, 12% ) 0%, $colorDocument 100% );
-    border-bottom: $lineWidth $lineStyle $colorPrimary;
-    box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.4 );
-    z-index: 100;
-
-    .header-nav {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: stretch;
-        height: 60px;
-
-        button, input {
-            display: block;
-            position: relative;
-            margin: 0;
-            padding: 0;
-            font-size: 140%;
-            line-height: 1.2em;
-        }
-        button {
-            padding: 4px 2px;
-        }
-        .header-icon {
-            cursor: pointer;
-            margin-right: 6px;
-            padding-right: 6px;
-            border-right: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
-        }
-        .header-btn {
-            cursor: pointer;
-            margin-left: 6px;
-            padding-left: 6px;
-            border-left: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
-        }
-        .header-input {
-            flex: 1;
-
-            input {
-                width: 100%;
-                line-height: 1.8em;
-            }
-        }
-        #sidebar-toggle-btn {
-            display: none;
-        }
-    }
-}
-
-/**
  * App containers
  */
 .app-wrap {
@@ -104,15 +19,18 @@ body {
             flex: 1;
             overflow-x: hidden;
             overflow-y: auto;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: contain;
             z-index: 1;
         }
         .app-right {
             width: 300px;
             overflow-x: hidden;
             overflow-y: auto;
+            color: desaturate( lighten( $colorSecondary, 30% ), 30% );
             background-color: $colorSecondary;
             background-image: linear-gradient( 90deg, darken( $colorSecondary, 6% ) 0%, $colorSecondary 6px );
-            color: $colorDocument;
             z-index: 2;
         }
     }
@@ -121,17 +39,57 @@ body {
 // default welcome message
 .todo-info-page {
     display: block;
-    padding: ( $padSpace * 2 ) $padSpace;
-    color: desaturate( darken( $colorDocument, 50% ), 20% );
+    padding: ( $padSpace * 2 ) $padSpace ( $padSpace * 4 ) $padSpace;
+    color: desaturate( darken( $colorDocument, 55% ), 40% );
+    animation: showAnimation $fxSpeed $fxEase forwards;
 
     h1, h2, h3, h4, h5, h6 {
-        color: desaturate( darken( $colorDocument, 60% ), 40% );
+        line-height: 1em;
+        margin-bottom: $padSpace;
+        color: desaturate( darken( $colorDocument, 65% ), 10% );
+    }
+
+    b, strong {
+        font-weight: normal;
+        color: saturate( darken( $colorDocument, 65% ), 30% );
+    }
+    i, em {
+        font-style: normal;
+        color: desaturate( darken( $colorDocument, 50% ), 10% );
     }
 
     a {
-        color: darken( $colorDocument, 60% );
+        color: $colorPrimary;
+        text-decoration: underline;
+
         &:hover {
-            color: darken( $colorDocument, 50% );
+            color: darken( $colorPrimary, 10% );
+        }
+    }
+
+    // user card
+    .user-wrap {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: $padSpace;
+
+        .user-photo {
+            display: block;
+            width: 2em;
+            height: 2em;
+            border-radius: 100px;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border: 3px solid lighten( $colorDocument, 20% );
+            box-shadow: $shadowPaper;
+        }
+        .user-info {
+            display: block;
+            padding-left: 0.5em;
+            color: $colorSecondary;
         }
     }
 }
@@ -156,30 +114,6 @@ body {
             .app-right.expanded {
                 box-shadow: -2px 0 2px rgba( 0, 0, 0, 0.2 );
                 transform: translateX( -300px );
-            }
-        }
-    }
-
-    // show sidebar toggle button
-    .header-wrap {
-        .header-nav {
-            #sidebar-toggle-btn {
-                display: block;
-            }
-        }
-    }
-}
-
-/**
- * 720px and smaller
- */
-@media (max-width: 720px) {
-
-    // show todo list controls
-    .todo-list-wrap {
-        .todo-list-item {
-            .todo-list-control {
-                opacity: 1;
             }
         }
     }

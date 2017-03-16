@@ -4,15 +4,15 @@ $headerHeight: 60px;
 $footerHeight: 4em;
 
 // spacing and padding
-$padSpace: 0.8em;
-$colSpace: 0.9em;
-$rowSpace: 1em;
+$padSpace: 0.9em;
+$colSpace: 1.0em;
+$rowSpace: 1.2em;
 $listSpace: 0.4em;
 
 // borders and lines
 $lineWidth: 2px;
 $lineStyle: solid;
-$lineColor: rgba( 0, 0, 0, 0.075 );
+$lineColor: rgba( 0, 0, 0, 0.1 );
 $lineJoin: 6px;
 
 // base font options
@@ -80,7 +80,7 @@ $shadowBold: 0 2px 12px rgba( 0, 0, 0, 0.4 );
 $shadowText: 1px 1px 0 rgba( 0, 0, 0, 0.3 );
 
 // common speed for most small ui transition animations
-$fxSpeed: 300ms;
+$fxSpeed: 400ms;
 $fxEase: cubic-bezier( 0.215, 0.610, 0.355, 1.000 );
 $fxEaseBounce: cubic-bezier( 0.640, -0.280, 0.050, 1.405 );
 
