@@ -100,6 +100,12 @@
             return output;
         },
 
+        // get a unique ID string that uses the current timestamp and a random value
+        idString: function()
+        {
+            return ( Date.now().toString( 36 ) + Math.random().toString( 36 ).substr( 2, 5 ) ).toUpperCase();
+        },
+
         // cap a number between min and max values
         capRange: function( num, min, max )
         {
@@ -145,6 +151,23 @@
         {
             var obj = this.arrayObjectExists( list, prop, value, true );
             return obj || {};
+        },
+
+        // convert an object to an enumerated array
+        objectToArray: function( obj )
+        {
+            var output = [];
+
+            if( typeof obj === "object" || Array.isArray( obj ) )
+            {
+                var keys = Object.keys( obj );
+
+                for( var i = 0; i < keys.length; ++i )
+                {
+                    output.push( obj[ keys[ i ] ] );
+                }
+            }
+            return output;
         },
 
         // get the value of a css property for an element
