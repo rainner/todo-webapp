@@ -1,6 +1,6 @@
 
 <template>
-    <div class="todo-info-page text">
+    <div class="todo-info-page">
 
         <h3>Hello and Welcome</h3>
         <p>
@@ -11,7 +11,7 @@
             <a class="icon-plus icon-pr" href="#" @click.prevent="emit( 'todosCreate' )">New List</a>,
             or select one you already created from the
             <a class="icon-book icon-pr" href="#" @click.prevent="emit( 'showSidebar' )">Sidebar Panel</a>
-            to the right <i>(hidden on mobile)</i>.
+            to the right.
         </p>
         <p>
             You can find more information about how to use this application along with

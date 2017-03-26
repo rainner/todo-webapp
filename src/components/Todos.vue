@@ -2,36 +2,23 @@
 <template>
     <div class="app-todos-list">
 
-        <div v-if="!hasTasks()" class="todo-info-page">
-            <h4>
-                This todos list is empty.
-            </h4>
-            <p>
-                <b>Type something</b> below and <b>hit enter</b> to add new tasks to this lists.
-            </p>
-            <p>
-                Use the <a class="icon-menu icon-pr" href="#" @click.prevent="emit( 'showMenu' )">Main Menu</a> above
-                to <b>manage your tasks</b>, or to <b>delete</b> this list.
-            </p>
-        </div>
-
-        <ul v-if="hasTasks()" class="todo-list-wrap sortable">
-            <li v-for="(task, index) in todos.tasks" :id="'task-' + index" :key="task.id" class="todo-list-item" :class="{ 'complete': task.complete }" v-sortitem>
+        <ul v-if="countTotal()" class="todo-list-wrap sortable">
+            <li v-for="(task, index) in todos.tasks" :id="'task-' + index" :key="task.key" class="todo-list-item" :class="{ 'complete': task.complete }" v-sortitem>
                 <div class="todo-list-icon is-clickable">
                     <span class="todo-list-icon-pending icon-clock sort-handle"></span>
                     <span class="todo-list-icon-complete icon-check sort-handle"></span>
                 </div>
                 <div class="todo-list-info">
                     <label class="todo-list-label">
-                        <div class="todo-list-date">Last modified: {{ task.modified }}</div>
+                        <div class="todo-list-date" v-html="task.modified"></div>
                         <input class="todo-list-input" type="text" v-model="task.todo" @focus="onFocus( $event )" @keyup.enter="taskUpdate( $event, index, 1 )" @blur="taskUpdate( $event, index )" />
                         <span class="todo-list-text text-wrap" v-html="task.todo"></span>
                     </label>
                 </div>
                 <div class="todo-list-control">
                     <div class="dropdown" v-dropdown>
-                        <big class="dropdown-trigger icon-config"></big>
-                        <ul class="dropdown-tr">
+                        <span class="dropdown-trigger icon-config"></span>
+                        <ul class="dropdown-left dropdown-bottom">
                             <li v-if="!task.complete"><a class="icon-check icon-pr text-success-hover" href="#" @click.prevent="taskCheck( index )">Check</a></li>
                             <li v-if="task.complete"><a class="icon-clock icon-pr text-warning-hover" href="#" @click.prevent="taskUncheck( index )">Uncheck</a></li>
                             <li><a class="icon-close icon-pr text-danger-hover" href="#" @click.prevent="taskDelete( index )">Delete task</a></li>
@@ -41,17 +28,31 @@
             </li>
         </ul>
 
-        <div class="todo-list-footer">
-            <form class="todo-list-form" action="#" @submit.prevent="taskInsert( $event )">
-                <div class="icon-plus text-success"></div>
-                <input type="text" name="todo" value="" placeholder="Add new TODO task..." />
+        <div v-else class="todo-info-page text-centered">
+            <h4>This todos list is empty.</h4>
+            <p>
+                Use the <a class="icon-edit icon-pr" href="#" @click.prevent="inputExpand()">New Task</a>
+                button below to <b>add new tasks</b> to this list.
+            </p>
+            <p>
+                Use the <a class="icon-menu icon-pr" href="#" @click.prevent="emit( 'showMenu' )">Main Menu</a> above
+                to <b>manage your tasks</b>, or to <b>delete</b> this list.
+            </p>
+            <p>
+                Use the <a class="icon-book icon-pr" href="#" @click.prevent="emit( 'showSidebar' )">Sidebar Panel</a>
+                on the right to <b>switch between lists</b>.
+            </p>
+        </div>
+
+        <div class="todo-footer-wrap">
+            <form class="todo-footer-form" action="#" @submit.prevent="taskInsert( $event )">
+                <label class="todo-footer-label">
+                    <div class="todo-footer-button icon-edit" title="New task" @click="inputExpand()" v-tooltip></div>
+                    <div class="todo-footer-control" :class="{ 'expanded': expanded }">
+                        <input type="text" name="todo" value="" placeholder="Add new task..." autocomplete="off" @blur="inputContract()" />
+                    </div>
+                </label>
             </form>
-            <div class="todo-list-metadata" v-if="todos.modified">
-                <span class="icon-clock icon-pr">Last saved: {{ todos.modified }}</span> <br /> &nbsp;&nbsp;&nbsp;
-                <span class="text-info" v-html="countTotal() + ' total'"></span>,
-                <span class="text-success" v-html="countDone() + ' done'"></span>,
-                <span class="text-danger" v-html="countRemain() + ' remain'"></span>.
-            </div>
         </div>
 
     </div>
@@ -63,17 +64,20 @@
 import Prompt from "../scripts/Prompt";
 import Sortable from "../scripts/Sortable";
 import Utils from "../scripts/Utils";
+import Scroller from "../scripts/Scroller";
 
 // setup sortable instance
-var sortable = new Sortable();
+var sortable = new Sortable( null, { uniqueAttribute: "id", moveHorizontal: false } );
 
 // component
 export default {
 
     // component props
     props: {
-        todos: { type: Object, default: {}, required: true },
+        user: { type: Object, default: {}, required: false },
         options: { type: Object, default: {}, required: false },
+        lists: { type: Array, default: [], required: false },
+        todos: { type: Object, default: {}, required: false },
     },
 
     // custom dom element manipulations
@@ -94,6 +98,7 @@ export default {
     data: function() {
         return {
             last: "",
+            expanded: false,
         };
     },
 
@@ -112,19 +117,39 @@ export default {
             this.last = e.target.value || "";
         },
 
+        // scroll tasks area to the bottom
+        autoScroll: function()
+        {
+            var dest = ( this.options.taskInsertPosition === "top" ) ? "top" : "bottom";
+            setTimeout( function() { new Scroller( ".app-left", dest ); }, 500 );
+        },
+
+        // expand task input
+        inputExpand: function( e )
+        {
+            this.expanded = true;
+            this.autoScroll();
+        },
+
+        // hide task input
+        inputContract: function( e )
+        {
+            this.expanded = false;
+        },
+
         // check if the todos object is valid
         hasTodos: function()
         {
-            return ( this.todos.id !== undefined && Array.isArray( this.todos.tasks ) );
+            return ( this.todos.hasOwnProperty( "key" ) && this.todos.key );
         },
 
-        // check if there are tasks in selected todos list
+        // check if there are tasks in given todos list
         hasTasks: function()
         {
             return ( Array.isArray( this.todos.tasks ) && this.todos.tasks.length );
         },
 
-        // get total number of entries in a todos list
+        // count total tasks in current todos
         countTotal: function()
         {
             return this.hasTasks() ? this.todos.tasks.length : 0;
@@ -145,14 +170,7 @@ export default {
         // check if a task exists in the selected todos list
         taskExists: function( index )
         {
-            if( Array.isArray( this.todos.tasks ) && index !== undefined )
-            {
-                if( this.todos.tasks[ index ] !== undefined )
-                {
-                    return true;
-                }
-            }
-            return false;
+            return ( this.hasTasks() && typeof this.todos.tasks[ index ] === "object" );
         },
 
         // append new todos task to current active todos list (form submit event)
@@ -164,21 +182,21 @@ export default {
 
             if( this.hasTodos() && todo && typeof todo === "string" )
             {
-                var id   = Utils.randString( 10 );
-                var date = Utils.dateString();
                 var task = {
-                    id       : id,
+                    key      : Utils.idString(),
+                    time     : Date.now(),
+                    expire   : 0,
+                    modified : Utils.dateString(),
                     todo     : todo,
-                    modified : date,
                     complete : false,
                 };
                 switch( this.options.taskInsertPosition )
                 {
-                    case "top" : this.todos.tasks.splice( 0, 0, task ) ; break;
+                    case "top" : this.todos.tasks.splice( 0, 0, task ); break;
                     default    : this.todos.tasks.push( task );
                 }
-                this.todos.modified = date;
-                this.emit( "todosSave", this.todos, "New todos task has been added." );
+                this.emit( "todosUpdate", this.todos, "New todos task has been added." );
+                this.autoScroll();
             }
             e.target.reset();
         },
@@ -190,50 +208,58 @@ export default {
 
             if( enter ) { e.target.blur(); return; }
 
-            if( this.taskExists( index ) && todo && todo !== this.last )
+            if( this.hasTodos() && this.taskExists( index ) && todo && todo !== this.last )
             {
                 var date = Utils.dateString();
-                this.todos.modified = date;
-                this.todos.tasks[ index ].modified = date;
                 this.todos.tasks[ index ].todo = todo;
-                this.emit( "todosSave", this.todos, "Todos task has been updated." );
+                this.todos.tasks[ index ].modified = date;
+                this.todos.modified = date;
+                this.emit( "todosUpdate", this.todos, "Todos task has been updated." );
             }
         },
 
-        // make todos task as checked for index
+        // make todos task as checked for key
         taskCheck: function( index )
         {
-            if( this.taskExists( index ) )
+            if( this.hasTodos() && this.taskExists( index ) )
             {
                 var date = Utils.dateString();
-                this.todos.modified = date;
-                this.todos.tasks[ index ].modified = date;
                 this.todos.tasks[ index ].complete = true;
-                this.emit( "todosSave", this.todos, "Todos task has been marked as complete." );
+                this.todos.tasks[ index ].modified = date;
+                this.todos.modified = date;
+                this.emit( "todosUpdate", this.todos, "Todos task has been marked as complete." );
             }
         },
 
-        // make todos task as unchecked for index
+        // make todos task as unchecked for key
         taskUncheck: function( index )
         {
-            if( this.taskExists( index ) )
+            if( this.hasTodos() && this.taskExists( index ) )
             {
                 var date = Utils.dateString();
-                this.todos.modified = date;
-                this.todos.tasks[ index ].modified = date;
                 this.todos.tasks[ index ].complete = false;
-                this.emit( "todosSave", this.todos, "Todos task has been unchecked." );
+                this.todos.tasks[ index ].modified = date;
+                this.todos.modified = date;
+                this.emit( "todosUpdate", this.todos, "Todos task has been unchecked." );
             }
         },
 
-        // delete todos task from list for index
+        // delete todos task from list for key
         taskDelete: function( index )
         {
-            if( this.taskExists( index ) )
+            if( this.hasTodos() && this.taskExists( index ) )
             {
-                this.todos.modified = Utils.dateString();
-                this.todos.tasks.splice( index, 1 );
-                this.emit( "todosSave", this.todos, "Todos task has been deleted." );
+                var _delete = function()
+                {
+                    this.todos.tasks.splice( index, 1 );
+                    this.todos.modified = Utils.dateString();
+                    this.emit( "todosUpdate", this.todos, "Todos task has been deleted." );
+                };
+                new Prompt( {
+                    title: "Confirm...",
+                    confirm: "Delete this task?",
+                    onAccept: _delete.bind( this ),
+                });
             }
         },
 
@@ -242,17 +268,16 @@ export default {
         {
             if( this.hasTodos() && this.countDone() > 0 )
             {
-                var self = this;
-
-                new Prompt({
+                var _clean = function()
+                {
+                    this.todos.tasks = this.todos.tasks.filter( function( task ) { return !task.complete; } );
+                    this.todos.modified = Utils.dateString();
+                    this.emit( "todosUpdate", this.todos, "All completed tasks have been removed." );
+                };
+                new Prompt( {
                     title: "Confirm...",
-                    confirm: "Delete all completed tasks?",
-                    onAccept: function()
-                    {
-                        self.todos.modified = Utils.dateString();
-                        self.todos.tasks = self.todos.tasks.filter( function( task ) { return !task.complete; } );
-                        self.emit( "todosSave", self.todos, "All completed tasks have been removed" );
-                    }
+                    confirm: "Remove all complete tasks?",
+                    onAccept: _clean.bind( this ),
                 });
             }
         },
@@ -262,17 +287,16 @@ export default {
         {
             if( this.hasTodos() && this.countTotal() > 0 )
             {
-                var self = this;
-
-                new Prompt({
+                var _flush = function()
+                {
+                    this.todos.tasks = [];
+                    this.todos.modified = Utils.dateString();
+                    this.emit( "todosUpdate", this.todos, "All tasks have been removed." );
+                };
+                new Prompt( {
                     title: "Confirm...",
-                    confirm: "Delete all tasks from this list?",
-                    onAccept: function()
-                    {
-                        self.todos.modified = Utils.dateString();
-                        self.todos.tasks = [];
-                        self.emit( "todosSave", self.todos, "All tasks have been removed" );
-                    }
+                    confirm: "Delete all tasks?",
+                    onAccept: _flush.bind( this ),
                 });
             }
         },
@@ -286,6 +310,7 @@ export default {
                 if( status === false && this.countRemain() === this.countTotal() ) return;
 
                 var date = Utils.dateString();
+                var word = status ? "checked" : "unchecked";
 
                 for( var i = 0; i < this.todos.tasks.length; ++i )
                 {
@@ -293,7 +318,7 @@ export default {
                     this.todos.tasks[ i ].complete = status;
                 }
                 this.todos.modified = date;
-                this.emit( "todosSave", this.todos, "All tasks have been " + ( status ? "checked" : "unchecked" ) + "." );
+                this.emit( "todosUpdate", this.todos, "All tasks have been " + word + "." );
             }
         },
 
@@ -312,7 +337,7 @@ export default {
                     }
                     this.todos.tasks = tasks;
                     this.todos.modified = Utils.dateString();
-                    this.emit( "todosSave", this.todos, "New task list order has been saved." );
+                    this.emit( "todosUpdate", this.todos, "New task list order has been saved." );
                 }
             }
         },
@@ -339,6 +364,14 @@ export default {
         sortable.onChange( function() {
             self.tasksSort( this.getNumericOrder() );
         });
+    },
+
+    // component before destroy
+    beforeDestroy: function()
+    {
+        this.$parent.$off( "tasksToggle" );
+        this.$parent.$off( "tasksClean" );
+        this.$parent.$off( "tasksFlush" );
     },
 
     // component mounted

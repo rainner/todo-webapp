@@ -28,7 +28,7 @@
         </p>
         <p>
             The lists you create will appear on the <a class="icon-book icon-pr" href="#" @click.prevent="emit( 'showSidebar' )">Sidebar Panel</a>
-            located to the right <i>(hidden on mobile)</i>. Once a list is <b>created and selected</b>, you can start adding tasks
+            located to the right. Once a list is <b>created and selected</b>, you can start adding tasks
             using the <b>input field</b> located on the page.
         </p>
 

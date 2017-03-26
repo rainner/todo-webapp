@@ -43,9 +43,9 @@
                 <b>across browsers and devices</b> without having to sign in.
             </p>
             <p>
-                <button class="btn bg-secondary-hover icon-download icon-pr shadow-paper" @click="exportData( $event )">Export</button>
-                <button class="btn bg-secondary-hover icon-save icon-pr shadow-paper" @click="importData( $event )">Import</button>
-                <button v-if="lists.length" class="btn bg-danger-hover icon-trash icon-pr shadow-paper" @click="emit( 'flushData' )">Erase</button>
+                <button class="btn bg-secondary-hover icon-download icon-pr shadow-paper" @click="exportData()">Export</button>
+                <button class="btn bg-secondary-hover icon-save icon-pr shadow-paper" @click="importData()">Import</button>
+                <button v-if="hasData()" class="btn bg-danger-hover icon-trash icon-pr shadow-paper" @click="flushData()">Erase</button>
             </p>
         </div>
 
@@ -112,9 +112,9 @@ export default {
 
     // component props
     props: {
-        lists: { type: Array, default: [], required: true },
-        options: { type: Object, default: {}, required: true },
         user: { type: Object, default: {}, required: false },
+        options: { type: Object, default: {}, required: false },
+        lists: { type: Array, default: [], required: false },
     },
 
     // app methods
@@ -126,21 +126,28 @@ export default {
             return this.$parent.emit.apply( this.$parent, arguments );
         },
 
+        // check if lists has data
+        hasData: function()
+        {
+            return this.lists.length || 0;
+        },
+
         // on option toggle change
         onChange: function( e )
         {
             var key = e.target.name;
             var val = e.target.value;
+            var opt = {};
 
             if( e.target.type === "checkbox" ) {
                 val = e.target.checked;
             }
-            this.options[ key ] = val;
-            this.emit( "saveOptions", "Options have been saved." );
+            opt[ key ] = val;
+            this.emit( "saveOptions", opt, "Options have been saved." );
         },
 
         // import data button event
-        importData: function( e )
+        importData: function()
         {
             if( !window.File || !window.FileList || !window.FileReader )
             {
@@ -167,7 +174,8 @@ export default {
                     reader.addEventListener( "load", function( e )
                     {
                         var data = JSON.parse( e.target.result || "{}" ) || {};
-                        self.emit( "importData", data, true );
+                        self.emit( "importOptions", data.options || {}, true );
+                        self.emit( "importLists", data.lists || [], true );
                     });
                     reader.readAsText( this.files[0], "utf-8" );
                 }
@@ -178,7 +186,7 @@ export default {
         },
 
         // export data button event
-        exportData: function( e )
+        exportData: function()
         {
             var data = {
                 timestamp: Date.now(),
@@ -216,6 +224,20 @@ export default {
             catch( e ) {
                 this.emit( "showNotice", "error", e.message );
             }
+        },
+
+        // flush all data
+        flushData: function()
+        {
+            var _flush = function()
+            {
+                this.emit( "saveDefaults" );
+            };
+            new Prompt({
+                title: "Confirm...",
+                confirm: "Delete all data saved by this app?",
+                onAccept: _flush.bind( this ),
+            });
         },
 
     },
