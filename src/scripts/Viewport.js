@@ -57,10 +57,12 @@
             return Math.max( 0, Math.floor( this.pageHeight() - this.clientHeight() ) );
         },
         mouseLeft : function( e ) {
-            return e ? Math.max( 0, e.pageX || e.clientX || 0 ) : 0;
+            var t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
+            return e ? Math.max( 0, t.pageX || e.pageX || e.clientX || 0 ) : 0;
         },
         mouseTop : function( e ) {
-            return e ? Math.max( 0, e.pageY || e.clientY || 0 ) : 0;
+            var t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
+            return e ? Math.max( 0, t.pageY || e.pageY || e.clientY || 0 ) : 0;
         },
         centerX : function( e ) { // pointer axis from center
             return ( this.mouseLeft( e ) - ( this.clientWidth() / 2 ) );
