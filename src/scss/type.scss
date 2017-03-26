@@ -50,6 +50,24 @@ p {
 }
 
 /**
+ * Links
+ */
+a,
+a:active,
+a:visited,
+a:hover {
+    color: darken( $colorPrimary, 10% );
+    text-decoration: none;
+}
+a:hover {
+    color: $colorPrimary;
+}
+p > a {
+    display: inline-block;
+    text-decoration: underline;
+}
+
+/**
  * Subscript
  */
 sub, sup {

@@ -19,15 +19,16 @@
         cursor: pointer;
         margin-bottom: $listSpace;
         border-radius: $lineJoin;
-        border-bottom: $lineWidth $lineStyle darken( $colorDocument, 30% );
-        background-color: lignten( $colorDocument, 20% );
-        box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.4 );
+        background-color: lignten( $colorDocument, 5% );
+        border-bottom: $lineWidth $lineStyle $colorDocument;
+        box-shadow: $shadowBold;
         opacity: 0;
         transform: translateY( 120px );
 
         .notify-message {
             display: block;
             padding: $padSpace;
+            padding-bottom: calc( #{$padSpace} - 4px );
             font-weight: normal;
         }
         &.notify-visible {
@@ -35,28 +36,28 @@
             transform: translateY( 0 );
         }
         &.notify-default {
-            border-color: darken( $colorDefault, 10% );
             background-color: $colorDefault;
+            border-color: darken( $colorDefault, 5% );
             color: $colorDefaultText;
         }
         &.notify-success {
-            border-color: darken( $colorSuccess, 10% );
             background-color: $colorSuccess;
+            border-color: darken( $colorSuccess, 5% );
             color: $colorSuccessText;
         }
         &.notify-warning {
-            border-color: darken( $colorWarning, 10% );
             background-color: $colorWarning;
+            border-color: darken( $colorWarning, 5% );
             color: $colorWarningText;
         }
         &.notify-info {
-            border-color: darken( $colorInfo, 10% );
             background-color: $colorInfo;
+            border-color: darken( $colorInfo, 5% );
             color: $colorInfoText;
         }
         &.notify-danger {
-            border-color: darken( $colorDanger, 10% );
             background-color: $colorDanger;
+            border-color: darken( $colorDanger, 5% );
             color: $colorDangerText;
         }
     }

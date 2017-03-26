@@ -25,28 +25,30 @@
         text-align: left;
         max-width: 300px;
         padding: 6px 0;
-        background-color: lighten( $colorDocument, 10% );
+        top: 80%;
+        left: 0;
+        background-color: lighten( $colorDocument, 5% );
+        border-left: $lineWidth $lineStyle $colorPrimary;
         border-radius: $lineJoin;
-        border-left: $lineWidth $lineStyle $colorSecondary;
         box-shadow: $shadowBold;
         animation: dropdownShow $fxSpeed $fxEaseBounce forwards;
         z-index: -9999;
 
-        &.dropdown-tl { /* top left */
-            top: 80%;
-            left: 0;
+        &.dropdown-top { /* show on top */
+            top: auto;
+            bottom: 80%;
         }
-        &.dropdown-tr { /* top right */
+        &.dropdown-bottom { /* show on bottom */
             top: 80%;
+            bottom: auto;
+        }
+        &.dropdown-left { /* show on left */
+            left: auto;
             right: 0;
         }
-        &.dropdown-bl { /* bottom left */
-            bottom: 80%;
+        &.dropdown-right { /* show on right */
             left: 0;
-        }
-        &.dropdown-br { /* bottom right */
-            bottom: 80%;
-            right: 0;
+            right: auto;
         }
 
         li {
@@ -67,7 +69,7 @@
             padding: 0.6em 1em;
             line-height: 1em;
             white-space: nowrap;
-            background-color: rgba( 0, 0, 0, 0.01 );
+            background-color: rgba( 0, 0, 0, 0 );
             color: $colorText;
 
             &:hover {
@@ -77,8 +79,8 @@
         }
         li.active > a,
         li.active > button {
-            background-color: $colorSecondary;
-            color: $colorSecondaryText;
+            background-color: rgba( 0, 0, 0, 0.1 );
+            color: $colorPrimary;
         }
     }
 }

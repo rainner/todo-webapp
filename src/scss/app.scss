@@ -5,7 +5,7 @@
 .app-wrap {
     display: block;
     overflow: hidden;
-    padding-top: 60px;
+    padding-top: $topbarHeight;
     height: 100vh;
 
     .app-columns {
@@ -13,13 +13,13 @@
         flex-direction: row;
         align-items: stretch;
         justify-content: stretch;
-        height: calc( 100vh - 60px );
+        height: calc( 100vh - #{$topbarHeight} );
 
         .app-left {
             flex: 1;
             overflow-x: hidden;
             overflow-y: auto;
-            background-position: center center;
+            background-position: center top;
             background-repeat: no-repeat;
             background-size: contain;
             z-index: 1;

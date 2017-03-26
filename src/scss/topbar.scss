@@ -5,7 +5,7 @@
     display: block;
     position: fixed;
     width: 100%;
-    height: 60px;
+    height: $topbarHeight;
     left: 0;
     top: 0;
     margin: 0;
@@ -21,19 +21,18 @@
         flex-direction: row;
         align-items: center;
         justify-content: stretch;
-        height: 60px;
+        height: $topbarHeight;
 
         & > div {
             display: block;
-            pointer-events: auto;
             cursor: pointer;
         }
-        span, input {
+
+        .header-icon > span,
+        .header-btn > span {
             display: block;
             font-size: 140%;
-            line-height: 1.2em;
-        }
-        span {
+            line-height: 1em;
             padding: 4px 2px;
         }
         .header-icon {
@@ -50,8 +49,16 @@
             flex: 1;
 
             input {
+                display: block;
+                white-space: nowrap !important;
+                overflow: visible !important;
+                text-overflow: ellipsis !important;
+                margin: 0;
+                padding: 0;
                 width: 100%;
-                line-height: 1.8em;
+                font-size: 120%;
+                line-height: 1.6em;
+                height: 52px;
             }
         }
         #sidebar-toggle-btn {

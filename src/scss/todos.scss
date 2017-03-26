@@ -13,6 +13,7 @@
         list-style: none;
         text-align: left;
         padding: $padSpace;
+        padding-bottom: 5em;
 
         // todo list item entry (pending)
         .todo-list-item {
@@ -21,25 +22,31 @@
             align-items: center;
             justify-content: stretch;
             margin: 0 0 $listSpace 0;
-            padding: 0.5em $padSpace;
+            padding: 0.6em;
             background-color: lighten( $colorDocument, 5% );
-            border-bottom: $lineWidth $lineStyle $colorDefault;
+            border-bottom: $lineWidth $lineStyle $colorDocument;
             border-radius: $lineJoin;
-            box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
+            box-shadow: $shadowPaper;
+
+            // list hover effect
+            &:hover {
+                background-color: lighten( $colorDocument, 10% );
+            }
 
             // list item left icon
-            .todo-list-icon,
-            .todo-list-icon a {
-                font-size: 200%;
-                line-height: 1em;
-                margin-right: 10px;
+            .todo-list-icon {
                 text-align: left;
 
-                // pending icon
+                span {
+                    display: block;
+                    font-size: 200%;
+                    line-height: 1em;
+                    margin-right: 10px;
+                }
                 .todo-list-icon-pending {
+                    display: block;
                     color: $colorWarning;
                 }
-                // complete icon
                 .todo-list-icon-complete {
                     display: none;
                     color: $colorSuccess;
@@ -95,31 +102,31 @@
 
             // entry controls
             .todo-list-control {
+                text-align: right;
                 padding: 2px 0 0 10px;
-                opacity: 0.2;
 
-                button {
-                    display: inline-block;
-                    font-size: inherit;
+                .dropdown-trigger {
+                    display: block;
+                    font-size: 140%;
                     line-height: 1em;
                     cursor: pointer;
-                }
-            }
+                    color: rgba( 0, 0, 0, 0.35 );
 
-            // entry hover state
-            &:hover {
-                background-color: $colorDocument;
-
-                // show controls on hover
-                .todo-list-control {
-                    opacity: 1;
+                    &:hover {
+                        color: rgba( 0, 0, 0, 0.5 );
+                    }
                 }
             }
         }
 
         // completed list item changes
         .todo-list-item.complete {
-            background-color: #e1ede0;
+            background-color: lighten( $colorSuccess, 45% );
+            border-bottom-color: lighten( $colorSuccess, 40% );
+
+            &:hover {
+                background-color: lighten( $colorSuccess, 48% );
+            }
 
             // toggle left icon state
             .todo-list-icon {
@@ -127,7 +134,7 @@
                     display: none;
                 }
                 .todo-list-icon-complete {
-                    display: inline-block;
+                    display: block;
                 }
             }
             // add line-through effect to todo text
@@ -146,39 +153,84 @@
         }
     }
 
-    // todos list add form
-    .todo-list-footer {
+    // tasks form
+    .todo-footer-wrap {
         display: block;
-        margin: 0;
-        padding: 40px $padSpace;
+        position: fixed;
+        text-align: center;
+        pointer-events: none;
+        width: calc( 100vw - 300px );
+        left: 0;
+        bottom: 0;
+        z-index: 888;
 
-        .todo-list-form {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: stretch;
+        .todo-footer-form {
+            display: inline-block;
+            pointer-events: auto;
+            padding: 0 $padSpace;
+            margin: 0 auto;
+            width: auto;
 
-            input {
-                display: block;
-                flex: 1;
-                padding: 0 0.5em;
-                line-height: 1.8em;
-                border-bottom: $lineWidth $lineStyle $colorSuccess;
+            .todo-footer-label {
+                display: flex;
+                position: relative;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
 
-                &:focus {
-                    border-color: $colorPrimary;
+                .todo-footer-button {
+                    display: block;
+                    position: relative;
+                    cursor: pointer;
+                    text-align: center;
+                    font-size: 160%;
+                    line-height: 2em;
+                    width: 2em;
+                    height: 2em;
+                    color: $colorSuccessText;
+                    background-color: $colorSuccess;
+                    border-radius: 100px;
+                    box-shadow: $shadowBold;
+                    z-index: 3;
+
+                    &:hover {
+                        background-color: darken( $colorSuccess, 10% );
+                    }
+                }
+
+                .todo-footer-control {
+                    display: block;
+                    position: relative;
+                    overflow: hidden;
+                    text-align: left;
+                    width: 0;
+                    opacity: 0;
+                    padding: 1em 0;
+                    z-index: 2;
+                    transform: translateX( -20px );
+                    transition: width $fxSpeed $fxEase, opacity $fxSpeed $fxEase;
+
+                    input {
+                        display: inline-block;
+                        padding-left: calc( 20px + 0.5em );
+                        padding-right: $padSpace;
+                        line-height: 2em;
+                        width: calc( 100% - 1em );
+                        background-color: lighten( $colorDocument, 20% );
+                        border: $lineWidth $lineStyle $colorSuccess;
+                        border-radius: $lineJoin;
+                    }
+                }
+
+                .todo-footer-control.expanded {
+                    width: 40vw;
+                    opacity: 1;
+                    input { box-shadow: $shadowBold; }
                 }
             }
         }
-        .todo-list-metadata {
-            display: none;
-            padding-left: 1.9em;
-            padding-top: 1.2em;
-            font-size: 80%;
-            line-height: 1.6em;
-            color: desaturate( darken( $colorDocument, 50% ), 10% );
-        }
     }
+
 }
 
 /**
@@ -188,11 +240,18 @@
 
     // totals on mobile
     .app-todos-list {
-        .todo-list-footer {
-            .todo-list-metadata {
-                display: block;
+
+        .todo-footer-wrap {
+            width: 100%;
+            .todo-footer-form {
+                .todo-footer-label {
+                    .todo-footer-control.expanded {
+                        width: 60vw;
+                    }
+                }
             }
         }
+
     }
 }
 
@@ -203,12 +262,17 @@
 
     // show todo list controls
     .app-todos-list {
-        .todo-list-wrap {
-            .todo-list-item {
-                .todo-list-control {
-                    opacity: 0.8;
+
+        .todo-footer-wrap {
+            width: 100%;
+            .todo-footer-form {
+                .todo-footer-label {
+                    .todo-footer-control.expanded {
+                        width: 70vw;
+                    }
                 }
             }
         }
+
     }
 }

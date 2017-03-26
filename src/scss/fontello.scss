@@ -35,10 +35,9 @@
     font-size: inherit;
     line-height: inherit;
     width: 1em;
-    line-height: 1em;
     margin-left: .01em;
     margin-right: .01em;
-    opacity: 0.95;
+    vertical-align: top;
     speak: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -56,6 +55,10 @@
 .icon-fwr:before { /* fixed-width right */
     width: 20px;
     margin-right: 0.3em;
+}
+.icon-bk:before { /* single block level icon */
+    display: block;
+    vertical-align: middle;
 }
 .icon-spin:before {
     animation: iconSpin 1s infinite linear;

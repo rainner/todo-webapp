@@ -41,6 +41,13 @@
             list-style: none;
             text-align: left;
 
+            // disable transition of elements inside list item
+            .saved-list-item *,
+            .saved-list-item *:before,
+            .saved-list-item *:after {
+                transition: none;
+            }
+
             // list item
             .saved-list-item {
                 display: block;
@@ -48,13 +55,11 @@
                 cursor: pointer;
                 margin: 0;
                 padding: $padSpace;
-                padding-bottom: $padSpace / 2;
                 border-radius: $lineJoin;
                 background-color: lighten( $colorSecondary, 10% );
                 border-bottom: $lineWidth $lineStyle lighten( $colorSecondary, 5% );
                 color: $colorDocument;
                 box-shadow: $shadowPaper;
-                animation: showAnimation $fxSpeed $fxEase;
 
                 // left side arrow
                 &:before {
@@ -75,18 +80,37 @@
                 &:hover {
                     background-color: lighten( $colorSecondary, 15% );
                 }
-                & > hr {
-                    margin: 6px 0;
+
+                .saved-list-date {
+                    font-size: 70%;
+                    line-height: 1em;
+                    padding-bottom: 0.8em;
+                    opacity: 0.4;
                 }
+
                 .saved-list-title {
-                    color: #fff;
+                    line-height: 1.2em;
+                    padding-bottom: 0.5em;
+                    margin-bottom: calc( 0.5em + #{$lineWidth} );
+                    border-bottom: $lineWidth $lineStyle $lineColor;
                 }
-                .saved-list-pill {
-                    display: inline-block;
-                    font-weight: normal;
+
+                .saved-list-count {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: flex-start;
+                    justify-content: flex-start;
                     font-size: 80%;
                     line-height: 1em;
-                    margin-right: 0.5em;
+
+                    & > span {
+                        display: inline-block;
+                    }
+                }
+                .saved-list-count > span + span {
+                    margin-left: 0.4em;
+                    padding-left: 0.4em;
+                    border-left: $lineWidth $lineStyle $lineColor;
                 }
             }
 
