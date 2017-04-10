@@ -405,7 +405,7 @@ export default {
         // import app options
         importOptions: function( data, save )
         {
-            if( typeof data === "object" )
+            if( data !== null && typeof data === "object" )
             {
                 this.options = Object.assign( {}, defaultOptions, data );
                 if( save ) this.saveData( "options", this.options, "Options have been loaded and saved." );
@@ -415,7 +415,7 @@ export default {
         // import app lists
         importLists: function( data, save )
         {
-            if( typeof data === "object" || Array.isArray( data ) )
+            if( data !== null && ( typeof data === "object" || Array.isArray( data ) ) )
             {
                 var lists = [];
                 var time  = Date.now();
@@ -463,7 +463,7 @@ export default {
         // import data loaded from remote db
         onAuthData: function( snapshot )
         {
-            if( snapshot.val() !== null )
+            if( snapshot && snapshot.val() !== null )
             {
                 this.importOptions( snapshot.val().options || {} );
                 this.importLists( snapshot.val().lists || [] );
@@ -476,7 +476,7 @@ export default {
             this.$emit( "showSpinner" );
             this.user = {};
 
-            if( user !== null )
+            if( user !== null && user.uid )
             {
                 this.user = {
                     uid      : user.uid,
@@ -486,13 +486,10 @@ export default {
                     provider : user.providerData[ 0 ].providerId,
                 };
                 database.ref( "/users/" + user.uid ).once( "value" ).then( this.onAuthData );
-                notify.success( "You have signed in using " + this.user.provider + "." );
+                return notify.success( "You have signed in using " + this.user.provider + "." );
             }
-            else {
-                var self = this;
-                localforage.getItem( "options" ).then( function( options ) { self.importOptions( options ); } );
-                localforage.getItem( "lists" ).then( function( lists ) { self.importLists( lists ); } );
-            }
+            localforage.getItem( "options" ).then( this.importOptions );
+            localforage.getItem( "lists" ).then( this.importLists );
         },
 
         // firebase login using a provider and user creds
