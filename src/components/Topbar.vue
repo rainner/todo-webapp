@@ -64,7 +64,7 @@ export default {
     // component data
     data: function() {
         return {
-            spinner: true,
+            spinner: false,
             sto: null,
         };
     },
