@@ -5,9 +5,9 @@
 
 # TODO VueJS Webapp
 
-This is a single page Task Managing web application built with Vue.js that  uses Google Firebase as a back-end for data keeping by authenticated users and LocalStorage for non-authenticated users. This is intended to be used as a simple TODOs web-app for creating TODO lists with the option to login using an online account to keep your TODOs data sync'd between devices.
-
 ![TODO-WebApp](https://raw.githubusercontent.com/rainner/todo-webapp/master/thumb.jpg)
+
+This is a single page Task Managing web application built with Vue.js that  uses Google Firebase as a back-end for data keeping by authenticated users and LocalStorage for non-authenticated users. This is intended to be used as a simple TODOs web-app for creating TODO lists with the option to login using an online account to keep your TODOs data sync'd between devices.
 
 ##### [Check out the demo][demo]
 
