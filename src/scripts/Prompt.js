@@ -8,19 +8,16 @@
  */
 (function( name, factory ) {
 
-    if( typeof define === "function" ) { define( factory ); }
-    if( typeof exports === "object" )  { module.exports = factory(); }
-    if( typeof window === "object" )
-    {
+    if ( typeof define === "function" ) { define( factory ); }
+    if ( typeof exports === "object" )  { module.exports = factory(); }
+    if ( typeof window === "object" ) {
         window[ name ] = factory();
 
         // highjack native window prompt to use this class,
         // if a third param callback is given
-        var _prompt = window.prompt;
-        window.prompt = function( title, value, callback )
-        {
-            if( callback && typeof callback === "function" )
-            {
+        let _prompt = window.prompt;
+        window.prompt = function( title, value, callback ) {
+            if ( callback && typeof callback === "function" ) {
                 return new window[ name ]( {
                     title    : title || "Enter a value",
                     value    : value || "",
@@ -34,8 +31,7 @@
 })( "Prompt", function() {
 
     // class constructor
-    var Factory = function( options )
-    {
+    let Factory = function( options ) {
         this._options = Object.assign( {
             // title to show on prompt window
             title: "Enter a value",
@@ -96,7 +92,7 @@
         this._container.addEventListener( "submit", this._onAccept.bind( this ), true );
         this._container.appendChild( this._title );
 
-        if( this._options.confirm ) { this._container.appendChild( this._message ); }
+        if ( this._options.confirm ) { this._container.appendChild( this._message ); }
         else { this._container.appendChild( this._input ); }
         this._container.appendChild( this._buttons );
 
@@ -113,13 +109,11 @@
         constructor: Factory,
 
         // add prompt to page
-        _append: function()
-        {
+        _append: function() {
             document.body.appendChild( this._overlay );
             this._input.focus();
 
-            var show = function()
-            {
+            let show = function() {
                 this._overlay.classList.add( this._options.toggleClass );
                 this._input.selectionStart = this._input.selectionEnd = 10000;
             };
@@ -127,14 +121,11 @@
         },
 
         // remove prompt from page
-        _remove: function()
-        {
+        _remove: function() {
             this._overlay.classList.remove( this._options.toggleClass );
 
-            var clear = function()
-            {
-                if( document.body.contains( this._overlay ) )
-                {
+            let clear = function() {
+                if ( document.body.contains( this._overlay ) ) {
                     document.body.removeChild( this._overlay );
                 }
             };
@@ -142,24 +133,19 @@
         },
 
         // on accept button
-        _onAccept: function( e )
-        {
+        _onAccept: function( e ) {
             e.preventDefault();
 
-            if( typeof this._options.onAccept === "function" )
-            {
+            if ( typeof this._options.onAccept === "function" ) {
                 this._options.onAccept( this._input.value );
             }
             this._remove();
         },
 
         // on cancel bubble
-        _onCancel: function( e )
-        {
-            if( e.target === this._cancel || e.target === this._overlay )
-            {
-                if( typeof this._options.onCancel === "function" )
-                {
+        _onCancel: function( e ) {
+            if ( e.target === this._cancel || e.target === this._overlay ) {
+                if ( typeof this._options.onCancel === "function" ) {
                     this._options.onCancel( this._input.value );
                 }
                 this._remove();

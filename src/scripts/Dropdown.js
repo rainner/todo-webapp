@@ -7,15 +7,14 @@
  */
 (function( name, factory ) {
 
-    if( typeof define === "function" ) { define( factory ); }
-    if( typeof exports === "object" ) { module.exports = factory(); }
-    if( typeof window === "object" ) { window[ name ] = factory(); }
+    if ( typeof define === "function" ) { define( factory ); }
+    if ( typeof exports === "object" ) { module.exports = factory(); }
+    if ( typeof window === "object" ) { window[ name ] = factory(); }
 
 })( "Dropdown", function() {
 
     // class constructor
-    var Factory = function( dropdown, options )
-    {
+    let Factory = function( dropdown, options ) {
         this._options = Object.assign( {
             // ...
         }, options );
@@ -30,7 +29,7 @@
         this._toggleMenu = this._toggleMenu.bind( this );
 
         this.select( dropdown );
-        // window.addEventListener( "click", this._hideMenu );
+        document.body.addEventListener( "click", this._hideMenu );
     };
 
     // class prototype
@@ -38,30 +37,26 @@
         constructor: Factory,
 
         // select dropdown root element/s
-        select: function( dropdown )
-        {
+        select: function( dropdown ) {
             dropdown = ( typeof dropdown === "string" ) ? document.querySelector( dropdown ) : dropdown;
 
             this._dropdown = ( dropdown instanceof Element ) ? dropdown : null;
             this._trigger  = this._dropdown ? this._dropdown.querySelector( ".dropdown-trigger" ) : null;
             this._list     = this._dropdown ? this._dropdown.querySelector( "ul" ) : null;
 
-            if( this._dropdown && this._trigger && this._list && !this._dropdown.hasAttribute( "data-dropdown" ) )
-            {
+            if ( this._dropdown && this._trigger && this._list && !this._dropdown.hasAttribute( "data-dropdown" ) ) {
                 this._listClass = this._list.className;
                 this._dropdown.setAttribute( "data-dropdown", 1 );
-                this._dropdown.addEventListener( "mouseup", this._hideMenu );
+                this._dropdown.addEventListener( "click", e => e.stopPropagation() );
                 this._dropdown.addEventListener( "mouseleave", this._hideMenu );
                 this._trigger.addEventListener( "click", this._toggleMenu );
             }
         },
 
         // modify list class to account for going off the screen
-        _adjustList: function()
-        {
-            if( this._list )
-            {
-                var box        = this._list.getBoundingClientRect(),
+        _adjustList: function() {
+            if ( this._list ) {
+                let box        = this._list.getBoundingClientRect(),
                     boxWidth   = this._list.offsetWidth,
                     boxHeight  = this._list.offsetHeight,
                     pageLeft   = 0,
@@ -69,22 +64,22 @@
                     pageRight  = window.innerWidth,
                     pageBottom = window.innerHeight;
 
-                if( box.top < pageTop ) // move down
+                if ( box.top < pageTop ) // move down
                 {
                     this._list.classList.remove( "dropdown-top" );
                     this._list.classList.add( "dropdown-bottom" );
                 }
-                if( ( box.top + boxHeight ) > pageBottom ) // move up
+                if ( ( box.top + boxHeight ) > pageBottom ) // move up
                 {
                     this._list.classList.remove( "dropdown-bottom" );
                     this._list.classList.add( "dropdown-top" );
                 }
-                if( box.left < pageLeft ) // move right
+                if ( box.left < pageLeft ) // move right
                 {
                     this._list.classList.remove( "dropdown-left" );
                     this._list.classList.add( "dropdown-right" );
                 }
-                if( ( box.left + boxWidth ) > pageRight ) // move left
+                if ( ( box.left + boxWidth ) > pageRight ) // move left
                 {
                     this._list.classList.remove( "dropdown-right" );
                     this._list.classList.add( "dropdown-left" );
@@ -93,13 +88,8 @@
         },
 
         // set dropdown to active
-        _showMenu: function( e )
-        {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if( this._dropdown && !this._visible )
-            {
+        _showMenu: function( e ) {
+            if ( this._dropdown && !this._visible ) {
                 this._visible = true;
                 this._dropdown.classList.add( "active" );
                 setTimeout( this._adjustList.bind( this ), 100 );
@@ -107,13 +97,8 @@
         },
 
         // set dropdown to inactive (hide)
-        _hideMenu: function( e )
-        {
-            e.preventDefault();
-            e.stopPropagation();
-
-            if( this._dropdown && this._visible )
-            {
+        _hideMenu: function( e ) {
+            if ( this._dropdown && this._visible ) {
                 this._visible = false;
                 this._dropdown.classList.remove( "active" );
                 this._list.className = this._listClass;
@@ -121,9 +106,9 @@
         },
 
         // toggle dropdown state
-        _toggleMenu: function( e )
-        {
-            if( this._visible ) { this._hideMenu( e ); }
+        _toggleMenu: function( e ) {
+            e.preventDefault();
+            if ( this._visible ) { this._hideMenu( e ); }
             else { this._showMenu( e ); }
         },
     };

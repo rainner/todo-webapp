@@ -8,18 +8,17 @@
  */
 (function( name, factory ) {
 
-    if( typeof define === "function" ) { define( factory ); } else
-    if( typeof exports === "object" ) { module.exports = factory(); } else
-    if( typeof window === "object" ) { window[ name ] = factory(); }
+    if ( typeof define === "function" ) { define( factory ); } else
+    if ( typeof exports === "object" ) { module.exports = factory(); } else
+    if ( typeof window === "object" ) { window[ name ] = factory(); }
 
 })( "Tooltip", function() {
 
     // imports
-    var View = require( "./Viewport" );
+    let View = require( "./Viewport" );
 
     // class constructor
-    var Factory = function( selector, options )
-    {
+    let Factory = function( selector, options ) {
         this._options = Object.assign( {
             // class to apply to tooltip element
             tipClass : "tooltip-wrap",
@@ -53,32 +52,24 @@
         constructor: Factory,
 
         // set target elements
-        select: function( selector )
-        {
-            if( typeof selector === "string" )
-            {
+        select: function( selector ) {
+            if ( typeof selector === "string" ) {
                 this._elements = document.querySelectorAll( selector ) || [];
             }
-            else if( typeof selector === "object" && selector instanceof Element )
-            {
+            else if ( typeof selector === "object" && selector instanceof Element ) {
                 this._elements.push( selector );
             }
-            for( var i = 0; i < this._elements.length; ++i )
-            {
+            for ( let i = 0; i < this._elements.length; ++i ) {
                 this._setupItem( this._elements[ i ] );
             }
             this._hideTooltip();
         },
 
         // remove element from the list
-        unselect: function( element )
-        {
-            if( typeof element === "object" && element instanceof Element )
-            {
-                for( var i = 0, t = this._elements.length; i < t; ++i )
-                {
-                    if( this._elements[ i ] === element )
-                    {
+        unselect: function( element ) {
+            if ( typeof element === "object" && element instanceof Element ) {
+                for ( let i = 0, t = this._elements.length; i < t; ++i ) {
+                    if ( this._elements[ i ] === element ) {
                         this._resetItem( this._elements[ i ] );
                         this._elements.splice( i, 1 );
                         break;
@@ -89,14 +80,11 @@
         },
 
         // cleanup this instance
-        destroy: function()
-        {
-            for( var i = 0; i < this._elements.length; ++i )
-            {
+        destroy: function() {
+            for ( let i = 0; i < this._elements.length; ++i ) {
                 this._resetItem( this._elements[ i ] );
             }
-            if( document.body.contains( this._tooltip ) )
-            {
+            if ( document.body.contains( this._tooltip ) ) {
                 document.body.removeChild( this._tooltip );
             }
             window.removeEventListener( "scroll", this._onScroll );
@@ -105,8 +93,7 @@
         },
 
         // initlaize elements
-        _init: function()
-        {
+        _init: function() {
             this._tooltip = document.createElement( "div" );
             this._tooltip.className = this._options.tipClass;
             this._tooltip.style["display"] = "block";
@@ -118,13 +105,10 @@
         },
 
         // set an element to have tooltip, if not alredy setup
-        _setupItem: function( item )
-        {
-            if( item && item instanceof Element )
-            {
-                if( item.hasAttribute( "title" ) )
-                {
-                    var tip  = item.getAttribute( "title" ) || "",
+        _setupItem: function( item ) {
+            if ( item && item instanceof Element ) {
+                if ( item.hasAttribute( "title" ) ) {
+                    let tip  = item.getAttribute( "title" ) || "",
                         self = this;
 
                     item.setAttribute( "data-tip", tip );
@@ -138,13 +122,10 @@
         },
 
         // remove tooltip events from element, if needed
-        _resetItem: function( item )
-        {
-            if( item && item instanceof Element )
-            {
-                if( item.hasAttribute( "data-tip" ) )
-                {
-                    var tip  = item.getAttribute( "data-tip" ) || "",
+        _resetItem: function( item ) {
+            if ( item && item instanceof Element ) {
+                if ( item.hasAttribute( "data-tip" ) ) {
+                    let tip  = item.getAttribute( "data-tip" ) || "",
                         self = this;
 
                     item.setAttribute( "title", tip );
@@ -158,11 +139,9 @@
         },
 
         // decides where to place the tooltip in relation to item and screen bounds
-        _showTooltip: function()
-        {
-            if( this._tooltip && this._hovItem )
-            {
-                var box       = this._hovItem.getBoundingClientRect(),
+        _showTooltip: function() {
+            if ( this._tooltip && this._hovItem ) {
+                let box       = this._hovItem.getBoundingClientRect(),
                     centerX   = box.left + ( this._hovItem.offsetWidth - this._tooltip.offsetWidth ) / 2,
                     centerY   = box.top + ( this._hovItem.offsetHeight - this._tooltip.offsetHeight ) / 2,
                     leftPos   = box.left - this._tooltip.offsetWidth,
@@ -174,26 +153,25 @@
                     left      = centerX,
                     top       = topPos;
 
-                if( box.left < tipHalf ) // move to the right
+                if ( box.left < tipHalf ) // move to the right
                 {
                     clss = this._options.rightClass;
                     left = rightPos;
                     top  = centerY;
                 }
-                else if( ( View.clientWidth() - rightPos ) < tipHalf ) // move to the left
+                else if ( ( View.clientWidth() - rightPos ) < tipHalf ) // move to the left
                 {
                     clss = this._options.leftClass;
                     left = leftPos;
                     top  = centerY;
                 }
-                else if( topPos < 0 ) // move to the bottom
+                else if ( topPos < 0 ) // move to the bottom
                 {
                     clss = this._options.bottomClass;
                     left = centerX;
                     top  = bottomPos;
                 }
-                if( left > 1 && top > 1 && this._tooltip.innerHTML )
-                {
+                if ( left > 1 && top > 1 && this._tooltip.innerHTML ) {
                     this._tooltip.className = this._options.tipClass + " " + clss;
                     this._tooltip.style["left"] = ( View.scrollLeft() + left ) +"px";
                     this._tooltip.style["top"] = ( View.scrollTop() + top ) +"px";
@@ -204,10 +182,8 @@
         },
 
         // move tooltip object off screen, reset content and class
-        _hideTooltip: function()
-        {
-            if( this._tooltip )
-            {
+        _hideTooltip: function() {
+            if ( this._tooltip ) {
                 this._tooltip.innerHTML = "";
                 this._tooltip.className = this._options.tipClass;
                 this._tooltip.style["left"] = "-1000px";
@@ -218,27 +194,23 @@
         },
 
         // when mouse enters target element
-        _onEnter: function( e, item )
-        {
-            var title = item.getAttribute( "data-tip" );
-            if( title )
-            {
+        _onEnter: function( e, item ) {
+            let title = item.getAttribute( "data-tip" );
+            if ( title ) {
                 this._hovItem = item;
                 this._tooltip.innerHTML = title;
 
-                if( this._timeout ) clearTimeout( this._timeout );
+                if ( this._timeout ) clearTimeout( this._timeout );
                 this._timeout = setTimeout( this._showTooltip.bind( this ), this._options.showDelay );
 
-                if( this._autohide ) clearTimeout( this._autohide );
+                if ( this._autohide ) clearTimeout( this._autohide );
                 this._autohide = setTimeout( this._hideTooltip.bind( this ), 6000 );
             }
         },
 
         // when mouse leaves target element
-        _onLeave: function( e, item )
-        {
-            if( this._timeout )
-            {
+        _onLeave: function( e, item ) {
+            if ( this._timeout ) {
                 clearTimeout( this._timeout );
                 this._timeout = null;
             }
@@ -247,10 +219,8 @@
         },
 
         // hide tooltip over fixed elements when scrolled
-        _onScroll: function( e )
-        {
-            if( this._visible )
-            {
+        _onScroll: function( e ) {
+            if ( this._visible ) {
                 this._hideTooltip();
             }
         },

@@ -8,24 +8,22 @@
  */
 (function( name, factory ) {
 
-    if( typeof define === "function" ) { define( factory ); } else
-    if( typeof exports === "object" ) { module.exports = factory(); } else
-    if( typeof window === "object" ) { window[ name ] = factory(); }
+    if ( typeof define === "function" ) { define( factory ); } else
+    if ( typeof exports === "object" ) { module.exports = factory(); } else
+    if ( typeof window === "object" ) { window[ name ] = factory(); }
 
 })( "Sortable", function() {
 
     // get view and scroll data
-    var View = require( "./Viewport" );
+    let View = require( "./Viewport" );
 
     // clamp a value between min and max
-    var clamp = function( value, min, max )
-    {
+    let clamp = function( value, min, max ) {
         return Math.max( min, Math.min( value, max ) );
     };
 
     // class constructor
-    var Factory = function( container, options )
-    {
+    let Factory = function( container, options ) {
         this._options = Object.assign( {
             // only allow dragging if an element with this class was clicked
             handleClass : "sort-handle",
@@ -73,10 +71,8 @@
         constructor: Factory,
 
         // set root sortable container element
-        setContainer: function( container )
-        {
-            if( container instanceof Element && container.hasAttribute( "data-sortable" ) === false )
-            {
+        setContainer: function( container ) {
+            if ( container instanceof Element && container.hasAttribute( "data-sortable" ) === false ) {
                 this._container = container;
                 this._container.setAttribute( "data-sortable", 1 );
                 this._container.style["position"] = "relative";
@@ -84,77 +80,62 @@
         },
 
         // get root sortable container element
-        getContainer: function()
-        {
+        getContainer: function() {
             return this._container;
         },
 
         // get attribute value from list container object
-        getAttr: function( attr, deft )
-        {
-            if( this._container && this._container.hasAttribute( attr ) )
-            {
+        getAttr: function( attr, deft ) {
+            if ( this._container && this._container.hasAttribute( attr ) ) {
                 return this._container.getAttribute( attr );
             }
             return deft || null;
         },
 
         // get new order array with unique values from attribute
-        getOrder: function( delimiter )
-        {
-            var output = [];
+        getOrder: function( delimiter ) {
+            let output = [];
 
-            if( this._container )
-            {
-                for( var i = 0; i < this._container.children.length; ++i )
-                {
-                    var item = this._container.children[ i ];
-                    var uniq = item.getAttribute( this._options.uniqueAttribute ) || "";
-                    if( uniq ) output.push( uniq );
+            if ( this._container ) {
+                for ( let i = 0; i < this._container.children.length; ++i ) {
+                    let item = this._container.children[ i ];
+                    let uniq = item.getAttribute( this._options.uniqueAttribute ) || "";
+                    if ( uniq ) output.push( uniq );
                 }
             }
-            if( delimiter && typeof delimiter === "string" )
-            {
+            if ( delimiter && typeof delimiter === "string" ) {
                 return output.join( delimiter );
             }
             return output;
         },
 
         // get new order array with unique (numeric) values from attribute
-        getNumericOrder: function( delimiter )
-        {
-            var output = [];
+        getNumericOrder: function( delimiter ) {
+            let output = [];
 
-            this.getOrder().forEach( function( uniq )
-            {
-                var numb = parseInt( uniq.replace( /[^0-9]+/gi, "" ) );
-                if( !isNaN( numb ) ) output.push( numb );
+            this.getOrder().forEach( function( uniq ) {
+                let numb = parseInt( uniq.replace( /[^0-9]+/gi, "" ) );
+                if ( !isNaN( numb ) ) output.push( numb );
             });
-            if( delimiter && typeof delimiter === "string" )
-            {
+            if ( delimiter && typeof delimiter === "string" ) {
                 return output.join( delimiter );
             }
             return output;
         },
 
         // scan container children and add sortable events to each child element
-        scan: function()
-        {
-            if( this._container )
-            {
-                for( var i = 0; i < this._container.children.length; ++i )
-                {
+        scan: function() {
+            if ( this._container ) {
+                for ( let i = 0; i < this._container.children.length; ++i ) {
                     this.add( this._container.children[ i ] );
                 }
             }
         },
 
         // add sortable events to item element
-        add: function( item )
-        {
-            if( item instanceof Element && !item.hasAttribute( "data-sort-item" ) )
-            {
-                var self = this;
+        add: function( item ) {
+            if ( item instanceof Element && !item.hasAttribute( "data-sort-item" ) ) {
+                let self = this;
                 item.setAttribute( "data-sort-item", 1 );
                 item.addEventListener( "mousedown", function( e ){ self._onPress( e, this ); } );
                 item.addEventListener( "touchstart", function( e ){ self._onPress( e, this ); } );
@@ -163,19 +144,15 @@
         },
 
         // remove sortable events from item element
-        remove: function( item )
-        {
-            if( item instanceof Element && item.hasAttribute( "data-sort-item" ) )
-            {
-                var self = this;
+        remove: function( item ) {
+            if ( item instanceof Element && item.hasAttribute( "data-sort-item" ) ) {
+                let self = this;
                 item.removeAttribute( "data-sort-item" );
                 item.removeEventListener( "mousedown", function( e ){ self._onPress( e, this ); } );
                 item.removeEventListener( "touchstart", function( e ){ self._onPress( e, this ); } );
 
-                for( var i = 0; i < this._elements.length; ++i )
-                {
-                    if( this._elements[ i ] === item )
-                    {
+                for ( let i = 0; i < this._elements.length; ++i ) {
+                    if ( this._elements[ i ] === item ) {
                         this._elements.splice( i, 1 );
                         break;
                     }
@@ -184,23 +161,20 @@
         },
 
         // clear everything
-        destroy: function()
-        {
-            var self = this;
+        destroy: function() {
+            let self = this;
             window.removeEventListener( "mouseup", this._onRelease );
             window.removeEventListener( "touchend", this._onRelease );
             window.removeEventListener( "mousemove", this._onMove );
             window.removeEventListener( "touchmove", this._onMove );
 
-            for( var i = 0; i < this._elements.length; ++i )
-            {
-                var item = this._elements[ i ];
+            for ( let i = 0; i < this._elements.length; ++i ) {
+                let item = this._elements[ i ];
                 item.removeAttribute( "data-sort-item" );
                 item.removeEventListener( "mousedown", function( e ){ self._onPress( e, this ); } );
                 item.removeEventListener( "touchstart", function( e ){ self._onPress( e, this ); } );
             }
-            if( this._container )
-            {
+            if ( this._container ) {
                 this._container.removeAttribute( "data-sortable" );
             }
             this._trashDragItem();
@@ -214,32 +188,29 @@
         },
 
         // set custom callback to fire when order changes (function)
-        onChange: function( callback )
-        {
+        onChange: function( callback ) {
             this._onChange = callback;
         },
 
         // checks if mouse x/y is on top of an item
-        _isOnTop: function( item, x, y )
-        {
-            var box = item.getBoundingClientRect(),
+        _isOnTop: function( item, x, y ) {
+            let box = item.getBoundingClientRect(),
                 isx = ( x > box.left && x < ( box.left + box.width ) ),
                 isy = ( y > box.top && y < ( box.top + box.height ) );
             return ( isx && isy );
         },
 
         // swap position of two items in sortable list container
-        _swapItems: function( item1, item2 )
-        {
-            var parent1 = item1.parentNode,
+        _swapItems: function( item1, item2 ) {
+            let parent1 = item1.parentNode,
                 parent2 = item2.parentNode;
 
-            if( parent1 !== parent2 ) // move to new list
+            if ( parent1 !== parent2 ) // move to new list
             {
                 parent2.insertBefore( item1, item2 );
             }
             else {
-                var temp = document.createElement( "div" );
+                let temp = document.createElement( "div" );
                 parent1.insertBefore( temp, item1 );
                 parent2.insertBefore( item1, item2 );
                 parent1.insertBefore( item2, temp );
@@ -248,15 +219,13 @@
         },
 
         // finds the offset of el from the body or html element
-        _getElementPosition: function( el )
-        {
-            var xPos = 0;
-            var yPos = 0;
+        _getElementPosition: function( el ) {
+            let xPos = 0;
+            let yPos = 0;
 
-            while( el )
-            {
-                var xParent = el.offsetParent ? el.offsetParent.offsetLeft : 0;
-                var yParent = el.offsetParent ? el.offsetParent.offsetTop : 0;
+            while( el ) {
+                let xParent = el.offsetParent ? el.offsetParent.offsetLeft : 0;
+                let yParent = el.offsetParent ? el.offsetParent.offsetTop : 0;
 
                 xPos += ( el.offsetLeft - el.scrollLeft ) - xParent;
                 yPos += ( el.offsetTop - el.scrollTop ) - yParent;
@@ -267,16 +236,13 @@
         },
 
         // update item position
-        _moveItem: function( item, x, y )
-        {
-            var translate = "";
+        _moveItem: function( item, x, y ) {
+            let translate = "";
 
-            if( this._options.moveHorizontal )
-            {
+            if ( this._options.moveHorizontal ) {
                 translate += "translateX( "+ x +"px ) ";
             }
-            if( this._options.moveVertical )
-            {
+            if ( this._options.moveVertical ) {
                 translate += "translateY( "+ y +"px ) ";
             }
             item.style["-webkit-transform"] = translate;
@@ -286,9 +252,8 @@
         },
 
         // make a temp fake item for dragging and add to container
-        _makeDragItem: function( item )
-        {
-            var box = this._getElementPosition( item );
+        _makeDragItem: function( item ) {
+            let box = this._getElementPosition( item );
 
             this._dragItem = document.createElement( item.tagName );
             this._dragItem.className = item.className + " " + this._options.draggerClass;
@@ -301,24 +266,19 @@
             this._dragItem.style["width"]    = item.offsetWidth  + "px";
             this._dragItem.style["height"]   = item.offsetHeight + "px";
 
-            if( /^(TR|TBODY)$/.test( item.tagName ) )
-            {
+            if ( /^(TR|TBODY)$/.test( item.tagName ) ) {
                 this._dragItem.style["display"] = "table";
                 this._dragItem.style["border-collapse"] = "separate";
             }
-            if( this._container )
-            {
+            if ( this._container ) {
                 this._container.appendChild( this._dragItem );
             }
         },
 
         // remove temp fake item from container and trash it
-        _trashDragItem: function()
-        {
-            if( this._container && this._dragItem )
-            {
-                if( this._container.contains( this._dragItem ) )
-                {
+        _trashDragItem: function() {
+            if ( this._container && this._dragItem ) {
+                if ( this._container.contains( this._dragItem ) ) {
                     this._container.removeChild( this._dragItem );
                 }
             }
@@ -326,12 +286,10 @@
         },
 
         // on item press/touch
-        _onPress: function( e, item )
-        {
-            if( e && item )
-            {
-                var handle = this._options.handleClass;
-                if( !handle || !e.target.classList.contains( handle ) ) return;
+        _onPress: function( e, item ) {
+            if ( e && item ) {
+                let handle = this._options.handleClass;
+                if ( !handle || !e.target.classList.contains( handle ) ) return;
 
                 e.preventDefault();
 
@@ -349,14 +307,11 @@
         },
 
         // on item release/drop
-        _onRelease: function( e )
-        {
+        _onRelease: function( e ) {
             this._trashDragItem();
 
-            if( this._listItem )
-            {
-                if( typeof this._onChange === "function" && this.getOrder( ":" ) !== this._order )
-                {
+            if ( this._listItem ) {
+                if ( typeof this._onChange === "function" && this.getOrder( ":" ) !== this._order ) {
                     this._onChange.call( this );
                 }
                 this._listItem.classList.remove( this._options.activeClass );
@@ -368,11 +323,9 @@
         },
 
         // on item drag/move
-        _onMove: function( e )
-        {
-            if( this._dragItem && this._dragging )
-            {
-                var scrollx   = View.scrollLeft(),
+        _onMove: function( e ) {
+            if ( this._dragItem && this._dragging ) {
+                let scrollx   = View.scrollLeft(),
                     scrolly   = View.scrollTop(),
                     mousex    = View.mouseLeft( e ),
                     mousey    = View.mouseTop( e ),
@@ -383,14 +336,12 @@
 
                 this._moveItem( this._dragItem, movex, movey );
 
-                for( var i = 0; i < this._elements.length; ++i )
-                {
-                    var item = this._elements[ i ];
+                for ( let i = 0; i < this._elements.length; ++i ) {
+                    let item = this._elements[ i ];
 
-                    if( item === this._listItem || item === this._dragItem ) continue;
+                    if ( item === this._listItem || item === this._dragItem ) continue;
 
-                    if( this._isOnTop( item, posx, posy ) )
-                    {
+                    if ( this._isOnTop( item, posx, posy ) ) {
                         this._hovItem = item;
                         this._swapItems( this._listItem, item );
                     }

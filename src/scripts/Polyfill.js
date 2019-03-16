@@ -5,24 +5,18 @@
 {
     "use strict";
 
-    if( !String.prototype.trim )
-    {
-        String.prototype.trim = function()
-        {
+    if ( !String.prototype.trim ) {
+        String.prototype.trim = function() {
             return this.replace( /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "" );
         };
     }
-    if( !String.prototype.trimLeft )
-    {
-        String.prototype.trimLeft = function()
-        {
+    if ( !String.prototype.trimLeft ) {
+        String.prototype.trimLeft = function() {
             return this.replace( /^[\s\uFEFF\xA0]+/g, "" );
         };
     }
-    if( !String.prototype.trimRight )
-    {
-        String.prototype.trimRight = function()
-        {
+    if ( !String.prototype.trimRight ) {
+        String.prototype.trimRight = function() {
             return this.replace( /[\s\uFEFF\xA0]+$/g, "" );
         };
     }
@@ -33,38 +27,29 @@
  */
 (function() {
 
-    if( typeof Object.keys != "function" )
-    {
-        Object.keys = (function()
-        {
+    if ( typeof Object.keys != "function" ) {
+        Object.keys = (function() {
             "use strict";
 
-            var hasOwnProperty = Object.prototype.hasOwnProperty,
+            let hasOwnProperty = Object.prototype.hasOwnProperty,
                 hasDontEnumBug = !({ toString: null }).propertyIsEnumerable( "toString" ),
                 dontEnums = ["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
                 dontEnumsLength = dontEnums.length;
 
-            return function( obj )
-            {
-                if( typeof obj !== "function" && ( typeof obj !== "object" || obj === null ) )
-                {
+            return function( obj ) {
+                if ( typeof obj !== "function" && ( typeof obj !== "object" || obj === null ) ) {
                     throw new TypeError( "Object.keys called on non-object" );
                 }
-                var result = [], prop, i;
+                let result = [], prop, i;
 
-                for( prop in obj )
-                {
-                    if( hasOwnProperty.call( obj, prop ) )
-                    {
+                for ( prop in obj ) {
+                    if ( hasOwnProperty.call( obj, prop ) ) {
                         result.push( prop );
                     }
                 }
-                if( hasDontEnumBug )
-                {
-                    for( i = 0; i < dontEnumsLength; i++ )
-                    {
-                        if( hasOwnProperty.call( obj, dontEnums[i] ) )
-                        {
+                if ( hasDontEnumBug ) {
+                    for ( i = 0; i < dontEnumsLength; i++ ) {
+                        if ( hasOwnProperty.call( obj, dontEnums[i] ) ) {
                             result.push( dontEnums[i] );
                         }
                     }
@@ -80,30 +65,22 @@
  */
 (function()
 {
-    if( typeof Object.assign != "function" )
-    {
-        Object.assign = (function()
-        {
+    if ( typeof Object.assign != "function" ) {
+        Object.assign = (function() {
             "use strict";
 
-            return function( target )
-            {
-                if( target === undefined || target === null )
-                {
+            return function( target ) {
+                if ( target === undefined || target === null ) {
                     throw new TypeError( "Cannot convert undefined or null to object" );
                 }
-                var output = Object( target );
+                let output = Object( target );
 
-                for( var index = 1; index < arguments.length; index++ )
-                {
-                    var source = arguments[ index ];
+                for ( let index = 1; index < arguments.length; index++ ) {
+                    let source = arguments[ index ];
 
-                    if( source !== undefined && source !== null )
-                    {
-                        for( var nextKey in source )
-                        {
-                            if( source.hasOwnProperty( nextKey ) )
-                            {
+                    if ( source !== undefined && source !== null ) {
+                        for ( let nextKey in source ) {
+                            if ( source.hasOwnProperty( nextKey ) ) {
                                 output[ nextKey ] = source[ nextKey ];
                             }
                         }
@@ -122,28 +99,25 @@
 {
     "use strict";
 
-    if( typeof window !== "object" ) return;
+    if ( typeof window !== "object" ) return;
 
-    var vendors  = ["webkit", "moz"];
-    var lastTime = 0;
+    let vendors  = ["webkit", "moz"];
+    let lastTime = 0;
 
-    for( var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x )
-    {
+    for ( let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x ) {
         window.requestAnimationFrame = window[ vendors[x] + "RequestAnimationFrame" ];
         window.cancelAnimationFrame  = window[ vendors[x] + "CancelAnimationFrame" ] || window[ vendors[x] + "CancelRequestAnimationFrame" ];
     }
-    if( !window.requestAnimationFrame )
-    {
+    if ( !window.requestAnimationFrame ) {
         window.requestAnimationFrame = function( callback, element ) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
-            var id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
+            let currTime = new Date().getTime();
+            let timeToCall = Math.max( 0, 16 - ( currTime - lastTime ) );
+            let id = window.setTimeout( function() { callback( currTime + timeToCall ); }, timeToCall );
             lastTime = currTime + timeToCall;
             return id;
         };
     }
-    if( !window.cancelAnimationFrame )
-    {
+    if ( !window.cancelAnimationFrame ) {
         window.cancelAnimationFrame = function( id ) {
             clearTimeout( id );
         };
@@ -157,8 +131,7 @@
 {
     "use strict";
 
-    if( !Element.prototype.matches )
-    {
+    if ( !Element.prototype.matches ) {
         Element.prototype.matches =
         Element.prototype.matchesSelector ||
         Element.prototype.mozMatchesSelector ||
@@ -166,7 +139,7 @@
         Element.prototype.oMatchesSelector ||
         Element.prototype.webkitMatchesSelector ||
         function( s ) {
-            var matches = ( this.document || this.ownerDocument ).querySelectorAll( s ), i = matches.length;
+            let matches = ( this.document || this.ownerDocument ).querySelectorAll( s ), i = matches.length;
             while ( --i >= 0 && matches.item( i ) !== this ) {}
             return i > -1;
         };
@@ -180,84 +153,72 @@
 {
     "use strict";
 
-    if( typeof window !== "object" ) return;
-    if( typeof window.Element === "undefined" ) return;
-    if( "classList" in document.documentElement ) return;
+    if ( typeof window !== "object" ) return;
+    if ( typeof window.Element === "undefined" ) return;
+    if ( "classList" in document.documentElement ) return;
 
-    var prototype = Array.prototype,
+    let prototype = Array.prototype,
         push      = prototype.push,
         splice    = prototype.splice,
         join      = prototype.join;
 
-    var indexOf = prototype.indexOf || function( item )
-    {
-        for( var i = 0, t = this.length; i < t; ++i )
-        {
-            if( i in this && this[i] === item ) return i;
+    let indexOf = prototype.indexOf || function( item ) {
+        for ( let i = 0, t = this.length; i < t; ++i ) {
+            if ( i in this && this[i] === item ) return i;
         }
         return -1;
     };
 
-    function DOMTokenList( el )
-    {
+    function DOMTokenList( el ) {
         this.el = el;
 
-        var classes = String( el.className || "" ).trim().split( /\s+/ );
+        let classes = String( el.className || "" ).trim().split( /\s+/ );
 
-        for( var i = 0, t = classes.length; i < t; ++i )
-        {
+        for ( let i = 0, t = classes.length; i < t; ++i ) {
             push.call( this, classes[i] );
         }
     };
 
     DOMTokenList.prototype = {
 
-        item: function( index )
-        {
+        item: function( index ) {
             return this[ index ] || null;
         },
-        contains: function( token )
-        {
+        contains: function( token ) {
             return indexOf.call( this, token ) != -1;
         },
-        add: function( token )
-        {
-            if( this.contains( token ) ) return;
+        add: function( token ) {
+            if ( this.contains( token ) ) return;
             push.call( this, token );
             this.el.className = this.toString();
         },
-        remove: function( token )
-        {
-            var index = indexOf.call( this, token );
-            if( index == -1 ) return;
+        remove: function( token ) {
+            let index = indexOf.call( this, token );
+            if ( index == -1 ) return;
             splice.call( this, index, 1 );
             this.el.className = this.toString();
         },
-        toggle: function( token )
-        {
-            var index = indexOf.call( this, token );
-            if( index == -1 ){ push.call( this, token ); }
+        toggle: function( token ) {
+            let index = indexOf.call( this, token );
+            if ( index == -1 ){ push.call( this, token ); }
             else{ splice.call( this, index, 1 ); }
             this.el.className = this.toString();
         },
-        toString: function()
-        {
+        toString: function() {
             return join.call( this, " " );
         },
     };
 
     window.DOMTokenList = DOMTokenList;
 
-    function defineElementGetter( obj, prop, getter )
-    {
-        if( Object.defineProperty ) {
+    function defineElementGetter( obj, prop, getter ) {
+        if ( Object.defineProperty ) {
             Object.defineProperty( obj, prop, { get: getter } );
         } else {
             obj.__defineGetter__( prop, getter );
         }
     }
-    defineElementGetter( Element.prototype, "classList", function()
-    {
+    defineElementGetter( Element.prototype, "classList", function() {
         return new DOMTokenList( this );
     });
 })();

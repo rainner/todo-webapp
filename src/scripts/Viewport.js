@@ -8,13 +8,13 @@
  */
 (function( name, factory ) {
 
-    if( typeof define === "function" ) { define( factory ); } else
-    if( typeof exports === "object" ) { module.exports = factory(); } else
-    if( typeof window === "object" ) { window[ name ] = factory(); }
+    if ( typeof define === "function" ) { define( factory ); } else
+    if ( typeof exports === "object" ) { module.exports = factory(); } else
+    if ( typeof window === "object" ) { window[ name ] = factory(); }
 
 })( "Viewport", function() {
 
-    var _w = window,
+    let _w = window,
         _s = window.screen,
         _d = document.documentElement,
         _b = document.body;
@@ -57,11 +57,11 @@
             return Math.max( 0, Math.floor( this.pageHeight() - this.clientHeight() ) );
         },
         mouseLeft : function( e ) {
-            var t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
+            let t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
             return e ? Math.max( 0, t.pageX || e.pageX || e.clientX || 0 ) : 0;
         },
         mouseTop : function( e ) {
-            var t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
+            let t = ( e && e.changedTouches ) ? e.changedTouches[ 0 ] : {};
             return e ? Math.max( 0, t.pageY || e.pageY || e.clientY || 0 ) : 0;
         },
         centerX : function( e ) { // pointer axis from center
