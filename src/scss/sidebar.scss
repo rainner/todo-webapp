@@ -9,22 +9,36 @@
 
         // sidebar heading
         .saved-list-heading {
-            display: block;
-            margin-bottom: $padSpace;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: .4em;
 
-            h1, h2, h3, h4, h5 {
+            & > h4 {
                 display: block;
-                margin: 0 0 0.3em 0;
+                margin: 0;
                 padding: 0;
                 line-height: 1em;
                 color: $colorDocument;
             }
-            span {
-                display: block;
-                padding-left: $padSpace;
-                font-size: 70%;
-                line-height: 1em;
+            & > button {
+                font-size: 150%;
+                color: $colorDocument;
+                opacity: 1;
+
+                &:hover {
+                    opacity: .8;
+                }
             }
+        }
+
+        // sidebar heading info
+        .saved-list-info {
+            // padding-left: $padSpace;
+            font-size: 70%;
+            line-height: 1em;
+            margin-bottom: $rowSpace;
         }
 
         // default info container
@@ -57,7 +71,6 @@
                 padding: $padSpace;
                 border-radius: $lineJoin;
                 background-color: lighten( $colorSecondary, 10% );
-                border-bottom: $lineWidth $lineStyle lighten( $colorSecondary, 5% );
                 color: $colorDocument;
                 box-shadow: $shadowPaper;
 
@@ -123,6 +136,7 @@
                 background-color: $colorDocument;
                 border-color: $colorPrimary;
                 color: $colorDocumentText;
+                animation: slideLeft $fxSpeed $fxEase forwards;
 
                 // left side arrow
                 &:before {

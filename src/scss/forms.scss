@@ -2,10 +2,11 @@
  * Common form elements
  */
 input, textarea, select, option, optgroup, button {
+    font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    color: inherit;
     text-decoration: none;
+    color: inherit;
 }
 button,
 input[type="button"],

@@ -10,10 +10,10 @@
     top: 0;
     margin: 0;
     padding: 0 $padSpace;
-    background-color: lighten( $colorDocument, 12% );
-    background-image: linear-gradient( 180deg, lighten( $colorDocument, 12% ) 0%, $colorDocument 100% );
+    background-color: lighten( $colorDocument, 8% );
+    // background-image: linear-gradient( 180deg, lighten( $colorDocument, 10% ) 0%, $colorDocument 100% );
     border-bottom: $lineWidth $lineStyle $colorPrimary;
-    box-shadow: 0 1px 3px rgba( 0, 0, 0, 0.4 );
+    box-shadow: $shadowPaper;
     z-index: 100;
 
     .header-nav {
@@ -36,13 +36,13 @@
             padding: 4px 2px;
         }
         .header-icon {
-            margin-right: 6px;
-            padding-right: 6px;
+            margin-right: .5em;
+            padding-right: .5em;
             border-right: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
         }
         .header-btn {
-            margin-left: 6px;
-            padding-left: 6px;
+            margin-left: .5em;
+            padding-left: .5em;
             border-left: $lineWidth $lineStyle rgba( 0, 0, 0, 0.075 );
         }
         .header-input {
@@ -57,7 +57,7 @@
                 padding: 0;
                 width: 100%;
                 font-size: 120%;
-                line-height: 1.6em;
+                line-height: inherit;
                 height: 52px;
             }
         }

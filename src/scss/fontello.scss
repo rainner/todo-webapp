@@ -24,21 +24,17 @@
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
     display: inline-block;
-    position: relative;
-    z-index: 1;
     font-family: "fontello";
     font-style: normal;
     font-weight: normal;
     text-transform: none;
     text-decoration: none;
     text-align: center;
+    text-rendering: auto;
     font-size: inherit;
     line-height: inherit;
     width: 1em;
-    margin-left: .01em;
-    margin-right: .01em;
-    vertical-align: top;
-    speak: none;
+    margin: 0 .05em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -58,7 +54,6 @@
 }
 .icon-bk:before { /* single block level icon */
     display: block;
-    vertical-align: middle;
 }
 .icon-spin:before {
     animation: iconSpin 1s infinite linear;

@@ -12,17 +12,15 @@
     background-color: transparent;
     text-transform: none;
     text-shadow: none;
-    text-size-adjust: 100%;
+    appearance: none;
     box-shadow: none;
     box-sizing: border-box;
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     touch-action: manipulation;
     transform-style: flat;
     transition:
+        fill $fxSpeed $fxEase,
+        stroke $fxSpeed $fxEase,
         transform $fxSpeed $fxEase,
-        color $fxSpeed $fxEase,
         border-color $fxSpeed $fxEase,
         background-color $fxSpeed $fxEase,
         opacity $fxSpeed $fxEase;
@@ -38,13 +36,6 @@ p, ol, ul, form, img {
 }
 
 /**
- * Vue cloaked elements
- */
-[v-cloak] {
-    display: none;
-}
-
-/**
  * Doc mods
  */
 html, body {
@@ -52,17 +43,19 @@ html, body {
     overflow: hidden;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    min-height: 100vh;
 }
 body {
     position: relative;
-    background-color: darken( $colorDocument, 5% );
+    font-family: "Kalam", sans-serif;
+    font-weight: normal;
+    background-color: $colorDocument;
+    color: $colorDocumentText;
 }
 
 /**
- * Common element show animation
+ * Vue cloaked elements
  */
-@keyframes showAnimation {
-      0% { opacity: 0; }
-    100% { opacity: 1; }
+[v-cloak] {
+    display: none;
 }

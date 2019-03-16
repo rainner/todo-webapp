@@ -24,14 +24,45 @@
             background-size: contain;
             z-index: 1;
         }
+
         .app-right {
-            width: 300px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            color: desaturate( lighten( $colorSecondary, 30% ), 30% );
-            background-color: $colorSecondary;
-            background-image: linear-gradient( 90deg, darken( $colorSecondary, 6% ) 0%, $colorSecondary 6px );
-            z-index: 2;
+            display: block;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-color: rgba( black, 0 );
+            z-index: -1;
+
+            & > .app-sidebar {
+                display: block;
+                position: relative;
+                margin: 0 0 0 auto;
+                width: $sidebarWidth;
+                transform: translateX( $sidebarWidth );
+                min-height: 100vh;
+                max-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+                color: desaturate( lighten( $colorSecondary, 30% ), 30% );
+                background-color: $colorSecondary;
+            }
+
+            // ready to interact
+            &.active {
+                pointer-events: auto;
+                z-index: 100;
+            }
+            // visible on page
+            &.visible {
+                background-color: rgba( black, .6 );
+                & > .app-sidebar {
+                    box-shadow: $shadowBold;
+                    transform: translateX( 0 );
+                }
+            }
         }
     }
 }
@@ -41,30 +72,15 @@
     display: block;
     padding: ( $padSpace * 2 ) $padSpace ( $padSpace * 4 ) $padSpace;
     color: desaturate( darken( $colorDocument, 55% ), 40% );
-    animation: showAnimation $fxSpeed $fxEase forwards;
-
-    h1, h2, h3, h4, h5, h6 {
-        line-height: 1em;
-        margin-bottom: $padSpace;
-        color: desaturate( darken( $colorDocument, 65% ), 10% );
-    }
+    animation: fadeIn $fxSpeed $fxEase forwards;
 
     b, strong {
         font-weight: normal;
-        color: saturate( darken( $colorDocument, 65% ), 30% );
+        color: saturate( darken( $colorDocument, 50% ), 10% );
     }
     i, em {
         font-style: normal;
         color: desaturate( darken( $colorDocument, 50% ), 10% );
-    }
-
-    a {
-        color: $colorPrimary;
-        text-decoration: underline;
-
-        &:hover {
-            color: darken( $colorPrimary, 10% );
-        }
     }
 
     // user card
@@ -95,27 +111,32 @@
 }
 
 /**
- * 900px and smaller
+ * 900px and bigger
  */
-@media (max-width: 900px) {
+@media (min-width: 900px) {
 
-    // collapse right sidebar
     .app-wrap {
-        width: calc( 100% + 300px );
-
         .app-columns {
-            .app-left {
-                width: 100%;
-            }
             .app-right {
-                width: 300px;
-                background-image: none;
-            }
-            .app-right.expanded {
-                box-shadow: -2px 0 2px rgba( 0, 0, 0, 0.2 );
-                transform: translateX( -300px );
+                position: relative;
+                width: auto;
+                height: auto;
+                pointer-events: auto;
+                background-color: rgba( black, 0 );
+                z-index: auto;
+
+                & > .app-sidebar {
+                    min-height: 100%;
+                    max-height: 100%;
+                    transform: translateX( 0 );
+                    box-shadow: none;
+                    background-image: linear-gradient( 90deg, darken( $colorSecondary, 6% ) 0%, $colorSecondary 6px );
+                }
             }
         }
+    }
+    .saved-list-heading > button {
+        display: none;
     }
 }
 

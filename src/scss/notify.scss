@@ -27,7 +27,7 @@
 
         .notify-message {
             display: block;
-            padding: $padSpace;
+            padding: $padSpace ( $padSpace * 2 );
             padding-bottom: calc( #{$padSpace} - 4px );
             font-weight: normal;
         }

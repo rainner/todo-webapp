@@ -24,7 +24,7 @@
             margin: 0 0 $listSpace 0;
             padding: 0.6em;
             background-color: lighten( $colorDocument, 5% );
-            border-bottom: $lineWidth $lineStyle $colorDocument;
+            // border-bottom: $lineWidth $lineStyle $colorDocument;
             border-radius: $lineJoin;
             box-shadow: $shadowPaper;
 
@@ -39,7 +39,8 @@
 
                 span {
                     display: block;
-                    font-size: 200%;
+                    font-size: 2em;
+                    font-weight: normal;
                     line-height: 1em;
                     margin-right: 10px;
                 }
@@ -67,8 +68,8 @@
                     // entry date
                     .todo-list-date {
                         font-size: 72%;
-                        line-height: 1.5em;
-                        opacity: 0.4;
+                        line-height: 1.6em;
+                        opacity: 0.5;
                     }
 
                     // entry hidden edit input
@@ -92,6 +93,14 @@
                         font-size: inherit;
                         line-height: 1.2em;
                         z-index: 2;
+
+                        & > i {
+                            line-height: 1em;
+                            opacity: 0;
+                        }
+                        &:hover > i {
+                            opacity: 1;
+                        }
                     }
 
                     // list entry focus state changes
@@ -110,10 +119,10 @@
                     font-size: 140%;
                     line-height: 1em;
                     cursor: pointer;
-                    color: rgba( 0, 0, 0, 0.35 );
+                    opacity: .6;
 
                     &:hover {
-                        color: rgba( 0, 0, 0, 0.5 );
+                        opacity: .8;
                     }
                 }
             }
@@ -139,9 +148,9 @@
             }
             // add line-through effect to todo text
             .todo-list-info {
-                .todo-list-text {
+                .todo-list-text > span {
                     text-decoration: line-through;
-                    opacity: 0.675;
+                    opacity: 0.5;
                 }
             }
             // hide check toggle icon

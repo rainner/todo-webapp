@@ -2,6 +2,9 @@
 // height of topbar
 $topbarHeight: 3em;
 
+// width of sidebar
+$sidebarWidth: 320px;
+
 // spacing and padding
 $padSpace: 0.9em;
 $colSpace: 1.0em;
@@ -11,8 +14,8 @@ $listSpace: 0.4em;
 // borders and lines
 $lineWidth: 2px;
 $lineStyle: solid;
-$lineColor: rgba( 0, 0, 0, 0.1 );
-$lineJoin: 6px;
+$lineColor: rgba( black, 0.1 );
+$lineJoin: 4px;
 
 // base font options
 $fontSize: 20px;
@@ -20,7 +23,7 @@ $fontFamily: Helvetica, Arial, sans-serif;
 $fontFixed: Consolas, "Andale Mono", Monaco, "Courier New", monospace;
 
 // document colors
-$colorDocument: #e3e3da;
+$colorDocument: #e0e0da;
 $colorDocumentText: #250829;
 
 // input colors
@@ -72,7 +75,7 @@ $colorOverlay: rgba( 0, 0, 0, 0.6 );
 // common shadow styles
 $shadowHollow: inset 0 2px 8px rgba( 0, 0, 0, 0.2 );
 $shadowBubble: inset 0 -20px 20px rgba( 0, 0, 0, 0.1 );
-$shadowPaper: 0 1px 1px rgba( 0, 0, 0, 0.15 );
+$shadowPaper: 0 1px 2px rgba( 0, 0, 0, 0.2 );
 $shadowDark: 0 1px 3px rgba( 0, 0, 0, 0.3 );
 $shadowGlow: 0 0 10px rgba( 0, 0, 0, 0.2 );
 $shadowBold: 0 2px 12px rgba( 0, 0, 0, 0.4 );
@@ -82,6 +85,9 @@ $shadowText: 1px 1px 0 rgba( 0, 0, 0, 0.3 );
 $fxSpeed: 400ms;
 $fxEase: cubic-bezier( 0.215, 0.610, 0.355, 1.000 );
 $fxEaseBounce: cubic-bezier( 0.640, -0.280, 0.050, 1.405 );
-
-
+$fxSpeedOffset: calc( #{$fxSpeed} / 3 );
+$fxSlideDist: 100px;
+$fxShrinkScale: .5;
+$fxGrowScale: 2;
+$fxRotateAmount: 8deg;
 

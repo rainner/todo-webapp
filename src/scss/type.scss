@@ -7,7 +7,7 @@ html * {
 }
 body {
     font-size: $fontSize;
-    line-height: 1.6em;
+    line-height: 1.4em;
 }
 
 /**
@@ -15,10 +15,11 @@ body {
  */
 h1, h2, h3, h4, h5, h6 {
     display: block;
-    margin: 0 0 $listSpace 0;
+    margin: 0 0 $padSpace 0;
     padding: 0;
     font-weight: normal;
     line-height: 1.2em;
+    color: desaturate( darken( $colorDocument, 65% ), 10% );
 }
 h1 {
     font-size: ceil( $fontSize * 3 );
@@ -52,20 +53,18 @@ p {
 /**
  * Links
  */
-a,
-a:active,
-a:visited,
-a:hover {
-    color: darken( $colorPrimary, 10% );
-    text-decoration: none;
-}
-a:hover {
+a {
     color: $colorPrimary;
+    text-decoration: none !important;
+
+    * {
+        color: inherit !important;
+    }
+    &:hover {
+        color: darken( $colorPrimary, 10% );
+    }
 }
-p > a {
-    display: inline-block;
-    text-decoration: underline;
-}
+
 
 /**
  * Subscript
