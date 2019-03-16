@@ -32,20 +32,17 @@ export default {
     methods: {
 
         // for passing method calls to parent
-        emit: function()
-        {
+        emit: function() {
             return this.$parent.emit.apply( this.$parent, arguments );
         },
 
         // get current address
-        getUrl: function()
-        {
+        getUrl: function() {
             return location.href || "";
         },
 
         // reload the page
-        reload: function()
-        {
+        reload: function() {
             location.reload();
         },
 

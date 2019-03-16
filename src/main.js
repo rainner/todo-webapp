@@ -7,7 +7,7 @@ import App from "./components/App.vue";
 import Dropdown from "./scripts/Dropdown";
 import Tooltip from "./scripts/Tooltip";
 
-var tooltip = new Tooltip();
+const tooltip = new Tooltip();
 
 Vue.directive( "tooltip", {
     bind: function( el ) { tooltip.select( el ); },
@@ -19,6 +19,6 @@ Vue.directive( "dropdown", {
 });
 
 new Vue({
-  el: "#app",
-  render: h => h( App )
+    el: "#app",
+    render: h => h( App )
 });

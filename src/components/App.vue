@@ -5,12 +5,12 @@
         <topbar :component="comp" :user="user" :options="options" :lists="lists" :todos="todos"></topbar>
         <!-- app columns container -->
         <main class="app-columns">
-            <div class="app-left" @mouseup="hideSidebar()" style="background-image: url( public/img/check.svg )">
+            <section class="app-left" @mouseup="hideSidebar()" style="background-image: url( public/img/check.svg )">
                 <component :is="comp" :user="user" :options="options" :lists="lists" :todos="todos"></component>
-            </div>
-            <div class="app-right" :class="{ 'expanded': expanded }">
-                <sidebar :user="user" :options="options" :lists="lists" :todos="todos"></sidebar>
-            </div>
+            </section>
+            <aside class="app-right" :class="{ 'active': sidebar.active, 'visible': sidebar.visible }" @click="hideSidebar()">
+                <sidebar class="app-sidebar" :user="user" :options="options" :lists="lists" :todos="todos"></sidebar>
+            </aside>
         </main>
     </div>
 </template>
@@ -18,14 +18,14 @@
 <style lang="scss">
 @import "../scss/variables";
 @import "../scss/base";
-@import "../scss/modifiers";
-@import "../scss/fontello";
+@import "../scss/fontawesome";
 @import "../scss/type";
+@import "../scss/forms";
 @import "../scss/buttons";
 @import "../scss/dropdowns";
-@import "../scss/forms";
 @import "../scss/shadows";
 @import "../scss/utils";
+@import "../scss/animations";
 @import "../scss/notify";
 @import "../scss/prompt";
 @import "../scss/tooltip";
@@ -34,6 +34,7 @@
 @import "../scss/topbar";
 @import "../scss/sidebar";
 @import "../scss/todos";
+@import "../scss/modifiers";
 </style>
 
 <script>
@@ -69,9 +70,9 @@ firebase.initializeApp({
 });
 
 // globals
-var notify = new Notify();
-var database = firebase.database();
-var defaultOptions = {
+const notify = new Notify();
+const database = firebase.database();
+const defaultOptions = {
     taskInsertPosition: "bottom", // (top, bottom)
     listInsertPosition: "top", // (top, bottom)
     listAutoSelect: true, // select new lists
@@ -101,7 +102,10 @@ export default {
             message  : "", // asyc success message to show
             path     : "", // current url hash path
             comp     : "home", // current active component
-            expanded : false, // sidebar status
+            sidebar  : { // sidebar state controls
+                active: false,
+                visible: false,
+            }
         }
     },
 
@@ -109,31 +113,26 @@ export default {
     methods: {
 
         // call a function or emit an event
-        emit: function()
-        {
-            var args = [].slice.call( arguments );
-            var func = args.shift();
+        emit: function() {
+            let args = [].slice.call( arguments );
+            let func = args.shift();
 
-            if( typeof this[ func ] === "function" )
-            {
+            if ( typeof this[ func ] === "function" ) {
                 return this[ func ].apply( this, args );
             }
             return this.$emit.apply( this, arguments );
         },
 
         // common handler for async errors
-        onError: function( e )
-        {
+        onError: function( e ) {
             notify.error( "Data Error: " + ( e.message || "There was a problem loading or saving data." ) , 8000 );
             this.$emit( "hideSpinner" );
             this.onHashChange();
         },
 
         // common handler for async successful operations
-        onSuccess: function()
-        {
-            if( this.message && typeof this.message === "string" )
-            {
+        onSuccess: function() {
+            if ( this.message && typeof this.message === "string" ) {
                 notify.success( this.message );
             }
             this.$emit( "hideSpinner" );
@@ -141,20 +140,16 @@ export default {
         },
 
         // save data to storage
-        saveData: function( path, data, message )
-        {
-            if( path && typeof path === "string" && path !== "/" )
-            {
+        saveData: function( path, data, message ) {
+            if ( path && typeof path === "string" && path !== "/" ) {
                 path = path.replace( /^([\/]+)|([\/]+)$/, "" );
                 this.$emit( "showSpinner" );
                 this.message = message || "";
 
-                if( this.user.uid ) // logged in
-                {
+                if ( this.user.uid ) { // logged in
                     return database.ref( "/users/" + this.user.uid + "/" + path ).set( data ).then( this.onSuccess ).catch( this.onError );
                 }
-                switch( path.split( "/" )[ 0 ] || "" )
-                {
+                switch ( path.split( "/" )[ 0 ] || "" ) {
                     case "options" : return localforage.setItem( "options", this.options ).then( this.onSuccess ).catch( this.onError );
                     case "lists"   : return localforage.setItem( "lists", this.lists ).then( this.onSuccess ).catch( this.onError );
                 }
@@ -163,20 +158,16 @@ export default {
         },
 
         // remove data from storage
-        removeData: function( path, message )
-        {
-            if( path && typeof path === "string" && path !== "/" )
-            {
+        removeData: function( path, message ) {
+            if ( path && typeof path === "string" && path !== "/" ) {
                 path = path.replace( /^([\/]+)|([\/]+)$/, "" );
                 this.$emit( "showSpinner" );
                 this.message = message || "";
 
-                if( this.user.uid ) // logged in
-                {
+                if ( this.user.uid ) { // logged in
                     return database.ref( "/users/" + this.user.uid + "/" + path ).remove().then( this.onSuccess ).catch( this.onError );
                 }
-                switch( path.split( "/" )[ 0 ] || "" )
-                {
+                switch ( path.split( "/" )[ 0 ] || "" ) {
                     case "options" : return localforage.removeItem( "options" ).then( this.onSuccess ).catch( this.onError );
                     case "lists"   : return localforage.removeItem( "lists" ).then( this.onSuccess ).catch( this.onError );
                 }
@@ -185,25 +176,21 @@ export default {
         },
 
         // reset app data to default
-        resetData: function()
-        {
+        resetData: function() {
             this.todosUnselect();
             this.options = Object.assign( {}, defaultOptions );
             this.lists = [];
         },
 
         // set new component view and location hash
-        setComponent: function( comp, path )
-        {
+        setComponent: function( comp, path ) {
             this.todos = {};
 
-            if( comp && typeof comp === "string" && comp !== this.comp )
-            {
+            if ( comp && typeof comp === "string" && comp !== this.comp ) {
                 this.hideSidebar();
                 this.comp = comp;
             }
-            if( path && typeof path === "string" && path !== this.path )
-            {
+            if ( path && typeof path === "string" && path !== this.path ) {
                 window.location.hash = path;
                 this.path = path;
             }
@@ -211,20 +198,17 @@ export default {
         },
 
         // update app state from url hash change
-        onHashChange: function( e )
-        {
-            var hash = window.location.hash || "/home";
-            var path = hash.replace( /^([\#\?]+)|([\/]+)$/, "" );
+        onHashChange: function( e ) {
+            let hash = window.location.hash || "/home";
+            let path = hash.replace( /^([\#\?]+)|([\/]+)$/, "" );
 
-            if( path )
-            {
+            if ( path ) {
                 this.path  = path;
-                var parts  = path.replace( /^([\#\?\/]+)|([\/]+)$/, "" ).split( "/" );
-                var action = parts.length ? parts.shift() : "home";
-                var item   = parts.length ? parts.shift() : "";
+                let parts  = path.replace( /^([\#\?\/]+)|([\/]+)$/, "" ).split( "/" );
+                let action = parts.length ? parts.shift() : "home";
+                let item   = parts.length ? parts.shift() : "";
 
-                switch( action )
-                {
+                switch ( action ) {
                     case "home"    :  return this.setComponent( "home" );
                     case "options" :  return this.setComponent( "options" );
                     case "about"   :  return this.setComponent( "about" );
@@ -235,75 +219,59 @@ export default {
         },
 
         // check if a todos object is valid
-        todosValid: function( todos )
-        {
+        todosValid: function( todos ) {
             return ( typeof todos === "object" && todos.hasOwnProperty( "key" ) && todos.key );
         },
 
         // check if there is an active todos selected
-        todosActive: function()
-        {
+        todosActive: function() {
             return this.todosValid( this.todos );
         },
 
         // select a todos list to be active
-        todosSelect: function( search )
-        {
-            var index = null;
+        todosSelect: function( search ) {
+            let index = null;
 
-            if( /^([\d]+)$/.test( search ) ) // index
-            {
+            if ( /^([\d]+)$/.test( search ) ) {
                 index = parseInt( search );
             }
-            else if( /^([\w\-\.]+)$/.test( search ) ) // key
-            {
-                for( var i = 0; i < this.lists.length; ++i )
-                {
-                    if( this.lists[ i ].key === search )
-                    {
+            else if ( /^([\w\-\.]+)$/.test( search ) ) {
+                for ( let i = 0; i < this.lists.length; ++i ) {
+                    if ( this.lists[ i ].key === search ) {
                         index = i; break;
                     }
                 }
             }
-            if( index !== null && typeof this.lists[ index ] === "object" ) // found
-            {
+            if ( index !== null && typeof this.lists[ index ] === "object" ) {
                 this.setComponent( "todos", "/todos/" + search );
-                this.todos = Object.assign( {}, this.lists[ index ] ); // copy
+                this.todos = Object.assign( {}, this.lists[ index ] );
                 return true;
             }
-            this.setComponent( "notfound" ); // not found
+            this.setComponent( "notfound" );
             return false;
         },
 
         // clear current todos data
-        todosUnselect: function()
-        {
-            if( this.comp === "todos" )
-            {
+        todosUnselect: function() {
+            if ( this.comp === "todos" ) {
                 this.setComponent( "home", "/home" );
             }
             this.todos = {};
         },
 
         // reselect active todos from main list
-        todosReselect: function()
-        {
-            if( this.todosActive() )
-            {
+        todosReselect: function() {
+            if ( this.todosActive() ) {
                 return this.todosSelect( this.todos.key );
             }
             return false;
         },
 
         // replace todos object back in the list by it's key
-        todosReplace: function( todos )
-        {
-            if( this.todosValid( todos ) )
-            {
-                for( var i = 0; i < this.lists.length; ++i )
-                {
-                    if( this.lists[ i ].key === todos.key )
-                    {
+        todosReplace: function( todos ) {
+            if ( this.todosValid( todos ) ) {
+                for ( let i = 0; i < this.lists.length; ++i ) {
+                    if ( this.lists[ i ].key === todos.key ) {
                         this.lists[ i ] = Object.assign( {}, todos );
                         return true;
                     }
@@ -313,30 +281,23 @@ export default {
         },
 
         // get index of todos from main list if it exists
-        todosGetIndex: function( todos )
-        {
-            if( this.todosValid( todos ) )
-            {
-                for( var i = 0; i < this.lists.length; ++i )
-                {
-                    if( this.lists[ i ].key === todos.key ) return i;
+        todosGetIndex: function( todos ) {
+            if ( this.todosValid( todos ) ) {
+                for ( let i = 0; i < this.lists.length; ++i ) {
+                    if ( this.lists[ i ].key === todos.key ) return i;
                 }
             }
             return -1;
         },
 
         // insert new todos to main list
-        todosInsert: function( todos, message )
-        {
-            if( this.todosValid( todos ) )
-            {
-                switch( this.options.listInsertPosition )
-                {
+        todosInsert: function( todos, message ) {
+            if ( this.todosValid( todos ) ) {
+                switch ( this.options.listInsertPosition ) {
                     case "bottom" : this.lists.push( todos ); break;
                     default       : this.lists.splice( 0, 0, todos );
                 }
-                if( this.options.listAutoSelect )
-                {
+                if ( this.options.listAutoSelect ) {
                     this.todosSelect( todos.key );
                 }
                 return this.saveData( "lists", this.lists, message );
@@ -345,26 +306,22 @@ export default {
         },
 
         // update todos data on main list
-        todosUpdate: function( todos, message )
-        {
-            if( this.todosValid( todos ) )
-            {
+        todosUpdate: function( todos, message ) {
+            if ( this.todosValid( todos ) ) {
                 this.todosReplace( todos );
                 this.todosReselect();
-                var index = this.todosGetIndex( todos );
+                let index = this.todosGetIndex( todos );
                 return this.saveData( "lists/" + index, todos, message );
             }
             return false;
         },
 
         // delete todos data from main list
-        todosDelete: function( todos, message )
-        {
-            var index = this.todosGetIndex( todos );
-            if( index > -1 )
-            {
-                var current = this.todosGetIndex( this.todos );
-                if( current === index ) this.todosUnselect();
+        todosDelete: function( todos, message ) {
+            let index = this.todosGetIndex( todos );
+            if ( index > -1 ) {
+                let current = this.todosGetIndex( this.todos );
+                if ( current === index ) this.todosUnselect();
                 this.lists.splice( index, 1 );
                 return this.saveData( "lists", this.lists, message );
             }
@@ -372,10 +329,8 @@ export default {
         },
 
         // save options data
-        saveOptions: function( options, message )
-        {
-            if( typeof options === "object" )
-            {
+        saveOptions: function( options, message ) {
+            if ( typeof options === "object" ) {
                 this.options = Object.assign( this.options, options );
                 return this.saveData( "options", this.options, message );
             }
@@ -383,10 +338,8 @@ export default {
         },
 
         // save lists data
-        saveLists: function( lists, message )
-        {
-            if( Array.isArray( lists ) )
-            {
+        saveLists: function( lists, message ) {
+            if ( Array.isArray( lists ) ) {
                 this.lists = lists;
                 this.todosReselect();
                 return this.saveData( "lists", this.lists, message );
@@ -395,33 +348,28 @@ export default {
         },
 
         // clear and save default app data
-        saveDefaults: function()
-        {
+        saveDefaults: function() {
             this.resetData();
             this.saveData( "options", this.options, "Options have been set to default." );
             this.saveData( "lists", this.lists, "Todos data have been reset." );
         },
 
         // import app options
-        importOptions: function( data, save )
-        {
-            if( data !== null && typeof data === "object" )
-            {
+        importOptions: function( data, save ) {
+            if ( data !== null && typeof data === "object" ) {
                 this.options = Object.assign( {}, defaultOptions, data );
-                if( save ) this.saveData( "options", this.options, "Options have been loaded and saved." );
+                if ( save ) this.saveData( "options", this.options, "Options have been loaded and saved." );
             }
         },
 
         // import app lists
-        importLists: function( data, save )
-        {
-            if( data !== null && ( typeof data === "object" || Array.isArray( data ) ) )
-            {
-                var lists = [];
-                var time  = Date.now();
-                var date  = Utils.dateString();
-                var keys  = Object.keys( data );
-                var deft  = {
+        importLists: function( data, save ) {
+            if ( data !== null && ( typeof data === "object" || Array.isArray( data ) ) ) {
+                let lists = [];
+                let time  = Date.now();
+                let date  = Utils.dateString();
+                let keys  = Object.keys( data );
+                let deft  = {
                     key      : "",
                     time     : time,
                     expire   : 0,
@@ -429,23 +377,18 @@ export default {
                     name     : date,
                     tasks    : [],
                 };
-                for( var i = 0; i < keys.length; ++i )
-                {
-                    var todos = data[ keys[ i ] ];
+                for ( let i = 0; i < keys.length; ++i ) {
+                    let todos = data[ keys[ i ] ];
 
-                    if( todos.id ) // deprecated
-                    {
+                    if ( todos.id ) { // deprecated
                         todos.key = todos.id;
                         delete todos.id;
                     }
-                    if( todos.key )
-                    {
+                    if ( todos.key ) {
                         todos.tasks = Utils.objectToArray( todos.tasks || [] );
 
-                        for( var t = 0; t < todos.tasks.length; ++t )
-                        {
-                            if( todos.tasks[ t ].id ) // deprecated
-                            {
+                        for ( let t = 0; t < todos.tasks.length; ++t ) {
+                            if ( todos.tasks[ t ].id ) { // deprecated
                                 todos.tasks[ t ].key = todos.tasks[ t ].id;
                                 delete todos.tasks[ t ].id;
                             }
@@ -454,30 +397,26 @@ export default {
                     }
                 }
                 this.lists = lists;
-                if( save ) this.saveData( "lists", this.lists, "Todos data has been loaded and saved." );
+                if ( save ) this.saveData( "lists", this.lists, "Todos data has been loaded and saved." );
             }
             this.$emit( "hideSpinner" );
             this.onHashChange();
         },
 
         // import data loaded from remote db
-        onAuthData: function( snapshot )
-        {
-            if( snapshot && snapshot.val() !== null )
-            {
+        onAuthData: function( snapshot ) {
+            if ( snapshot && snapshot.val() !== null ) {
                 this.importOptions( snapshot.val().options || {} );
                 this.importLists( snapshot.val().lists || [] );
             }
         },
 
         // on firebase user auth change
-        onAuthChange: function( user )
-        {
+        onAuthChange: function( user ) {
             this.$emit( "showSpinner" );
             this.user = {};
 
-            if( user !== null && user.uid )
-            {
+            if ( user !== null && user.uid ) {
                 this.user = {
                     uid      : user.uid,
                     name     : user.providerData[ 0 ].displayName,
@@ -493,22 +432,18 @@ export default {
         },
 
         // firebase login using a provider and user creds
-        userLogin: function( type, email, pass )
-        {
-            if( type && typeof type === "string" )
-            {
-                var provider = null;
+        userLogin: function( type, email, pass ) {
+            if ( type && typeof type === "string" ) {
+                let provider = null;
 
-                switch( type )
-                {
+                switch ( type ) {
                     case "email"    :  provider = new firebase.auth.signInWithEmailAndPassword( email, pass );  break;
                     case "google"   :  provider = new firebase.auth.GoogleAuthProvider();   break;
                     case "twitter"  :  provider = new firebase.auth.TwitterAuthProvider();  break;
                     case "facebook" :  provider = new firebase.auth.FacebookAuthProvider(); break;
                     case "github"   :  provider = new firebase.auth.GithubAuthProvider();   break;
                 }
-                if( provider )
-                {
+                if ( provider ) {
                     return firebase.auth().signInWithPopup( provider ).catch( this.onError );
                 }
                 return notify.warning( "Invalid login provider type ("+ type +")." );
@@ -517,53 +452,48 @@ export default {
         },
 
         // firebase signoff
-        userLogoff: function()
-        {
+        userLogoff: function() {
             firebase.auth().signOut()
             .then( function() { notify.success( "You are no longer signed in." ); } )
             .catch( this.onError );
         },
 
         // show the sidebar
-        showSidebar: function()
-        {
-            this.expanded = true;
+        showSidebar: function() {
+            this.sidebar.active = true;
+            this.sidebar.visible = true;
         },
 
         // hide the sidebar
-        hideSidebar: function()
-        {
-            this.expanded = false;
+        hideSidebar: function() {
+            this.sidebar.visible = false;
+            setTimeout( () => { this.sidebar.active = false; }, 500 );
         },
 
         // toggle the sidebar
-        toggleSidebar: function()
-        {
-            this.expanded = !this.expanded;
+        toggleSidebar: function() {
+            if ( this.sidebar.active ) { this.hideSidebar(); }
+            else { this.showSidebar(); }
         },
 
         // show notification
-        showNotice: function( type, info, time )
-        {
+        showNotice: function( type, info, time ) {
             notify.add( type, info, time );
         },
     },
 
     // before mounted
-    beforeMount: function()
-    {
+    beforeMount: function() {
         firebase.auth().onAuthStateChanged( this.onAuthChange );
     },
 
     // component mounted
-    mounted: function()
-    {
+    mounted: function() {
         window.addEventListener( "hashchange", this.onHashChange );
     },
 
     // component destroyed
-    destroyed: function()
-    {
+    destroyed: function() {
         window.removeEventListener( "hashchange", this.onHashChange );
     },
 }

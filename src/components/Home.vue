@@ -8,28 +8,28 @@
         </p>
         <p>
             To get started, you first need to create a
-            <a class="icon-plus icon-pr" href="#" @click.prevent="emit( 'todosCreate' )">New List</a>,
+            <a class="text-nowrap" href="#" @click.prevent="emit( 'todosCreate' )"><i class="fa fa-plus"></i> New List</a>,
             or select one you already created from the
-            <a class="icon-book icon-pr" href="#" @click.prevent="emit( 'showSidebar' )">Sidebar Panel</a>
+            <a class="text-nowrap" href="#" @click.prevent="emit( 'showSidebar' )"><i class="fa fa-ellipsis-v"></i> Sidebar Panel</a>
             to the right.
         </p>
         <p>
             You can find more information about how to use this application along with
             other technical and author details by looking at the
-            <a class="icon-code icon-pr" href="#/about">About this app</a> page.
+            <a class="text-nowrap" href="#/about"><i class="fa fa-question-circle"></i> About this app</a> page.
         </p>
         <p>
             To manage options for this application, or to authenticate using an external
             account to keep your data sync'd on a remote database, have a look at the
-            <a class="icon-user icon-pr" href="#/options">Account &amp; options</a> page.
+            <a class="text-nowrap" href="#/options"><i class="fa fa-user-circle"></i> Account &amp; options</a> page.
         </p>
 
         <hr />
         <h4>Share this app</h4>
         <div>
-            <button class="btn bg-bright-hover icon-twitter icon-pr shadow-paper" @click="share( 'twitter' )">Twitter</button>
-            <button class="btn bg-bright-hover icon-facebook icon-pr shadow-paper" @click="share( 'facebook' )">Facebook</button>
-            <button class="btn bg-bright-hover icon-reddit icon-pr shadow-paper" @click="share( 'reddit' )">Reddit</button>
+            <button class="btn bg-bright-hover shadow-paper text-nowrap" @click="share( 'twitter' )"><i class="fab fa-twitter"></i> Twitter</button>
+            <button class="btn bg-bright-hover shadow-paper text-nowrap" @click="share( 'facebook' )"><i class="fab fa-facebook"></i> Facebook</button>
+            <button class="btn bg-bright-hover shadow-paper text-nowrap" @click="share( 'reddit' )"><i class="fab fa-reddit"></i> Reddit</button>
         </div>
 
     </div>
@@ -49,20 +49,17 @@ export default {
     methods: {
 
         // for passing method calls to parent
-        emit: function()
-        {
+        emit: function() {
             return this.$parent.emit.apply( this.$parent, arguments );
         },
 
         // launch share window
-        share: function( service )
-        {
-            var url    = window.location.href || "";
-            var title  = "Todos web application";
-            var status = "Todos web application by @raintek_ #webdev #javascript #vuejs | " + url;
+        share: function( service ) {
+            let url    = window.location.href || "";
+            let title  = "Todos web application";
+            let status = "Todos web application by @raintek_ #webdev #javascript #vuejs | " + url;
 
-            switch( service )
-            {
+            switch ( service ) {
                 case "twitter":
                     return window.open( "//twitter.com/home?status="+ encodeURIComponent( status ), "_blank" );
 

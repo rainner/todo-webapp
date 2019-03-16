@@ -5,23 +5,23 @@
         <ul v-if="countTotal()" class="todo-list-wrap sortable">
             <li v-for="(task, index) in todos.tasks" :id="'task-' + index" :key="task.key" class="todo-list-item" :class="{ 'complete': task.complete }" v-sortitem>
                 <div class="todo-list-icon is-clickable">
-                    <span class="todo-list-icon-pending icon-clock sort-handle"></span>
-                    <span class="todo-list-icon-complete icon-check sort-handle"></span>
+                    <span class="todo-list-icon-pending fa fa-clock sort-handle fx fx-drop-in"></span>
+                    <span class="todo-list-icon-complete fa fa-check sort-handle fx fx-drop-in"></span>
                 </div>
                 <div class="todo-list-info">
                     <label class="todo-list-label">
                         <div class="todo-list-date" v-html="task.modified"></div>
                         <input class="todo-list-input" type="text" v-model="task.todo" @focus="onFocus( $event )" @keyup.enter="taskUpdate( $event, index, 1 )" @blur="taskUpdate( $event, index )" />
-                        <span class="todo-list-text text-wrap" v-html="task.todo"></span>
+                        <span class="todo-list-text text-wrap"><span>{{task.todo}}</span> <i class="fa fa-pen"></i></span>
                     </label>
                 </div>
                 <div class="todo-list-control">
                     <div class="dropdown" v-dropdown>
-                        <span class="dropdown-trigger icon-config"></span>
+                        <span class="dropdown-trigger"><i class="fa fa-cog"></i></span>
                         <ul class="dropdown-left dropdown-bottom">
-                            <li v-if="!task.complete"><a class="icon-check icon-pr text-success-hover" href="#" @click.prevent="taskCheck( index )">Check</a></li>
-                            <li v-if="task.complete"><a class="icon-clock icon-pr text-warning-hover" href="#" @click.prevent="taskUncheck( index )">Uncheck</a></li>
-                            <li><a class="icon-close icon-pr text-danger-hover" href="#" @click.prevent="taskDelete( index )">Delete task</a></li>
+                            <li v-if="!task.complete"><a class="text-success-hover" href="#" @click.prevent="taskCheck( index )"><i class="fa fa-check"></i> Check</a></li>
+                            <li v-if="task.complete"><a class="text-warning-hover" href="#" @click.prevent="taskUncheck( index )"><i class="fa fa-clock"></i> Uncheck</a></li>
+                            <li><a class="text-danger-hover" href="#" @click.prevent="taskDelete( index )"><i class="fa fa-times"></i>  Delete task</a></li>
                         </ul>
                     </div>
                 </div>
@@ -31,15 +31,15 @@
         <div v-else class="todo-info-page text-centered">
             <h4>This todos list is empty.</h4>
             <p>
-                Use the <a class="icon-edit icon-pr" href="#" @click.prevent="inputExpand()">New Task</a>
+                Use the <a href="#" @click.prevent="inputExpand()"><i class="fa fa-plus"></i> New Task</a>
                 button below to <b>add new tasks</b> to this list.
             </p>
             <p>
-                Use the <a class="icon-menu icon-pr" href="#" @click.prevent="emit( 'showMenu' )">Main Menu</a> above
+                Use the <a href="#" @click.prevent="emit( 'showMenu' )"><i class="fa fa-bars"></i> Main Menu</a> above
                 to <b>manage your tasks</b>, or to <b>delete</b> this list.
             </p>
             <p>
-                Use the <a class="icon-book icon-pr" href="#" @click.prevent="emit( 'showSidebar' )">Sidebar Panel</a>
+                Use the <a href="#" @click.prevent="emit( 'showSidebar' )"><i class="fa fa-ellipsis-v"></i> Sidebar Panel</a>
                 on the right to <b>switch between lists</b>.
             </p>
         </div>
@@ -47,7 +47,7 @@
         <div class="todo-footer-wrap">
             <form class="todo-footer-form" action="#" @submit.prevent="taskInsert( $event )">
                 <label class="todo-footer-label">
-                    <div class="todo-footer-button icon-edit" title="New task" @click="inputExpand()" v-tooltip></div>
+                    <div class="todo-footer-button fa fa-pen" title="New task" @click="inputExpand()" v-tooltip></div>
                     <div class="todo-footer-control" :class="{ 'expanded': expanded }">
                         <input type="text" name="todo" value="" placeholder="Add new task..." autocomplete="off" @blur="inputContract()" />
                     </div>
@@ -67,7 +67,7 @@ import Utils from "../scripts/Utils";
 import Scroller from "../scripts/Scroller";
 
 // setup sortable instance
-var sortable = new Sortable( null, { uniqueAttribute: "id", moveHorizontal: false } );
+let sortable = new Sortable( null, { uniqueAttribute: "id", moveHorizontal: false } );
 
 // component
 export default {
@@ -106,83 +106,70 @@ export default {
     methods: {
 
         // for passing method calls to parent
-        emit: function()
-        {
+        emit: function() {
             return this.$parent.emit.apply( this.$parent, arguments );
         },
 
         // capture previous value of input to compare later when saving
-        onFocus: function( e )
-        {
+        onFocus: function( e ) {
             this.last = e.target.value || "";
         },
 
         // scroll tasks area to the bottom
-        autoScroll: function()
-        {
-            var dest = ( this.options.taskInsertPosition === "top" ) ? "top" : "bottom";
+        autoScroll: function() {
+            let dest = ( this.options.taskInsertPosition === "top" ) ? "top" : "bottom";
             setTimeout( function() { new Scroller( ".app-left", dest ); }, 500 );
         },
 
         // expand task input
-        inputExpand: function( e )
-        {
+        inputExpand: function( e ) {
             this.expanded = true;
             this.autoScroll();
         },
 
         // hide task input
-        inputContract: function( e )
-        {
+        inputContract: function( e ) {
             this.expanded = false;
         },
 
         // check if the todos object is valid
-        hasTodos: function()
-        {
+        hasTodos: function() {
             return ( this.todos.hasOwnProperty( "key" ) && this.todos.key );
         },
 
         // check if there are tasks in given todos list
-        hasTasks: function()
-        {
+        hasTasks: function() {
             return ( Array.isArray( this.todos.tasks ) && this.todos.tasks.length );
         },
 
         // count total tasks in current todos
-        countTotal: function()
-        {
+        countTotal: function() {
             return this.hasTasks() ? this.todos.tasks.length : 0;
         },
 
         // get number of done tasks in a todos list
-        countDone: function()
-        {
+        countDone: function() {
             return this.hasTasks() ? this.todos.tasks.filter( function( task ){ return task.complete; } ).length : 0;
         },
 
         // get number of done tasks remaining
-        countRemain: function()
-        {
+        countRemain: function() {
             return this.countTotal() - this.countDone();
         },
 
         // check if a task exists in the selected todos list
-        taskExists: function( index )
-        {
+        taskExists: function( index ) {
             return ( this.hasTasks() && typeof this.todos.tasks[ index ] === "object" );
         },
 
         // append new todos task to current active todos list (form submit event)
-        taskInsert: function( e )
-        {
+        taskInsert: function( e ) {
             e.preventDefault();
 
-            var todo = e.target.todo.value || "";
+            let todo = e.target.todo.value || "";
 
-            if( this.hasTodos() && todo && typeof todo === "string" )
-            {
-                var task = {
+            if ( this.hasTodos() && todo && typeof todo === "string" ) {
+                let task = {
                     key      : Utils.idString(),
                     time     : Date.now(),
                     expire   : 0,
@@ -190,8 +177,7 @@ export default {
                     todo     : todo,
                     complete : false,
                 };
-                switch( this.options.taskInsertPosition )
-                {
+                switch ( this.options.taskInsertPosition ) {
                     case "top" : this.todos.tasks.splice( 0, 0, task ); break;
                     default    : this.todos.tasks.push( task );
                 }
@@ -202,15 +188,13 @@ export default {
         },
 
         // save individual todo list entry task name
-        taskUpdate: function( e, index, enter )
-        {
-            var todo = e.target.value || "";
+        taskUpdate: function( e, index, enter ) {
+            let todo = e.target.value || "";
 
-            if( enter ) { e.target.blur(); return; }
+            if ( enter ) { e.target.blur(); return; }
 
-            if( this.hasTodos() && this.taskExists( index ) && todo && todo !== this.last )
-            {
-                var date = Utils.dateString();
+            if ( this.hasTodos() && this.taskExists( index ) && todo && todo !== this.last ) {
+                let date = Utils.dateString();
                 this.todos.tasks[ index ].todo = todo;
                 this.todos.tasks[ index ].modified = date;
                 this.todos.modified = date;
@@ -219,38 +203,31 @@ export default {
         },
 
         // make todos task as checked for key
-        taskCheck: function( index )
-        {
-            if( this.hasTodos() && this.taskExists( index ) )
-            {
-                var date = Utils.dateString();
+        taskCheck: function( index ) {
+            if ( this.hasTodos() && this.taskExists( index ) ) {
+                let date = Utils.dateString();
                 this.todos.tasks[ index ].complete = true;
                 this.todos.tasks[ index ].modified = date;
                 this.todos.modified = date;
-                this.emit( "todosUpdate", this.todos, "Todos task has been marked as complete." );
+                this.emit( "todosUpdate", this.todos );
             }
         },
 
         // make todos task as unchecked for key
-        taskUncheck: function( index )
-        {
-            if( this.hasTodos() && this.taskExists( index ) )
-            {
-                var date = Utils.dateString();
+        taskUncheck: function( index ) {
+            if ( this.hasTodos() && this.taskExists( index ) ) {
+                let date = Utils.dateString();
                 this.todos.tasks[ index ].complete = false;
                 this.todos.tasks[ index ].modified = date;
                 this.todos.modified = date;
-                this.emit( "todosUpdate", this.todos, "Todos task has been unchecked." );
+                this.emit( "todosUpdate", this.todos );
             }
         },
 
         // delete todos task from list for key
-        taskDelete: function( index )
-        {
-            if( this.hasTodos() && this.taskExists( index ) )
-            {
-                var _delete = function()
-                {
+        taskDelete: function( index ) {
+            if ( this.hasTodos() && this.taskExists( index ) ) {
+                let _delete = function() {
                     this.todos.tasks.splice( index, 1 );
                     this.todos.modified = Utils.dateString();
                     this.emit( "todosUpdate", this.todos, "Todos task has been deleted." );
@@ -264,12 +241,9 @@ export default {
         },
 
         // remove all completed tasks
-        tasksClean: function()
-        {
-            if( this.hasTodos() && this.countDone() > 0 )
-            {
-                var _clean = function()
-                {
+        tasksClean: function() {
+            if ( this.hasTodos() && this.countDone() > 0 ) {
+                let _clean = function() {
                     this.todos.tasks = this.todos.tasks.filter( function( task ) { return !task.complete; } );
                     this.todos.modified = Utils.dateString();
                     this.emit( "todosUpdate", this.todos, "All completed tasks have been removed." );
@@ -283,12 +257,9 @@ export default {
         },
 
         // remove all tasks
-        tasksFlush: function()
-        {
-            if( this.hasTodos() && this.countTotal() > 0 )
-            {
-                var _flush = function()
-                {
+        tasksFlush: function() {
+            if ( this.hasTodos() && this.countTotal() > 0 ) {
+                let _flush = function() {
                     this.todos.tasks = [];
                     this.todos.modified = Utils.dateString();
                     this.emit( "todosUpdate", this.todos, "All tasks have been removed." );
@@ -302,18 +273,15 @@ export default {
         },
 
         // check/uncheck all tasks in active list
-        tasksToggle: function( status )
-        {
-            if( this.hasTodos() && typeof status === "boolean" )
-            {
-                if( status === true && this.countRemain() === 0 ) return;
-                if( status === false && this.countRemain() === this.countTotal() ) return;
+        tasksToggle: function( status ) {
+            if ( this.hasTodos() && typeof status === "boolean" ) {
+                if ( status === true && this.countRemain() === 0 ) return;
+                if ( status === false && this.countRemain() === this.countTotal() ) return;
 
-                var date = Utils.dateString();
-                var word = status ? "checked" : "unchecked";
+                let date = Utils.dateString();
+                let word = status ? "checked" : "unchecked";
 
-                for( var i = 0; i < this.todos.tasks.length; ++i )
-                {
+                for ( let i = 0; i < this.todos.tasks.length; ++i ) {
                     this.todos.tasks[ i ].modified = date;
                     this.todos.tasks[ i ].complete = status;
                 }
@@ -323,37 +291,31 @@ export default {
         },
 
         // save new order of todo tasks
-        tasksSort: function( indexes )
-        {
-            if( this.hasTasks() && Array.isArray( indexes ) )
-            {
-                if( indexes.length === this.todos.tasks.length )
-                {
-                    var tasks = []; // fresh list
+        tasksSort: function( indexes ) {
+            if ( this.hasTasks() && Array.isArray( indexes ) ) {
+                if ( indexes.length === this.todos.tasks.length ) {
+                    let tasks = []; // fresh list
 
-                    for( var i = 0; i < indexes.length; ++i )
-                    {
+                    for ( let i = 0; i < indexes.length; ++i ) {
                         tasks[ i ] = Object.assign( {}, this.todos.tasks[ indexes[ i ] ] );
                     }
                     this.todos.tasks = tasks;
                     this.todos.modified = Utils.dateString();
-                    this.emit( "todosUpdate", this.todos, "New task list order has been saved." );
+                    this.emit( "todosUpdate", this.todos );
                 }
             }
         },
 
         // reset sortable container when component mounts/updates
-        setupSortable: function()
-        {
-            var list = document.querySelector( ".todo-list-wrap" );
+        setupSortable: function() {
+            let list = document.querySelector( ".todo-list-wrap" );
             sortable.setContainer( list );
         },
     },
 
     // setup sortable change handler
-    beforeMount: function()
-    {
-        var self = this;
+    beforeMount: function() {
+        let self = this;
 
         // register methods that need to be called from outside
         this.$parent.$on( "tasksToggle", this.tasksToggle );
@@ -367,22 +329,19 @@ export default {
     },
 
     // component before destroy
-    beforeDestroy: function()
-    {
+    beforeDestroy: function() {
         this.$parent.$off( "tasksToggle" );
         this.$parent.$off( "tasksClean" );
         this.$parent.$off( "tasksFlush" );
     },
 
     // component mounted
-    mounted: function()
-    {
+    mounted: function() {
         this.setupSortable();
     },
 
     // component updated
-    updated: function()
-    {
+    updated: function() {
         this.setupSortable();
     },
 }
