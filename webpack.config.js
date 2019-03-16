@@ -1,27 +1,29 @@
-
-var path = require( "path" );
-var webpack = require( "webpack" );
+/**
+ * Webpack config
+ */
+const path = require( 'path' );
+const webpack = require( 'webpack' );
 
 module.exports = {
 
-    entry: "./src/main.js",
+    entry: './src/main.js',
 
     output: {
-        path: path.resolve( __dirname, "./public/js" ),
-        publicPath: "/public/js/",
-        filename: "bundle.js"
+        path: path.resolve( __dirname, './public/js' ),
+        publicPath: '/public/js/',
+        filename: 'bundle.js'
     },
 
     resolve: {
         alias: {
-            "vue$": "vue/dist/vue.common.js",
+            'vue$': 'vue/dist/vue.common.js',
         }
     },
 
     devServer: {
-        host: "192.168.0.102",
-        port: 8888,
-        clientLogLevel: "info",
+        host: 'localhost',
+        port: 3000,
+        clientLogLevel: 'info',
         historyApiFallback: true,
         noInfo: true,
         inline: true,
@@ -36,35 +38,31 @@ module.exports = {
         rules: [
             {
                 test: /\.vue$/,
-                loader: "vue-loader",
+                loader: 'vue-loader',
                 options: {
                     loaders: {
-                        "scss": "vue-style-loader!css-loader!postcss-loader!sass-loader",
-                        "sass": "vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax",
+                        'scss': 'vue-style-loader!css-loader!postcss-loader!sass-loader',
+                        'sass': 'vue-style-loader!css-loader!postcss-loader!sass-loader?indentedSyntax',
                     }
                 }
             },
             {
                 test: /\.js$/,
-                loader: "babel-loader",
+                loader: 'babel-loader',
                 exclude: /node_modules/,
             },
         ]
     },
-
-    devtool: "#eval-source-map",
 };
 
 /**
  * Production build
  */
-if( process.env.NODE_ENV === "production" )
-{
-    module.exports.devtool = "#source-map";
+if ( process.env.NODE_ENV === 'production' ) {
 
     module.exports.plugins = ( module.exports.plugins || [] ).concat([
         new webpack.DefinePlugin({
-            "process.env": {
+            'process.env': {
                 NODE_ENV: '"production"',
             }
         }),
