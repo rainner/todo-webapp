@@ -44,7 +44,7 @@ import firebase from "firebase/app";
 import {} from "firebase/auth";
 import {} from "firebase/database";
 // components
-import TopBar from "./TopBar.vue";
+import TopBar from "./Topbar.vue";
 import Sidebar from "./Sidebar.vue";
 import Home from "./Home.vue";
 import Todos from "./Todos.vue";
