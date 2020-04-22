@@ -7,7 +7,7 @@
                 <span :class="spinnerClass()"></span>
             </div>
 
-            <div class="header-input fx fx-slide-left" :key="todos.name">
+            <div class="header-input">
                 <input type="text"
                     placeholder="New list name..."
                     autocomplete="off"
